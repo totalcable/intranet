@@ -60,7 +60,11 @@
                                            
                                         </td>
                                         <td><?php echo $la['date']; ?></td>
-                                        <td><?php echo $single[0]['total_late']; ?></td>                                     
+                                        <td>
+                                            
+                                            <a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late')) ?>" title="Click here for more information" style="font-weight: normal; color: blue;"><?php echo $single[0]['total_late']; ?></a>
+                                        
+                                        </td>                                     
                                         
                                        
                                     </tr>

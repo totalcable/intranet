@@ -1,0 +1,259 @@
+<?php
+echo $this->Html->script(
+        array(
+            'http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js',
+            'check_login'
+        )
+);
+?>
+
+<style type="text/css">
+    button.btn.btn-primary {
+        margin-top: -28px;
+        margin-right: 9px;
+        margin-bottom: -12px;
+    }
+
+    button.btn.btn-warning {
+        float: right;
+        margin-right: 10px;
+    }
+</style>
+
+
+
+<div id="content" class="clearfix">
+    <div class="contentwrapper"><!--Content wrapper-->
+
+        <div id="studentRegistrationModal" class="modal hide fade" style="display: none; ">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span class="icon12 minia-icon-close"></span></button>       
+            </div>
+            <div class="modal-body">
+                <div class="paddingT15 paddingB15">  
+                    <div class="alert alert-success" id="info-container">
+                        <strong> You must login to access this feature </strong>
+                        <p> 
+                            If you have student account then click <button class="btn btn-info" id="studentLogin">Login</button> </p>
+                        <p>If you did not have student account click <button id="studentAcc" class="btn btn btn-success" >Create New Account</button>
+                        </p>
+
+                    </div>  
+                    <div class="row-fluid hide" id="sregirtrationForm">
+
+                        <div class="span12">
+
+                            <div class="box">
+
+                                <div class="title">
+                                </div>
+                                <div class="content">
+
+                                    <?php
+                                    echo $this->Form->create('Student', array(
+                                        'inputDefaults' => array(
+                                            'label' => false,
+                                            'div' => false
+                                        ),
+                                        'id' => 'regForm',
+                                        'class' => 'form-horizontal',
+                                        'novalidate' => 'novalidate',
+                                        'url' => array('controller' => 'frontends', 'action' => 'registration'),
+                                            )
+                                    );
+                                    ?>
+                                    <div class="form-row row-fluid">
+                                        <div class="span12">
+                                            <div class="row-fluid">
+                                                <label class="form-label span3" for="required">Name</label>
+                                                <?php
+                                                echo $this->Form->input(
+                                                        'name', array(
+                                                    'class' => 'span9 text required'
+                                                        )
+                                                );
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row row-fluid">
+                                        <div class="span12">
+                                            <div class="row-fluid">
+                                                <label class="form-label span3" for="required">Email</label>
+                                                <?php
+                                                echo $this->Form->input(
+                                                        'email', array(
+                                                    'class' => 'span9 text required'
+                                                        )
+                                                );
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row row-fluid">
+                                        <div class="span12">
+                                            <div class="row-fluid">
+                                                <label class="form-label span3" for="required">Password</label>
+
+                                                <?php
+                                                echo $this->Form->input(
+                                                        'password', array(
+                                                    'class' => 'span9 text required'
+                                                        )
+                                                );
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-row row-fluid">
+                                        <div class="span12">
+                                            <div class="row-fluid">
+                                                <label class="form-label span3" for="checkboxes">Select your level</label>
+                                                <div class="span9 controls sel">
+                                                    <?php
+                                                    echo $this->Form->input('level_id', array(
+                                                        'type' => 'select',
+                                                        'options' => $levels,
+                                                        'empty' => '',
+                                                        'class' => 'span12 uniform nostyle select1 required',
+                                                        'div' => array('class' => 'span12 required')
+                                                            )
+                                                    );
+                                                    ?>
+                                                </div> 
+                                            </div>
+                                        </div> 
+                                    </div>  
+
+                                    <div class="form-row row-fluid">
+                                        <div class="span12">
+                                            <div class="row-fluid">
+                                                <label class="form-label span3" for="required">Current Institute</label>
+                                                <?php
+                                                echo $this->Form->input(
+                                                        'institute', array(
+                                                    'class' => 'span9 text required'
+                                                        )
+                                                );
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                    <div class="form-row row-fluid">
+                                        <?php
+                                        echo $this->Form->button(
+                                                'Register', array(
+                                            'class' => 'btn btn-primary',
+                                            'type' => 'submit',
+                                            'id' => 'rgstrBtn'
+                                                )
+                                        );
+                                        ?>
+                                    </div>
+                                    <?php echo $this->Form->end(); ?>
+
+
+                                </div>
+
+                            </div><!-- End .box -->
+
+                        </div><!-- End .span12 -->
+
+                    </div><!-- End .row-fluid (registration) --> 
+
+
+                    <div class="row-fluid hide" id="sloginForm">
+
+                        <div class="span12">
+
+                            <div class="box">
+
+                                <div class="title">
+                                </div>
+                                <div class="content">
+                                    <?php
+                                    echo $this->Form->create('Student', array(
+                                        'inputDefaults' => array(
+                                            'label' => false,
+                                            'div' => false
+                                        ),
+                                        'id' => 'loginForm',
+                                        'class' => 'form-horizontal',
+                                        'novalidate' => 'novalidate',
+                                        'url' => array('controller' => 'frontends', 'action' => 'login'),
+                                            )
+                                    );
+                                    ?>
+
+                                    <div class="form-row row-fluid">
+                                        <div class="span12">
+                                            <div class="row-fluid">
+                                                <label class="form-label span3" for="required">Email</label>
+                                                <?php
+                                                echo $this->Form->input(
+                                                        'email', array(
+                                                    'class' => 'span9 text required'
+                                                        )
+                                                );
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row row-fluid">
+                                        <div class="span12">
+                                            <div class="row-fluid">
+                                                <label class="form-label span3" for="required">Password</label>
+
+                                                <?php
+                                                echo $this->Form->input(
+                                                        'password', array(
+                                                    'class' => 'span9 text required'
+                                                        )
+                                                );
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-row row-fluid">
+
+                                        <?php
+                                        echo $this->Form->button(
+                                                'Login', array('id' => 'loginBtn', 'class' => 'btn btn-warning', 'type' => 'submit')
+                                        );
+                                        ?>
+
+
+                                    </div>
+
+
+                                    <?php echo $this->Form->end(); ?>
+
+
+                                </div>
+
+                            </div><!-- End .box -->
+
+                        </div><!-- End .span12 -->
+
+                    </div><!-- End .row-fluid (login) --> 
+
+
+
+
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,85 @@
+.temp-img {
+    position: absolute;
+    z-index: 9999;
+}
+
+.product-quantity input.form-control {
+    font: 300 14px 'Open Sans', sans-serif;
+    width: 35px;
+}
+
+.product-quantity, .product-quantity .input-group {
+    width: 53px;
+    margin-right: 5px;
+}
+
+.product-quantity, .product-quantity .input-group {
+    width: 47px;
+    margin-left: -8px;
+}
+
+.top-cart-content {
+    display: block !important;
+}
+
+.busket li {
+    list-style-type: none;
+}
+
+span.del-goods.remove-item {
+    background-color: #000;
+    cursor: pointer;
+    float: right;
+    margin-right: 8px;
+}
+
+span.del-goods.remove-item:hover {
+    background-color: red;
+}
+
+p#msg {
+    margin: -8px auto;
+    width: 175px;
+    padding-top: 0px;
+    margin-top: -8px;
+    text-align: center;
+}
+a#hide_btn {
+    margin-bottom: 20;
+    margin-right: 215px;
+}
+h4.modal-title {
+    text-align: center;
+}
+.top-cart-content-wrapper{
+    z-index: 9999;
+}
+.clr{
+    clear: both;
+}
+
+.addeditem {
+    padding: 4px;
+    margin-left: 20px;
+}
+
+.addeditem img {
+    margin-right: 28px;
+}
+
+.busket-head {
+    background-color: #9b59b6;
+    padding: 10px;
+    color: #fff;
+    margin-left: -2px;
+    font-size: 13px;
+    font-family: sans-serif;
+}
+button#buybtn {
+    bottom: 7px;
+    position: absolute;
+    right: 0px;
+    left: 1px;
+    width: 98%;
+    border-radius: 10px !important;
+}

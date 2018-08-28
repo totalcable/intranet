@@ -1,0 +1,48 @@
+
+
+
+
+SELECT * FROM package_customers pc 
+
+left join psettings ps on ps.id = pc.psetting_id 
+left join custom_packages cp on cp.id = pc.custom_package_id 
+left join installations ins on ins.package_customer_id = pc.id 
+
+WHERE ((pc.follow_up= 0 AND pc.status = 'canceled' OR pc.status ='requested') 
+AND pc.status != 'old_ready' AND shipment =0 AND pc.follow_date = '') 
+
+OR (pc.shipment = 1 AND pc.status ='requested') 
+OR (pc.follow_up = 0 AND pc.status = 'done')
+and pc.approved != 1 and pc.date ='2017-01-01'
+
+
+
+
+
+SELECT * FROM package_customers pc 
+
+left join psettings ps on ps.id = pc.psetting_id 
+left join custom_packages cp on cp.id = pc.custom_package_id 
+left join installations ins on ins.package_customer_id = pc.id 
+
+WHERE (shipment = 0 AND pc.follow_up= 0 AND dealer =''  AND pc.status ='requested') 
+
+OR (pc.shipment = 1 AND pc.status ='requested') 
+OR  pc.status = 'done' OR dealer !='' 
+
+
+
+pc.status = 'canceled' OR
+
+(shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') OR
+
+(dealer !='' AND pc.status ='requested') OR
+
+(pc.shipment = 1 AND pc.status ='requested') OR
+
+(pc.follow_up = 1 AND pc.status ='requested') 
+
+
+WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') OR (dealer !='' AND pc.status ='requested') OR
+
+(pc.shipment = 1 AND pc.status ='requested') OR (pc.follow_up = 1 AND pc.status ='requested'))

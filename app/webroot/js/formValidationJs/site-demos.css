@@ -1,0 +1,25 @@
+#field{margin-left:.5em;float:left;}#field,label{float:left;font-family:Arial,Helvetica,sans-serif;font-size:small;}br{clear:both;}input{border:1px solid black;margin-bottom:.5em;}input.error{border:1px solid red;}label.error{background:url('images/unchecked.gif') no-repeat;padding-left:16px;margin-left:.3em;}label.valid{background:url('images/checked.gif') no-repeat;display:block;width:16px;height:16px;}
+
+div#info-container {
+    margin: 0px auto !important;
+    /*width: 501px;*/
+    text-align: center;
+}
+
+p.warning_msg {
+    color: red;
+    background-color: #abc;
+    font-size: 15px;
+    padding: 5px;
+/*    width: 501px;*/
+    margin: 0 auto;
+}
+
+p.success_msg {
+    color: green;
+    background-color: #abc;
+    font-size: 15px;
+    padding: 5px;
+/*    width: 381px;*/
+    margin: 0 auto;
+}

@@ -1,0 +1,35 @@
+@media screen and (max-width: 500px) /* Mobile */ {
+
+   .col-md-7.col-sm-12.feedback-container {
+    display: none;
+}
+
+  .header{
+  	margin-top: 50px;
+  }
+
+ .busket {
+    width: 80%;
+    left: 57px;
+    height: 100px;
+    overflow-y: scroll;
+}
+
+button#buybtn {
+    top: 0px;
+    height: 30px;
+    width: 50px !important;
+}
+.busket-head {
+    font-size: 12px !important;
+}
+
+.hide-in-mobile{
+    display: none;
+}
+
+.busket-head {
+	height: 32px;
+	}
+
+}

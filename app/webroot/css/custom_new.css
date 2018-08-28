@@ -1,0 +1,397 @@
+html {height: 100%;}body {    background: #fff;    -webkit-font-smoothing: antialiased;    overflow-x:	hidden;    background: url(../images/patterns/5.png) repeat;    height: 100%;}.sidenav {width: 100%; margin-left:0;}/*custom css by A. Total IT *//*reset css*/ul {    margin: 0px;    padding: 0px;}/*reset css*//*frontends index page css*/span.label.label-inverse {    min-width: 25px;}span.book-name {    color: #000;    font-size: 16px;    font-style: italic;}span.writer-name {    color: gray;    font-size: 11px;}.book-info {    border-bottom: 3px solid #FFF;    margin-bottom: 6px;}.busket {    position: relative;     min-height: 140px;     width: 206px;    background-image: url(../img/busket.png);    border-radius: 9px;    /* border: 2px; */    margin-left: 4px;    padding: 47px 0px;    padding-bottom: 30px;}button#buybtn {    /* margin-top: 95px; */    /* margin-left: 44px; */    position: absolute;    bottom: 0px;    /* left: 0px; */    right: 0px;    border-radius: 9px;}#showPrice{    position: absolute;    bottom: -9px;    /* left: 0px; */    left: 0px;}#showPrice span.label.label-important{    height: 20px;    line-height: 20px;    padding-right: 4px;    font-size: 13px;    font-weight: normal;    /* font-style: italic; */    border-radius: 0 0 0 9px}.temp-img{    position: absolute;    z-index: 9999;}button.viewbtn {    position: absolute;    bottom: 0;}.btn-primary{    float: right;}.box .content {    padding: 0px;    border-top: 1px solid #c4c4c4;}span.label.title {    width: 84px;    color: black;}.book-info-wrapper {    padding: 8px 3px 0 3px !important;    min-height:240px; }img.img-polaroid.marginR5 {    height: 240px;    width: 175px;}span.label.label-important {    height: 27px;    line-height: 25px;    padding-right: 10px;    font-size: 15px;    font-weight: normal;    /* font-style: italic; */}span.ui-spinner.ui-widget.ui-widget-content.ui-corner-all {    width: 65px;}.search .top-search {    width: 90%;}.search {    float: none;}#added_items_container{    position: fixed;    bottom: 40px;    left: 0px;}img.addedimg {    /*  position: absolute;      left: 22px;      bottom: 0px;      width: 115px;*/}.remove-item{    font-size: 18px;    color: #FFF;}.remove-item:hover{    cursor: pointer;    color: #abd;}/* END- frontends index page css*/
+p#siteName {
+    text-transform: uppercase;
+    color: #FFF;
+    text-shadow: 2px 2px 0px #0429CC;
+    /* padding: 20px 200px 40px 20px; */
+    font: 26px helvetica,Arial,Sans-serif;
+    margin-right: 80px;
+    margin-bottom: 0px;
+}
+@font-face{
+    font-family: headerpFont;src: url(fonts/blackadder-itc-6881.ttf);
+}
+
+p#slogan {
+    color: #DD991E;
+    font-family: headerpFont;
+    font-size: 20px;
+    letter-spacing: 6px;
+}
+span#site a 
+{  color: rgb(158, 138, 148);
+}
+
+.brand {
+    padding: 8px 20px 8px;
+    margin-left: -20px;
+    margin-right: -30px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 45px;
+    color: #353535;
+}
+
+.search {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.heading {
+    border-bottom: none;
+}
+/*End custom css by */
+
+/*custom css by*/
+
+
+div#uniform-requiredDay {
+    margin-right: 15px;
+}
+div#uniform-requiredMonth {
+    margin-right: 25px;
+}
+div#uniform-requiredDay {
+    margin-right: 24px;
+}
+
+div#header {
+    position: relative;
+    height: initial;
+
+}
+
+#pre {
+    padding-bottom: 2px;
+    padding-top: 2px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    background-color: #DDD;
+}
+
+img.img-polaroid.marginR10 {
+    margin-left: 30px;
+    margin-bottom: 10px;
+}
+.page-header {
+    margin: 8px 0;
+}
+img#mainnews {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+div#mainstory {
+    text-align: left;
+}
+.photo {
+    float: left;
+    border: 1px solid #DDD;
+}
+#categoryimage {
+    margin-left: 0px;
+}
+.myfooter {
+    //background: url('http://localhost/tbn24/app/webroot/images/patterns/4.png');
+    display: block;
+    padding: 12px;
+}
+#footerlogo {
+    //background: darkgray;
+    //padding: 10px;
+    //margin-bottom: 15px;
+}
+.footerlink {
+    border-bottom: 3px solid #890B10;
+    margin: 10px 0px 10px 0px;
+    padding: 5px 10px;
+    position: relative;
+    text-align: left;
+
+}
+.footerlink ul {
+    list-style: outside none none;
+    display: inline-block;
+}
+.footerlink li {
+    border-right: 1px solid #ccc;
+
+    margin: 5px 0px 5px 0px;
+    padding: 0px 10px 0px 10px;
+    float: left;
+}
+.footerlink li:last-child {
+    border-right: 0px;
+}
+.footerlink li a {
+    color: #646565;
+    font-size: 12px;
+}
+#copyright {
+    text-align: center;
+}
+
+
+//categorized news coustomize...
+
+.box .title#world {
+    background: #DF6300;
+    color: #fff;
+}
+.box .title#world {
+    background: #DF6300;
+    color: #fff;
+}
+.box .title#sports {
+    background: #31b0d5;
+    color: #fff;
+}
+.box .title#entertainment {
+    background: #cc00cc;
+    color: #fff;
+}
+.box .title#sci {
+    background: #6666ff;
+    color: #fff;
+}
+.box .title#life {
+    background: #999900;
+    color: #fff;
+}
+.box .title#business {
+    background: #009999;
+    color: #fff;
+}
+.box .title#comment {
+    background: #cc3300;
+    color: #fff;
+}
+.box .title#art {
+    background: #ffcc00;
+    color: #fff;
+}
+.box .title#edu {
+    background: #cc0033;
+    color: #fff;
+}
+.box .title#health {
+    background: #ff6600;
+    color: #fff;
+}
+.box .title#society {
+    background: #3399ff;
+    color: #fff;
+}
+
+/* menu color */
+.nav-tabs.pattern {
+    background: #890B10;
+    font-size: 14px;
+    //font-weight: bold;
+}
+.nav-tabs.pattern:a {
+    color: #353535;
+}
+.nav-tabs > li > a {
+    color: aliceblue;
+
+}
+.nav-tabs > li > a:hover {
+    color: #555;
+}
+.dropdown-menu {
+    font-size: 14px;          
+}
+.dropdown-menu > li > a:hover {
+    background: #890B10;
+}
+.nav .dropdown-toggle .caret {
+    border-top-color: aliceblue;
+}
+
+
+
+
+/* Social Network Customize */
+.box .title#socialtitle {
+    background: #303030;
+    color: #DDD;
+}
+.box .content#socialcontent {
+    background-color: #303030;
+    text-align: center;
+
+}
+.box .content#socialcontent i {
+    color: #DDD;
+}
+.soicon {
+    font-size: 38px;
+    height: 38px;
+    width: 38px;
+    padding: 25px 6px 10px 6px;
+    display: inline-block;
+
+}
+.topicon {
+    color: #fafafa;
+}
+.search-submit-button .topsearchicon {
+    margin-right: 5px;
+}
+
+.tabindexicon {
+    font-size: 25px;
+    height: 25px;
+    width: 25px;
+    padding: 15px 5px 8px 5px;
+    display: inline-block;
+}
+
+/* Header text customize */
+div#headertext {
+    padding-top: 10px;
+    color: aliceblue;
+    text-align: center;
+}
+a:hover {
+    text-decoration: none;
+}
+
+
+/* Image and Box border customize   */
+.content .myimage {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.box .content {
+    border: 0px;
+}
+.box {
+    border: 1px solid #c4c4c4;
+}
+.box .title {
+    border: 0px;
+    border-bottom: 1px solid #c4c4c4;
+    background: #eaeaea;
+}
+.box {
+    margin-bottom: 10px;
+}
+
+
+.row {
+    margin-left: 0px;
+}
+.newstitle {
+    text-align: left;
+    font-size: 17px;
+    line-height: 22px;
+}
+h2 {
+    font-size: 30px;
+    font-weight: normal;
+}
+p {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+
+a {
+    color: #353535;
+}
+
+
+/* top search box */
+input, select, textarea {
+    background: none repeat scroll 0 0 #fafafa;
+    border: 1px solid #eeeeee;
+    color: #5e5e5e;
+    display: block;
+    font-family: arial, sans-serif;
+    font-size: inherit;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin: 0;
+    height: 40px;
+}
+
+#searchtext {
+    overflow: hidden;
+}
+
+a.search-submit-button {
+    background: none repeat scroll 0 0 #fafafa;
+    border-bottom: 1px solid #eeeeee;
+    border-right: 1px solid #eeeeee;
+    border-top: 1px solid #eeeeee;
+    color: #5e5e5e !important;
+    display: block;
+    float: right;
+    font-family: inherit;
+    font-size: 20px;
+    padding: 8px 10px;
+    text-align: center;
+    width: 45px;
+    box-sizing: border-box;
+    height: 31.5px;
+    border-radius: 0px 15px 15px 0px;
+}
+
+
+input.text, input.email, input.password, textarea.uniform {
+    padding: 15px;
+    font-size: 12px;
+    border-radius: 15px 0px 0px 15px;
+}
+
+
+i.icomoon-icon-home-8 {
+    color: inherit;
+}
+
+/* Onlin Polling */ 
+form {
+    margin: 0 0 -5px;
+}
+
+/* Headline Section */
+#headline {
+    position: relative;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border: 1px solid #c4c4c4;
+    background: #eaeaea;
+    line-height: 16px;
+}
+#headline div.headlist {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+
+}
+#headline div.headlist ul {
+    position: relative;
+    width: 2500px;
+}
+#headline div.headlist ul>li {
+    font-size: 16px;
+    color: #353535;
+    margin-right: 25px;
+    display: inline-block;
+}
+.healine_title {
+    color: #890B10;
+    padding-left: 10px;
+    font-size: 20px;
+}
+
+#searchtext {
+    overflow: hidden;
+    margin-top: 27px;
+}
+
+/* END custom css by Sakib */

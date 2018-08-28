@@ -1,0 +1,56 @@
+8:42 PM 3/2/2018
+
+ALTER TABLE `users` ADD `log_status` ENUM('no','request','approve') NOT NULL DEFAULT 'no' AFTER `status`;
+
+2:00 PM 3/5/2018
+
+ALTER TABLE `roaster_details` ADD `in_time` TIME NOT NULL AFTER `date`;
+ALTER TABLE `roaster_details` CHANGE `in_time` `in_time` TIME NULL;
+
+ALTER TABLE `roaster_details` ADD `out_time` TIME NULL AFTER `in_time`;
+ALTER TABLE `roaster_details` ADD `late_time` TIME NULL AFTER `out_time`;
+ALTER TABLE `roaster_details` ADD `extra_time` TIME NULL AFTER `late_time`;
+
+ALTER TABLE `roaster_details` ADD `attend_status` ENUM('no', 'request', 'approve') NOT NULL DEFAULT 'no' AFTER `extra_time`;
+
+7:40 PM 3/30/2018
+
+ALTER TABLE `roaster_details` CHANGE `attend_status` `attend_status` ENUM('no','request','approve','leave','absent','swap') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'no';
+
+
+2:52 PM 6/27/2018
+
+ALTER TABLE `tickets` ADD `verification_solve` TEXT NULL COMMENT 'When task is solve' AFTER `status`
+
+ALTER TABLE `tickets` ADD `pc_info` VARCHAR(151) NULL COMMENT 'When QA will verify ' AFTER `verification_info` 
+
+ALTER TABLE `tickets` ADD `verification_date` DATE NOT NULL AFTER `verification_info`;
+
+ALTER TABLE `tickets` ADD `verification_not_solve` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'When task is not solve' AFTER `verification_solve`;
+
+
+
+
+ALTER TABLE `package_customers` ADD `post_pone` CHAR(1) NOT NULL DEFAULT '0' COMMENT '1 means post pone , 0 means no' AFTER `pc_id`;
+ALTER TABLE `package_customers` ADD `troubleshoot_postpone` INT(1) NULL DEFAULT '0' AFTER `post_pone`;
+ALTER TABLE `package_customers` ADD `troubleshoot_shipment` CHAR(3) NULL AFTER ` troubleshoot_postpone`;
+
+4:31 PM 7/17/2018
+ALTER TABLE `users` ADD `emp_id` INT(5) NOT NULL COMMENT 'This is unique id from company' AFTER `user_id`;
+
+
+
+7:39 PM 7/20/2018
+
+ALTER TABLE `static_roasters` ADD `alphabet_a` CHAR(1) NOT NULL AFTER `shift_incharge3_id`;
+ALTER TABLE `static_roasters` ADD `alphabet_b` CHAR(1) NOT NULL AFTER `afshift_incharge3_id`;
+ALTER TABLE `static_roasters` ADD `alphabet_c` CHAR(1) NOT NULL AFTER `nishift_incharge3_id`;
+
+ALTER TABLE `roaster_details` ADD `alphabet` CHAR(1) NOT NULL AFTER `shift_name_time`;
+
+ALTER TABLE `roaster_details` CHANGE `attend_status` `attend_status` ENUM('no','start','complete','request','approve','leave','absent','swap') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'no';
+ALTER TABLE `users` CHANGE `log_status` `log_status` ENUM('no','request','complete','approve') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'no';
+
+
+
+

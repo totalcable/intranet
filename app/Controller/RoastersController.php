@@ -142,12 +142,15 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('User');
         $clicked = false;
-
+        
         if (!empty($this->request->data)) {
             $date_s = $this->request->data['RoasterHistorie']['date']['year'] . '-' . $this->request->data['RoasterHistorie']['date']['month'] . '-' . $this->request->data['RoasterHistorie']['date']['day'];
+           
             $shift = $this->request->data['RoasterHistorie']['shift'];
+             
             $convert_date1 = strtotime($date_s);
             $name_day = date('l', $convert_date1);
+            
             $sql = "select * from static_roasters where day_name ='$name_day'";
             $roaster = $this->RoasterHistorie->query($sql);
 
@@ -155,7 +158,8 @@ class RoastersController extends AppController {
 
             if ($shift == 'Morning (07.30 - 12.00)') {
                 $data = $data_s;
-
+                pr($shift . ' ' . $data);
+                exit;
                 $array = array_values($data);
 
                 $array2 = array_slice($array, 4, 16);
@@ -163,7 +167,8 @@ class RoastersController extends AppController {
                 //$array3 = array_filter($array2);
                 //$array4 = array_chunk($array3, 1);
             } elseif ($shift == 'Afternoon (12.00 - 20.00)') {
-
+                pr('2');
+                exit;
                 $array = array_values($data_s);
 
                 $array2 = array_slice($array, 20, 16);
@@ -171,6 +176,8 @@ class RoastersController extends AppController {
                 // $array3 = array_filter($array2);
                 //$array4 = array_chunk($array3, 1);
             } elseif ($shift == 'Night (20.00-02.00)') {
+                pr('3');
+                exit;
                 $array = array_values($data_s);
                 //pr($array); exit;
                 $array2 = array_slice($array, 36, 16);
@@ -596,7 +603,7 @@ class RoastersController extends AppController {
         } else {
             $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.emp_id
                            WHERE attend_status = 'no' limit 0,50");
-            $this->set(compact('users','duty'));
+            $this->set(compact('users', 'duty'));
         }
     }
 

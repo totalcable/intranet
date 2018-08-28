@@ -326,6 +326,37 @@ class LeavesController extends AppController {
 
         $this->set(compact('late'));
     }
+    
+    function emp_late_detail() {
+        $this->loadModel('User');
+        //Time take in variable for validation end 
+        $this->loadModel('Emp');
+        $this->loadModel('Designation');
+        $this->loadModel('RoasterDetail');
+        $this->loadModel('Leave');
+        //$date = new DateTime('now');
+        // $d = new DateTime('first day of this month');
+        // First day of this month
+        $d = new DateTime('first day of this month');
+        $d_f = $d->format('Y-m-d');
+
+        $date = new DateTime('now');
+        $date->modify('last day of this month');
+        $d_l = $date->format('Y-m-d');
+        $id = $this->params['pass'][0];
+//        pr($this->request->data);
+//        exit;
+        $conditions = " roaster_details.date >=' " . $d_f . "' AND  roaster_details.date <='" . $d_l . "'";
+
+        $late = $this->RoasterDetail->query("SELECT * FROM `roaster_details` 
+                left join users on users.id = roaster_details.emp_id
+                WHERE roaster_details.`late_time` != '00:00:00' AND emp_id = $id  AND $conditions");
+       
+//        echo $this->RoasterDetail->getLastQuery();
+//        pr($late);
+//        exit;
+        $this->set(compact('late'));
+    }
 
 //pr('hello am I here :-)'); exit;
 }

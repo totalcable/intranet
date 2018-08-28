@@ -14,7 +14,6 @@
         <h3 class="page-title"><br>
          Employee late information
         </h3>
-
         <!-- END PAGE HEADER-->
         <!-- BEGIN PAGE CONTENT-->
         <div class="row">
@@ -32,7 +31,10 @@
                             <thead>
                                 <tr>
                                     <th>Emp Information</th>                                    
-                                    <th>Late</th>
+                                    <th>Shift</th>                                    
+                                    <th>Date</th>                                    
+                                    <th>In Time</th>                                    
+                                    <th>Late Time</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -46,9 +48,10 @@
                                             <b>Name :</b>  <?php echo $us['name']; ?><br>
                                             <b>Emp ID : </b><b title="Emp Id" style="color:orange;"><?php echo $la['emp_id']; ?></b>
                                         </td>
-                                        <td>
-                                            <a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late_detail',$la['emp_id'])) ?>" title="Click here for more information" style="font-weight: normal; color: blue;"><?php echo $single[0]['total_late']; ?></a>
-                                        </td>                                     
+                                        <td><?php echo $la['shift_name_time']; ?></td>
+                                        <td><?php echo $la['date']; ?></td>
+                                        <td><?php echo $la['in_time']; ?></td>
+                                        <td><?php echo $la['late_time']; ?></td>
                                     </tr>
                                     <?php
                                 endforeach;

@@ -996,9 +996,9 @@ class TicketsController extends AppController {
                         INNER JOIN issues i ON tr.issue_id = i.id
                         INNER join package_customers pc on tr.package_customer_id = pc.id
                         WHERE tr.`issue_id` = '204' and tr.`status` = 'open' ORDER BY tr.created DESC  " . " LIMIT " . $offset . "," . $this->per_page);
-        echo $this->Track->getLastQuery();
-        pr($tickets);
-        exit;
+//        echo $this->Track->getLastQuery();
+//        pr($tickets);
+//        exit;
 
         $temp = $this->Ticket->query("SELECT COUNT(tr.id) as total FROM tracks tr
                         INNER JOIN tickets t ON tr.ticket_id = t.id

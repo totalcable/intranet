@@ -1,1 +1,1 @@
-# internet
+# intranet

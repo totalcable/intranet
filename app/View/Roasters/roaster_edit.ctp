@@ -136,6 +136,7 @@
                                 echo $this->Form->input('shift_incharge_id', array(
                                     'type' => 'select',
                                     'options' => $supervisor,
+                                    'empty' => 'Select Supervisor',
                                     'value' => $shift_incharge,
                                     'class' => 'form-control select2me'
                                         )
@@ -149,6 +150,7 @@
                                 echo $this->Form->input('shift_incharge2_id', array(
                                     'type' => 'select',
                                     'options' => $supervisor,
+                                    'empty' => 'Select Supervisor',
                                     'value' => $shift_incharge2,
                                     'class' => 'form-control select2me'
                                         )
@@ -162,9 +164,10 @@
                                 echo $this->Form->input('shift_incharge3_id', array(
                                     'type' => 'select',
                                     'options' => $supervisor,
+                                    'empty' => 'Select Supervisor',
                                     'value' => $shift_incharge3,
-                                    'empty' => 'Select Category',
-                                    'class' => 'form-control select2me required pclass',
+                                    
+                                    'class' => 'form-control select2me pclass',
                                         )
                                 );
                                 ?>
@@ -179,6 +182,7 @@
                                 echo $this->Form->input('a1_id', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a1_id'],
                                     'class' => 'form-control select2me'
                                         )
@@ -192,6 +196,7 @@
                                 echo $this->Form->input('a2', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a2'],
                                     'class' => 'form-control select2me'
                                         )
@@ -205,6 +210,7 @@
                                 echo $this->Form->input('a3', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a3'],
                                     'class' => 'form-control select2me ',
                                         )
@@ -221,6 +227,7 @@
                                 echo $this->Form->input('a4', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a4'],
                                     'class' => 'form-control select2me'
                                         )
@@ -234,8 +241,9 @@
                                 echo $this->Form->input('a5', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a5'],
-                                    'class' => 'form-control select2me required pclass',
+                                    'class' => 'form-control select2me pclass',
                                         )
                                 );
                                 ?>
@@ -248,8 +256,9 @@
                                 echo $this->Form->input('a6', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a6'],
-                                    'class' => 'form-control select2me required pclass',
+                                    'class' => 'form-control select2me pclass',
                                         )
                                 );
                                 ?>
@@ -264,8 +273,9 @@
                                 echo $this->Form->input('a7', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a7'],
-                                    'class' => 'form-control select2me required pclass',
+                                    'class' => 'form-control select2me pclass',
                                         )
                                 );
                                 ?>
@@ -278,8 +288,9 @@
                                 echo $this->Form->input('a8', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a8'],
-                                    'class' => 'form-control select2me required pclass',
+                                    'class' => 'form-control select2me pclass',
                                         )
                                 );
                                 ?>
@@ -292,8 +303,9 @@
                                 echo $this->Form->input('a9', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a9'],
-                                    'class' => 'form-control select2me required pclass',
+                                    'class' => 'form-control select2me pclass',
                                         )
                                 );
                                 ?>
@@ -308,8 +320,9 @@
                                 echo $this->Form->input('a10', array(
                                     'type' => 'select',
                                     'options' => $agent,
+                                    'empty' => 'Select Agent',
                                     'value' => $results['a10'],
-                                    'class' => 'form-control select2me required pclass',
+                                    'class' => 'form-control select2me pclass',
                                         )
                                 );
                                 ?>
@@ -384,8 +397,8 @@
                                     echo $this->Form->input('afshift_incharge_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $afshift_incharge,
                                         'empty' => 'Select Supervisor',
+                                        'value' => $afshift_incharge,
                                         'class' => 'form-control select2me'
                                             )
                                     );
@@ -398,8 +411,8 @@
                                     echo $this->Form->input('afshift_incharge2_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $afshift_incharge2,
                                         'empty' => 'Select Supervisor',
+                                        'value' => $afshift_incharge2,
                                         'class' => 'form-control select2me'
                                             )
                                     );
@@ -412,9 +425,9 @@
                                     echo $this->Form->input('afshift_incharge3_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $afshift_incharge3,
                                         'empty' => 'Select Supervisor',
-                                        'class' => 'form-control select2me required pclass',
+                                        'value' => $afshift_incharge3,
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -429,6 +442,7 @@
                                     echo $this->Form->input('afa1_id', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa1_id'],
                                         'class' => 'form-control select2me'
                                             )
@@ -442,6 +456,7 @@
                                     echo $this->Form->input('afa2', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa2'],
                                         'class' => 'form-control select2me'
                                             )
@@ -455,6 +470,7 @@
                                     echo $this->Form->input('afa3', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa3'],
                                         'class' => 'form-control select2me ',
                                             )
@@ -471,6 +487,7 @@
                                     echo $this->Form->input('afa4', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa4'],
                                         'class' => 'form-control select2me'
                                             )
@@ -484,8 +501,9 @@
                                     echo $this->Form->input('afa5', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa5'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -498,8 +516,9 @@
                                     echo $this->Form->input('afa6', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa6'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -514,8 +533,9 @@
                                     echo $this->Form->input('afa7', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa7'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -528,8 +548,9 @@
                                     echo $this->Form->input('afa8', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa8'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -542,8 +563,9 @@
                                     echo $this->Form->input('afa9', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa9'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -558,8 +580,9 @@
                                     echo $this->Form->input('afa10', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['afa10'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -635,8 +658,8 @@
                                     echo $this->Form->input('nishift_incharge_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $nishift_incharge,
                                         'empty' => 'Select Supervisor',
+                                        'value' => $nishift_incharge,
                                         'class' => 'form-control select2me'
                                             )
                                     );
@@ -649,8 +672,8 @@
                                     echo $this->Form->input('nishift_incharge2_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $nishift_incharge2,
                                         'empty' => 'Select Supervisor',
+                                        'value' => $nishift_incharge2,
                                         'class' => 'form-control select2me'
                                             )
                                     );
@@ -663,9 +686,9 @@
                                     echo $this->Form->input('nishift_incharge3_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $nishift_incharge3,
                                         'empty' => 'Select Supervisor',
-                                        'class' => 'form-control select2me required pclass',
+                                        'value' => $nishift_incharge3,
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -680,6 +703,7 @@
                                     echo $this->Form->input('nia1_id', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia1_id'],
                                         'class' => 'form-control select2me'
                                             )
@@ -693,6 +717,7 @@
                                     echo $this->Form->input('nia2', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia2'],
                                         'class' => 'form-control select2me'
                                             )
@@ -706,6 +731,7 @@
                                     echo $this->Form->input('nia3', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia3'],
                                         'class' => 'form-control select2me ',
                                             )
@@ -722,6 +748,7 @@
                                     echo $this->Form->input('nia4', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia4'],
                                         'class' => 'form-control select2me'
                                             )
@@ -735,8 +762,9 @@
                                     echo $this->Form->input('nia5', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia5'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -748,8 +776,9 @@
                                     echo $this->Form->input('nia6', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia6'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -764,8 +793,9 @@
                                     echo $this->Form->input('nia7', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia7'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -778,8 +808,9 @@
                                     echo $this->Form->input('nia8', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia8'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -792,8 +823,9 @@
                                     echo $this->Form->input('nia9', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia9'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>
@@ -808,8 +840,9 @@
                                     echo $this->Form->input('nia10', array(
                                         'type' => 'select',
                                         'options' => $agent,
+                                        'empty' => 'Select Agent',
                                         'value' => $results['nia10'],
-                                        'class' => 'form-control select2me required pclass',
+                                        'class' => 'form-control select2me pclass',
                                             )
                                     );
                                     ?>

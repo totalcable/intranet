@@ -26,6 +26,7 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('User');
         $id = $this->params['pass']['0'];
+        
         $data = $this->StaticRoaster->query("SELECT * FROM static_roasters            
 
                 left join users on users.id = static_roasters.shift_incharge_id 
@@ -588,7 +589,7 @@ class RoastersController extends AppController {
             $empid = $this->request->data['RoasterDetail']['emp_id'];
             $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details                 
         inner join users on users.id = roaster_details.emp_id
-        WHERE roaster_details.`emp_id`= '$empid' AND attend_status = 'no' order by alphabet limit 0,50");
+        WHERE roaster_details.`emp_id`= '$empid' AND attend_status = 'no' order by alphabet limit 0,49");
 
             if (empty($duty)) {
                 $msg = '<div class="alert alert-success">
@@ -602,7 +603,7 @@ class RoastersController extends AppController {
             }
         } else {
             $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.emp_id
-                           WHERE attend_status = 'no' limit 0,50");
+                           WHERE attend_status = 'no' limit 0,21");
             $this->set(compact('users', 'duty'));
         }
     }
@@ -1973,9 +1974,11 @@ class RoastersController extends AppController {
         $this->loadModel('User');
         if ($this->request->is('post')) {
             $this->StaticRoaster->set($this->request->data);
-            $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];
+            
             $loggedUser = $this->Auth->user();
             $this->request->data['StaticRoaster']['user_id'] = $loggedUser['id'];
+//            pr($this->request->data); exit;
+            $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];
             $this->StaticRoaster->save($this->request->data['StaticRoaster']);
             $msg = '<div class="alert alert-success">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -1990,11 +1993,11 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('User');
         if ($this->request->is('post')) {
-            $this->StaticRoaster->set($this->request->data);
-            $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];
+            $this->StaticRoaster->set($this->request->data);            
             $loggedUser = $this->Auth->user();
             $this->request->data['StaticRoaster']['user_id'] = $loggedUser['id'];
-//            pr($this->request->data['StaticRoaster']); exit;
+            $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];
+//            pr($this->request->data); exit;
             $this->StaticRoaster->save($this->request->data['StaticRoaster']);
             $msg = '<div class="alert alert-success">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -2010,9 +2013,10 @@ class RoastersController extends AppController {
         $this->loadModel('User');
         if ($this->request->is('post')) {
             $this->StaticRoaster->set($this->request->data);
-            $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];
+            
             $loggedUser = $this->Auth->user();
             $this->request->data['StaticRoaster']['user_id'] = $loggedUser['id'];
+            $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];
 //            pr($this->request->data['StaticRoaster']); exit;
             $this->StaticRoaster->save($this->request->data['StaticRoaster']);
             $msg = '<div class="alert alert-success">

@@ -26,7 +26,7 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('User');
         $id = $this->params['pass']['0'];
-        
+
         $data = $this->StaticRoaster->query("SELECT * FROM static_roasters            
 
                 left join users on users.id = static_roasters.shift_incharge_id 
@@ -143,42 +143,43 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('User');
         $clicked = false;
-        
+//        pr($this->request->data); exit;
+
         if (!empty($this->request->data)) {
             $date_s = $this->request->data['RoasterHistorie']['date']['year'] . '-' . $this->request->data['RoasterHistorie']['date']['month'] . '-' . $this->request->data['RoasterHistorie']['date']['day'];
-           
+
             $shift = $this->request->data['RoasterHistorie']['shift'];
-             
+
             $convert_date1 = strtotime($date_s);
             $name_day = date('l', $convert_date1);
-            
+
             $sql = "select * from static_roasters where day_name ='$name_day'";
             $roaster = $this->RoasterHistorie->query($sql);
 
             $data_s = $roaster[0]['static_roasters'];
 
-            if ($shift == 'Morning (07.30 - 12.00)') {
+            if ($shift == 'Morning (07:30 - 01:00)') {
                 $data = $data_s;
-                pr($shift . ' ' . $data);
-                exit;
+//                pr($shift . ' ' . $data);
+//                exit;
                 $array = array_values($data);
 
                 $array2 = array_slice($array, 4, 16);
 //                 pr($array2[7]); exit;
                 //$array3 = array_filter($array2);
                 //$array4 = array_chunk($array3, 1);
-            } elseif ($shift == 'Afternoon (12.00 - 20.00)') {
-                pr('2');
-                exit;
+            } elseif ($shift == 'Afternoon (01:00 - 09:00)') {
+//                pr('2');
+//                exit;
                 $array = array_values($data_s);
 
                 $array2 = array_slice($array, 20, 16);
                 // pr($array2); exit; 
                 // $array3 = array_filter($array2);
                 //$array4 = array_chunk($array3, 1);
-            } elseif ($shift == 'Night (20.00-02.00)') {
-                pr('3');
-                exit;
+            } elseif ($shift == 'Night (09:00 - 03:00)') {
+//                pr('3');
+//                exit;
                 $array = array_values($data_s);
                 //pr($array); exit;
                 $array2 = array_slice($array, 36, 16);
@@ -243,37 +244,193 @@ class RoastersController extends AppController {
     function setnewroaster() {
         $this->loadModel('User');
         $this->loadModel('RoasterDetail');
+        $this->loadModel('RoasterHistorie');
         $loggedUser = $this->Auth->user();
-
-        $date_s = $this->request->data['RoasterHistorie']['date'];
-        $shift_name_time = $this->request->data['RoasterHistorie']['shift'];
-
-        $alphabet = $this->request->data['RoasterHistorie']['alphabet'];
-        // pr($alphabet); exit;
-        $convert_date1 = strtotime($date_s);
-        $day_name = date('l', $convert_date1);
-        $data_e = $this->RoasterDetail->query("SELECT * FROM `roaster_details` WHERE `date` = '$date_s' and shift_name_time = '$shift_name_time'");
-        if (!empty($data_e)) {
-            $msg = 'Roaster has already been set for ' . $date_s . ', ' . $shift_name_time . ', ' . $day_name;
-            $this->Session->setFlash($msg);
-            return $this->redirect($this->referer());
-        }
-
+        
         //pc , ip and date time collect
         $myIp = getHostByName(php_uname('n'));
         $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
         $date = date("Y-m-d h:i:sa");
         $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
 
+        $date_s = $this->request->data['RoasterHistorie']['date'];
+        $shift_name_time = $this->request->data['RoasterHistorie']['shift'];
+
+        $alphabet = $this->request->data['RoasterHistorie']['alphabet'];
+        $convert_date1 = strtotime($date_s);
+        $day_name = date('l', $convert_date1);
+        $data_e = $this->RoasterDetail->query("SELECT * FROM `roaster_details` WHERE `date` = '$date_s' and shift_name_time = '$shift_name_time'");
+        $data_rh = $this->RoasterHistorie->query("SELECT * FROM `roasters_histories` WHERE `date` = '$date_s'");
+        if (!empty($data_e)) {
+            $msg = 'Roaster has already been set for ' . $date_s . ', ' . $shift_name_time . ', ' . $day_name;
+            $this->Session->setFlash($msg);
+            return $this->redirect($this->referer());
+        }
+//        pr($msg); exit;
+        if ($shift_name_time == 'Morning (07:30 - 01:00)') {
+            if (!empty($data_rh)) {
+                $id = $data_rh[0]['roasters_histories']['id'];
+                $data4rHistory = array();
+                $data4rHistory['RoasterHistorie'] = array(
+                    'id' => $id,
+                    'shift_name_time' => $this->request->data['RoasterHistorie']['shift'],
+                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
+                    'shift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
+                    'shift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
+                    'shift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
+                    'a1_id' => $this->request->data['RoasterHistorie']['a1'],
+                    'a2' => $this->request->data['RoasterHistorie']['a2'],
+                    'a3' => $this->request->data['RoasterHistorie']['a3'],
+                    'a4' => $this->request->data['RoasterHistorie']['a4'],
+                    'a5' => $this->request->data['RoasterHistorie']['a5'],
+                    'a6' => $this->request->data['RoasterHistorie']['a6'],
+                    'a7' => $this->request->data['RoasterHistorie']['a7'],
+                    'a8' => $this->request->data['RoasterHistorie']['a8'],
+                    'a9' => $this->request->data['RoasterHistorie']['a9'],
+                    'a10' => $this->request->data['RoasterHistorie']['a10'],
+                    'a11' => $this->request->data['RoasterHistorie']['a11'],
+                );
+                $this->RoasterHistorie->save($data4rHistory);
+            } else {
+                $data4rHistory = array();
+                $data4rHistory['RoasterHistorie'] = array(
+                    'date' => $this->request->data['RoasterHistorie']['date'],
+                    'pc_id' => $pc_info,
+                    'user_id' => $loggedUser['id'],
+                    'day_name' => $day_name,
+                    'shift_name_time' => $this->request->data['RoasterHistorie']['shift'],
+                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
+                    'shift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
+                    'shift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
+                    'shift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
+                    'a1_id' => $this->request->data['RoasterHistorie']['a1'],
+                    'a2' => $this->request->data['RoasterHistorie']['a2'],
+                    'a3' => $this->request->data['RoasterHistorie']['a3'],
+                    'a4' => $this->request->data['RoasterHistorie']['a4'],
+                    'a5' => $this->request->data['RoasterHistorie']['a5'],
+                    'a6' => $this->request->data['RoasterHistorie']['a6'],
+                    'a7' => $this->request->data['RoasterHistorie']['a7'],
+                    'a8' => $this->request->data['RoasterHistorie']['a8'],
+                    'a9' => $this->request->data['RoasterHistorie']['a9'],
+                    'a10' => $this->request->data['RoasterHistorie']['a10'],
+                    'a11' => $this->request->data['RoasterHistorie']['a11'],
+                    'status' => 'yes'
+                );
+                $this->RoasterHistorie->save($data4rHistory);
+            }
+        } elseif ($shift_name_time == 'Afternoon (01:00 - 09:00)') {
+
+            if (!empty($data_rh)) {
+                $id = $data_rh[0]['roasters_histories']['id'];
+                $data4rHistory = array();
+                $data4rHistory['RoasterHistorie'] = array(
+                    'id' => $id,
+                    'afshift_name_time2' => $this->request->data['RoasterHistorie']['shift'],
+//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
+                    'afshift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
+                    'afshift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
+                    'afshift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
+                    'afa1_id' => $this->request->data['RoasterHistorie']['a1'],
+                    'afa2' => $this->request->data['RoasterHistorie']['a2'],
+                    'afa3' => $this->request->data['RoasterHistorie']['a3'],
+                    'afa4' => $this->request->data['RoasterHistorie']['a4'],
+                    'afa5' => $this->request->data['RoasterHistorie']['a5'],
+                    'afa6' => $this->request->data['RoasterHistorie']['a6'],
+                    'afa7' => $this->request->data['RoasterHistorie']['a7'],
+                    'afa8' => $this->request->data['RoasterHistorie']['a8'],
+                    'afa9' => $this->request->data['RoasterHistorie']['a9'],
+                    'afa10' => $this->request->data['RoasterHistorie']['a10'],
+                    'afa11' => $this->request->data['RoasterHistorie']['a11'],
+                    'status' => 'yes'
+                );
+                
+                $this->RoasterHistorie->save($data4rHistory);
+            } else {
+                $data4rHistory = array();
+                $data4rHistory['RoasterHistorie'] = array(
+                    'date' => $this->request->data['RoasterHistorie']['date'],
+                    'pc_id' => $pc_info,
+                    'user_id' => $loggedUser['id'],
+                    'day_name' => $day_name,
+                    'afshift_name_time2' => $this->request->data['RoasterHistorie']['shift'],
+//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
+                    'afshift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
+                    'afshift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
+                    'afshift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
+                    'afa1_id' => $this->request->data['RoasterHistorie']['a1'],
+                    'afa2' => $this->request->data['RoasterHistorie']['a2'],
+                    'afa3' => $this->request->data['RoasterHistorie']['a3'],
+                    'afa4' => $this->request->data['RoasterHistorie']['a4'],
+                    'afa5' => $this->request->data['RoasterHistorie']['a5'],
+                    'afa6' => $this->request->data['RoasterHistorie']['a6'],
+                    'afa7' => $this->request->data['RoasterHistorie']['a7'],
+                    'afa8' => $this->request->data['RoasterHistorie']['a8'],
+                    'afa9' => $this->request->data['RoasterHistorie']['a9'],
+                    'afa10' => $this->request->data['RoasterHistorie']['a10'],
+                    'afa11' => $this->request->data['RoasterHistorie']['a11'],
+                    'status' => 'yes'
+                );
+                $this->RoasterHistorie->save($data4rHistory);
+            }
+        } elseif ($shift_name_time == 'Night (09:00 - 03:00)') {
+            if (!empty($data_rh)) {
+                $id = $data_rh[0]['roasters_histories']['id'];
+                $data4rHistory = array();
+                $data4rHistory['RoasterHistorie'] = array(
+                    'id' => $id,
+                    'nishift_name_time3' => $this->request->data['RoasterHistorie']['shift'],
+//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
+                    'nishift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
+                    'nishift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
+                    'nishift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
+                    'nia1_id' => $this->request->data['RoasterHistorie']['a1'],
+                    'nia2' => $this->request->data['RoasterHistorie']['a2'],
+                    'nia3' => $this->request->data['RoasterHistorie']['a3'],
+                    'nia4' => $this->request->data['RoasterHistorie']['a4'],
+                    'nia5' => $this->request->data['RoasterHistorie']['a5'],
+                    'nia6' => $this->request->data['RoasterHistorie']['a6'],
+                    'nia7' => $this->request->data['RoasterHistorie']['a7'],
+                    'nia8' => $this->request->data['RoasterHistorie']['a8'],
+                    'nia9' => $this->request->data['RoasterHistorie']['a9'],
+                    'nia10' => $this->request->data['RoasterHistorie']['a10'],
+                    'nia11' => $this->request->data['RoasterHistorie']['a11'],
+                    'status' => 'yes'
+                );
+
+                $this->RoasterHistorie->save($data4rHistory);
+            } else {
+                $data4rHistory = array();
+                $data4rHistory['RoasterHistorie'] = array(
+                    'date' => $this->request->data['RoasterHistorie']['date'],
+                    'pc_id' => $pc_info,
+                    'user_id' => $loggedUser['id'],
+                    'day_name' => $day_name,
+                    'nishift_name_time3' => $this->request->data['RoasterHistorie']['shift'],
+//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
+                    'nishift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
+                    'nishift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
+                    'nishift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
+                    'nia1_id' => $this->request->data['RoasterHistorie']['a1'],
+                    'nia2' => $this->request->data['RoasterHistorie']['a2'],
+                    'nia3' => $this->request->data['RoasterHistorie']['a3'],
+                    'nia4' => $this->request->data['RoasterHistorie']['a4'],
+                    'nia5' => $this->request->data['RoasterHistorie']['a5'],
+                    'nia6' => $this->request->data['RoasterHistorie']['a6'],
+                    'nia7' => $this->request->data['RoasterHistorie']['a7'],
+                    'nia8' => $this->request->data['RoasterHistorie']['a8'],
+                    'nia9' => $this->request->data['RoasterHistorie']['a9'],
+                    'nia10' => $this->request->data['RoasterHistorie']['a10'],
+                    'nia11' => $this->request->data['RoasterHistorie']['a11'],
+                    'status' => 'yes'
+                );
+                $this->RoasterHistorie->save($data4rHistory);
+            }
+        }
         if ($this->request->is('post') || $this->request->is('pull')) {
             $data = $this->request->data['RoasterHistorie'];
-
             $array = array_values($data);
-            //pr($array); exit;
             $array2 = array_slice($array, 3, 15);
-            //pr($array2); exit;
             $array3 = array_filter($array2);
-
             $array4 = array_chunk($array3, 1);
             //RoasterDetail insert start
             foreach ($array3 as $result) {
@@ -979,7 +1136,8 @@ class RoastersController extends AppController {
 
         //  check properties data empty or not
         if (empty($data_roaster)) {
-
+            pr($this->request->data);
+            exit;
             // roasterhistorie id unset here for new data
             unset($this->request->data['RoasterHistorie']['id']);
             $this->request->data['RoasterHistorie']['status'] = 'yes';
@@ -1974,7 +2132,7 @@ class RoastersController extends AppController {
         $this->loadModel('User');
         if ($this->request->is('post')) {
             $this->StaticRoaster->set($this->request->data);
-            
+
             $loggedUser = $this->Auth->user();
             $this->request->data['StaticRoaster']['user_id'] = $loggedUser['id'];
 //            pr($this->request->data); exit;
@@ -1993,7 +2151,7 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('User');
         if ($this->request->is('post')) {
-            $this->StaticRoaster->set($this->request->data);            
+            $this->StaticRoaster->set($this->request->data);
             $loggedUser = $this->Auth->user();
             $this->request->data['StaticRoaster']['user_id'] = $loggedUser['id'];
             $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];
@@ -2013,7 +2171,7 @@ class RoastersController extends AppController {
         $this->loadModel('User');
         if ($this->request->is('post')) {
             $this->StaticRoaster->set($this->request->data);
-            
+
             $loggedUser = $this->Auth->user();
             $this->request->data['StaticRoaster']['user_id'] = $loggedUser['id'];
             $this->StaticRoaster->id = $this->request->data['StaticRoaster']['id'];

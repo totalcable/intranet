@@ -77,7 +77,7 @@
                                     <?php
                                     echo $this->Form->input('shift', array(
                                         'type' => 'select',
-                                        'options' => array('Morning (07.30 - 01.00)' => 'Morning (07.30 - 01.00)', 'Afternoon (01.00 - 09.00)' => 'Afternoon (01.00 - 09.00)', 'Night (09.00-03.00)' => 'Night (09.00-03.00)'),
+                                        'options' => array('Morning (07:30 - 01:00)' => 'Morning (07:30 - 01:00)', 'Afternoon (01:00 - 09:00)' => 'Afternoon (01:00 - 09:00)', 'Night (09:00 - 03:00)' => 'Night (09:00 - 03:00)'),
                                         'empty' => 'Select Shift',
                                         'class' => 'form-control select2me required'
                                             )
@@ -184,8 +184,6 @@
                                 </label>
                                 <div class="col-md-2">                                                                
                                     <?php
-                                    
-                                                                       
                                     echo $this->Form->input('shift_incharge_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,

@@ -167,9 +167,9 @@
                         <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'staticroaster')) ?>"> <i class="fa fa-search"></i> Static roaster</a>
                     </li>      
 
-<!--                    <li <?php if ($this->name . '' . $this->action == 'Roasterssetroaster'): ?> class="active" <?php endif; ?> >
+                    <li <?php if ($this->name . '' . $this->action == 'Roasterssetroaster'): ?> class="active" <?php endif; ?> >
                         <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'setroaster')) ?>"> <i class="fa fa-search"></i> Set roaster</a>
-                    </li> -->
+                    </li> 
 
                     <li <?php if ($this->name . '' . $this->action == 'Roastersedit'): ?> class="active" <?php endif; ?> >
                         <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'edit')) ?>"> <i class="fa fa-search"></i> Roaster edit</a>

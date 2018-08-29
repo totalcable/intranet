@@ -568,16 +568,16 @@
                                                                     <?php if (!empty($a1['name'])) { ?> 
                                                                         <td> <?php echo $a1['name']; ?> </td>
                                                                     <?php } ?>
-                                                                  
+
                                                                     <?php if (!empty($data['afa1']['name'])) { ?> 
                                                                         <td> <?php echo $data['afa1']['name']; ?> </td>
                                                                     <?php } ?>
-                                                                  
+
                                                                     <?php if (!empty($data['nia1']['name'])) { ?> 
                                                                         <td> <?php echo $data['nia1']['name']; ?> </td>
                                                                     <?php } ?>
                                                                 </tr>
-                                                                
+
                                                                 <tr>
                                                                     <?php if (!empty($a2['name'])) { ?> 
                                                                         <td> <?php echo $a2['name']; ?> </td>
@@ -592,41 +592,59 @@
                                                                     <?php } ?>  
                                                                 </tr>
                                                                 <tr>
-                                                                    <?php if (!empty($a3['name'])) { ?>
-                                                                        <td> <?php echo $a3['name']; ?>  </td>
-                                                                    <?php } ?>    
-                                                                    <?php if (!empty($data['afa3']['name'])) { ?> 
-                                                                        <td> <?php echo $data['afa3']['name']; ?> </td>
-                                                                    <?php } ?>  
-
-                                                                    <?php if (!empty($data['nia3']['name'])) { ?> 
-                                                                        <td> <?php echo $data['nia3']['name']; ?> </td>
-                                                                    <?php } ?>   
-
-                                                                </tr>
-                                                                <tr>
-                                                                    <?php if (!empty($a4['name'])) { ?> 
-                                                                        <td> <?php echo $a4['name']; ?></td>
-                                                                    <?php } ?> 
-                                                                    <td>
-                                                                        <?php echo $data['afa4']['name']; ?>
+                                                                    <td> 
+                                                                        <?php if (!empty($a3['name'])) { ?>
+                                                                            <?php echo $a3['name']; ?>  
+                                                                        <?php } ?>  
                                                                     </td>
-
                                                                     <td>
-                                                                        <?php echo $data['nia4']['name']; ?>
+                                                                        <?php if (!empty($data['afa3']['name'])) { ?> 
+                                                                            <?php echo $data['afa3']['name']; ?> 
+                                                                        <?php } ?>  
+
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php if (!empty($data['nia3']['name'])) { ?> 
+                                                                            <?php echo $data['nia3']['name']; ?> 
+                                                                        <?php } ?>   
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>
-                                                                        <?php echo $a5['name']; ?> 
+                                                                        <?php if (!empty($a4['name'])) { ?> 
+                                                                            <?php echo $a4['name']; ?>
+                                                                        <?php } ?>
                                                                     </td>
                                                                     <td>
-                                                                        <?php echo $data['afa5']['name']; ?>
+                                                                        <?php if (!empty($data['afa4']['name'])) { ?> 
+                                                                            <?php echo $data['afa4']['name']; ?>
+                                                                        <?php } ?> 
                                                                     </td>
                                                                     <td>
-                                                                        <?php echo $data['nia5']['name']; ?>
+                                                                        <?php if (!empty($data['nia4']['name'])) { ?> 
+                                                                            <?php echo $data['nia4']['name']; ?>
+                                                                        <?php } ?> 
                                                                     </td>
                                                                 </tr>
+
+                                                                <tr>
+                                                                    <td>
+                                                                        <?php if (!empty($a5['name'])) { ?> 
+                                                                            <?php echo $a5['name']; ?>
+                                                                        <?php } ?> 
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php if (!empty($data['afa5']['name'])) { ?> 
+                                                                            <?php echo $data['afa5']['name']; ?>
+                                                                        <?php } ?> 
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php if (!empty($data['nia5']['name'])) { ?> 
+                                                                            <?php echo $data['nia5']['name']; ?>
+                                                                        <?php } ?> 
+                                                                    </td>
+                                                                </tr>
+
                                                                 <tr>                                                                 
                                                                     <?php if (!empty($a6['name'])) { ?> 
                                                                         <td> <?php echo $a6['name']; ?> </td>

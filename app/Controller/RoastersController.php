@@ -143,52 +143,27 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('User');
         $clicked = false;
-//        pr($this->request->data); exit;
-
         if (!empty($this->request->data)) {
             $date_s = $this->request->data['RoasterHistorie']['date']['year'] . '-' . $this->request->data['RoasterHistorie']['date']['month'] . '-' . $this->request->data['RoasterHistorie']['date']['day'];
-
             $shift = $this->request->data['RoasterHistorie']['shift'];
-
             $convert_date1 = strtotime($date_s);
             $name_day = date('l', $convert_date1);
-
             $sql = "select * from static_roasters where day_name ='$name_day'";
             $roaster = $this->RoasterHistorie->query($sql);
-
             $data_s = $roaster[0]['static_roasters'];
-
             if ($shift == 'Morning (07:30 - 01:00)') {
                 $data = $data_s;
-//                pr($shift . ' ' . $data);
-//                exit;
                 $array = array_values($data);
-
                 $array2 = array_slice($array, 4, 16);
-//                 pr($array2[7]); exit;
-                //$array3 = array_filter($array2);
-                //$array4 = array_chunk($array3, 1);
             } elseif ($shift == 'Afternoon (01:00 - 09:00)') {
-//                pr('2');
-//                exit;
                 $array = array_values($data_s);
 
                 $array2 = array_slice($array, 20, 16);
-                // pr($array2); exit; 
-                // $array3 = array_filter($array2);
-                //$array4 = array_chunk($array3, 1);
             } elseif ($shift == 'Night (09:00 - 03:00)') {
-//                pr('3');
-//                exit;
                 $array = array_values($data_s);
-                //pr($array); exit;
                 $array2 = array_slice($array, 36, 16);
-                //pr($array2); exit;
-                // $array3 = array_filter($array2);
-                // $array4 = array_chunk($array3, 1);
             }
             $clicked = true;
-            //pr($array2); exit;
             $agent = $this->User->find('list', array('conditions' => array('User.role_id' => 14, 'AND' => array('User.status' => 'active'))));
             $supervisor = $this->User->find('list', array('conditions' => array('User.role_id' => 7, 'AND' => array('User.status' => 'active'))));
             $this->set(compact('array2', 'agent', 'supervisor', 'date_s', 'name_day'));
@@ -197,6 +172,71 @@ class RoastersController extends AppController {
     }
 
     function roasterview() {
+        $this->loadModel('RoasterHistorie');
+        $this->loadModel('User');
+//        Morning Afternoon Night
+        $data = $this->RoasterHistorie->query("SELECT * FROM roasters_histories            
+
+                left join users on users.id = roasters_histories.shift_incharge_id 
+                left join users u2 on u2.id = roasters_histories.shift_incharge2_id 
+                left join users u3 on u3.id = roasters_histories.shift_incharge3_id 
+                left join users a1 on a1.id = roasters_histories.a1_id 
+                left join users a2 on a2.id = roasters_histories.a2 
+                left join users a3 on a3.id = roasters_histories.a3 
+                left join users a4 on a4.id = roasters_histories.a4 
+                left join users a5 on a5.id = roasters_histories.a5 
+                left join users a6 on a6.id = roasters_histories.a6  
+                left join users a7 on a7.id = roasters_histories.a7 
+                left join users a8 on a8.id = roasters_histories.a8 
+                left join users a9 on a9.id = roasters_histories.a9  
+                left join users a10 on a10.id = roasters_histories.a10 
+                left join users a11 on a11.id = roasters_histories.a11 
+
+                left join users af on af.id = roasters_histories.afshift_incharge_id 
+                left join users afu2 on afu2.id = roasters_histories.afshift_incharge2_id 
+                left join users afu3 on afu3.id = roasters_histories.afshift_incharge3_id 
+                left join users afa1 on afa1.id = roasters_histories.afa1_id 
+                left join users afa2 on afa2.id = roasters_histories.afa2 
+                left join users afa3 on afa3.id = roasters_histories.afa3 
+                left join users afa4 on afa4.id = roasters_histories.afa4 
+                left join users afa5 on afa5.id = roasters_histories.afa5 
+                left join users afa6 on afa6.id = roasters_histories.afa6  
+                left join users afa7 on afa7.id = roasters_histories.afa7 
+                left join users afa8 on afa8.id = roasters_histories.afa8 
+                left join users afa9 on afa9.id = roasters_histories.afa9  
+                left join users afa10 on afa10.id = roasters_histories.afa10 
+                left join users afa11 on afa11.id = roasters_histories.afa11
+                
+
+                left join users ni on ni.id = roasters_histories.nishift_incharge_id 
+                left join users niu2 on niu2.id = roasters_histories.nishift_incharge2_id 
+                left join users niu3 on niu3.id = roasters_histories.nishift_incharge3_id 
+                left join users nia1 on nia1.id = roasters_histories.nia1_id 
+                left join users nia2 on nia2.id = roasters_histories.nia2 
+                left join users nia3 on nia3.id = roasters_histories.nia3 
+                left join users nia4 on nia4.id = roasters_histories.nia4 
+                left join users nia5 on nia5.id = roasters_histories.nia5 
+                left join users nia6 on nia6.id = roasters_histories.nia6  
+                left join users nia7 on nia7.id = roasters_histories.nia7 
+                left join users nia8 on nia8.id = roasters_histories.nia8 
+                left join users nia9 on nia9.id = roasters_histories.nia9
+                 
+                left join users nia10 on nia10.id = roasters_histories.nia10 
+                left join users nia11 on nia11.id = roasters_histories.nia11
+                ORDER BY roasters_histories.id ASC");
+
+        $th = $this->RoasterHistorie->query("SELECT * FROM roasters_histories ");
+//        pr($th); exit;
+        $data1 = $th[6]['roasters_histories'];
+//        pr($data1); exit;
+        $datas = $data;
+        $agent = $this->User->find('list', array('conditions' => array('User.role_id' => 9)));
+//        pr($agent .' '.$supervisor); exit;
+        $supervisor = $this->User->find('list', array('conditions' => array('User.role_id' => 7)));
+        $this->set(compact('datas', 'data1', 'supervisor', 'technician'));
+    }
+
+    function roasterview_() {
         $this->loadModel('RoasterDetail');
         $this->loadModel('User');
         $clicked = false;
@@ -234,10 +274,6 @@ class RoastersController extends AppController {
         }
         $sql = "select * from roaster_details order by id limit 0,30";
         $roaster = $this->RoasterDetail->query($sql);
-
-//        pr($roaster);
-//        exit;
-
         $this->set(compact('clicked'));
     }
 
@@ -246,7 +282,7 @@ class RoastersController extends AppController {
         $this->loadModel('RoasterDetail');
         $this->loadModel('RoasterHistorie');
         $loggedUser = $this->Auth->user();
-        
+
         //pc , ip and date time collect
         $myIp = getHostByName(php_uname('n'));
         $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
@@ -266,7 +302,6 @@ class RoastersController extends AppController {
             $this->Session->setFlash($msg);
             return $this->redirect($this->referer());
         }
-//        pr($msg); exit;
         if ($shift_name_time == 'Morning (07:30 - 01:00)') {
             if (!empty($data_rh)) {
                 $id = $data_rh[0]['roasters_histories']['id'];
@@ -326,7 +361,6 @@ class RoastersController extends AppController {
                 $data4rHistory['RoasterHistorie'] = array(
                     'id' => $id,
                     'afshift_name_time2' => $this->request->data['RoasterHistorie']['shift'],
-//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
                     'afshift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
                     'afshift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
                     'afshift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
@@ -343,7 +377,7 @@ class RoastersController extends AppController {
                     'afa11' => $this->request->data['RoasterHistorie']['a11'],
                     'status' => 'yes'
                 );
-                
+
                 $this->RoasterHistorie->save($data4rHistory);
             } else {
                 $data4rHistory = array();
@@ -353,7 +387,6 @@ class RoastersController extends AppController {
                     'user_id' => $loggedUser['id'],
                     'day_name' => $day_name,
                     'afshift_name_time2' => $this->request->data['RoasterHistorie']['shift'],
-//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
                     'afshift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
                     'afshift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
                     'afshift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
@@ -379,7 +412,6 @@ class RoastersController extends AppController {
                 $data4rHistory['RoasterHistorie'] = array(
                     'id' => $id,
                     'nishift_name_time3' => $this->request->data['RoasterHistorie']['shift'],
-//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
                     'nishift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
                     'nishift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
                     'nishift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
@@ -406,7 +438,6 @@ class RoastersController extends AppController {
                     'user_id' => $loggedUser['id'],
                     'day_name' => $day_name,
                     'nishift_name_time3' => $this->request->data['RoasterHistorie']['shift'],
-//                    'alphabet' => $this->request->data['RoasterHistorie']['alphabet'],
                     'nishift_incharge_id' => $this->request->data['RoasterHistorie']['shift_incharge_id'],
                     'nishift_incharge2_id' => $this->request->data['RoasterHistorie']['shift_incharge2_id'],
                     'nishift_incharge3_id' => $this->request->data['RoasterHistorie']['shift_incharge3_id'],
@@ -567,7 +598,6 @@ class RoastersController extends AppController {
             if (!empty($this->request->data)) {
                 $date_s = $this->request->data['RoasterHistorie']['date']['year'] . '-' . $this->request->data['RoasterHistorie']['date']['month'] . '-' . $this->request->data['RoasterHistorie']['date']['day'];
             } else {
-
                 $date_s = $d;
             }
         }
@@ -670,23 +700,18 @@ class RoastersController extends AppController {
         $roaster_m = $this->RoasterHistorie->query("SELECT * FROM roasters_histories where date = '$d' AND shift_name_time != '' ");
 
         if (!empty($roaster_m)) {
-//         pr($roaster_m); exit;    
             $roaster_date = $roaster_m[0]['roasters_histories']['date'];
         }
-//        pr('there'); exit;
         //afternoon
         $roaster_a = $this->RoasterHistorie->query("SELECT * FROM roasters_histories where date = '$d' AND afshift_name_time2 != '' ");
         if (!empty($roaster_a)) {
             $roaster_date_a = $roaster_a[0]['roasters_histories']['date'];
         }
-
         //night
         $roaster_n = $this->RoasterHistorie->query("SELECT * FROM roasters_histories where date = '$d' AND afshift_name_time2 != '' ");
         if (!empty($roaster_n)) {
             $roaster_date_n = $roaster_n[0]['roasters_histories']['date'];
         }
-
-
         $agent = $this->User->find('list', array('conditions' => array('User.role_id' => 14, 'AND' => array('User.status' => 'active'))));
         $supervisor = $this->User->find('list', array('conditions' => array('User.role_id' => 7, 'AND' => array('User.status' => 'active'))));
         $this->set(compact('roaster_date', 'roaster_date_a', 'roaster_date_n', 'datas', 'data1', 'supervisor', 'agent', 'technician', 'date_s'));
@@ -1136,8 +1161,7 @@ class RoastersController extends AppController {
 
         //  check properties data empty or not
         if (empty($data_roaster)) {
-            pr($this->request->data);
-            exit;
+
             // roasterhistorie id unset here for new data
             unset($this->request->data['RoasterHistorie']['id']);
             $this->request->data['RoasterHistorie']['status'] = 'yes';

@@ -159,42 +159,35 @@ class LeavesController extends AppController {
         $start = $this->request->data['Leave']['from_date'];
         $end = $this->request->data['Leave']['to_date'];
 
+        //leave count start
+        $date1 = new DateTime($end);
+        $date2 = new DateTime($start);
+        $diff = $date1->diff($date2);
+        $total_day = $diff->days;
+        //leave count end
+       
         if ($start == $end) {
             $conditions = "roaster_details.date >=' " . $start . "' AND  roaster_details.date <= '" . $end . " '";
         } else {
             $conditions = " roaster_details.date >=' " . $start . "' AND  roaster_details.date <='" . $end . "'";
         }
+        //total duty count in this leaves and set status leave
         $data_e = $this->RoasterDetail->query("SELECT * FROM `roaster_details` WHERE `emp_id` = $user_id and $conditions");
+        $y = count($data_e);
 
         //update emp table remaining leave
         $e = $this->Emp->query("SELECT * FROM `emps` WHERE `user_id` = $user_id");
         $id_e = $e[0]['emps']['id'];
-        
-        
-        //$s = $e[0]['emps']['sick'];
-        // $c = $e[0]['emps']['casual'];
-        $r_leave = $e[0]['emps']['r_leave'];
-pr($data_e.' '.$r_leave); exit;
-        $y = count($data_e);
 
-//        $r_leaves = (($s + $c) - ($y + $old_leave));
-        $r_leaves = ($r_leave - $y);
-        //pr($r_leaves); exit;
-//        $minus = substr($r_leaves,0,1);
-//        if($minus == '-'){
-//            
-//            $msg = '<div class="alert alert-success">
-//				<button type="button" class="close" data-dismiss="alert">&times;</button>
-//				<strong> Contact with HR about your "Leave"</strong>
-//			</div>';
-//            $this->Session->setFlash($msg);
-//            return $this->redirect($this->referer());
-//        }
-        //pr('complete'); exit;
-        // Update roasterDetail table for leave
+        $r_leave = $e[0]['emps']['r_leave'];
+        //minus remaining leaves from request leave
+        $r_leaves = ($r_leave - $total_day);
+
+        // Update emp table for leave
         $this->Emp->id = $id_e;
         $this->Emp->saveField("r_leave", $r_leaves);
 
+        // Update RoasterDetail table change status leave
         for ($x = 0; $x < $y; $x++) {
             foreach ($data_e as $value) {
                 $id = $value['roaster_details']['id'];
@@ -220,7 +213,7 @@ pr($data_e.' '.$r_leave); exit;
             'id' => $this->request->data['Leave']['id'],
             'admin_comment' => $this->request->data['Leave']['comment'],
             'status' => 'admin_approved',
-            'total' => $y,
+            'total' => $total_day,
             'admin_approve_date' => $l_d,
             'admin_id' => $u_id,
             'pc_id' => $pc_info
@@ -317,7 +310,7 @@ pr($data_e.' '.$r_leave); exit;
         $total_late = $late[0][0]['total_late'];
         $this->set(compact('late'));
     }
-    
+
     function emp_late_detail() {
         $this->loadModel('User');
         //Time take in variable for validation end 

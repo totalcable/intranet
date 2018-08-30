@@ -118,17 +118,9 @@
                             Adjustment Memo</a>
                     </li>
 
-                    <li
-                    <?php if ($this->name . '' . $this->action == 'Otherspaymentsmanage' || $this->name . '' . $this->action == 'Otherspaymentscreate' || $this->name . '' . $this->action == 'Otherspaymentsedit'):
-                        ?>
-                            class="active"
-                            <?php
-                        endif;
-                        ?>
-                        >
-                        <a href="<?php echo Router::url(array('controller' => 'otherspayments', 'action' => 'manage')) ?>">
-                            <i class="fa fa-dashboard"></i>
-                            Tech Payment</a>
+                    <li   <?php if ($this->name . '' . $this->action == 'Otherspaymentsmanage' || $this->name . '' . $this->action == 'Otherspaymentscreate' || $this->name . '' . $this->action == 'Otherspaymentsedit'):
+                        ?> class="active" <?php endif; ?> > <a href="<?php echo Router::url(array('controller' => 'otherspayments', 'action' => 'manage')) ?>">
+                            <i class="fa fa-dashboard"></i> Tech Payment</a>
                     </li>
 
                     <li <?php if ($this->name . '' . $this->action == 'Customersmanage_delete_data'): ?> class="active"  <?php endif; ?> >
@@ -158,12 +150,12 @@
 
             <!-- Roaster menu start -->
             <li <?php
-            $roaster = array('Roastersstaticroaster', 'Roasterssetroaster', 'Roastersedit', 'Roastersscript', 'Roastersdaily', 'Roastersroasterview');
+            $roaster = array('Roastersroaster_edit','Roastersstaticroaster', 'Roasterssetroaster', 'Roastersedit', 'Roastersscript', 'Roastersdaily', 'Roastersroasterview');
             if (in_array($this->name . '' . $this->action, $roaster)):
                 ?> class="active"<?php endif; ?> ><a href="javascript:;">
                     <i class="fa fa-envelope"></i> <span class="title">Roaster manage</span>  <span class="arrow "></span> </a>
                 <ul class="sub-menu">                
-                    <li <?php if ($this->name . '' . $this->action == 'Roastersstaticroaster'): ?> class="active" <?php endif; ?> >
+                    <li <?php if ($this->name . '' . $this->action == 'Roastersstaticroaster' || $this->name . '' . $this->action == 'Roastersroaster_edit'): ?> class="active" <?php endif; ?> >
                         <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'staticroaster')) ?>"> <i class="fa fa-search"></i> Static roaster</a>
                     </li>      
 

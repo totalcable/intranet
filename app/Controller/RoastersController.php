@@ -75,10 +75,8 @@ class RoastersController extends AppController {
         $th = $this->StaticRoaster->query("SELECT * FROM static_roasters ");
         $data1 = $th[0]['static_roasters'];
         $datas = $data[0];
-//        pr($datas['a4']['name']); exit;
 
         $agent = $this->User->find('list', array('conditions' => array('User.role_id' => 14)));
-//        pr($agent .' '.$supervisor); exit;
         $supervisor = $this->User->find('list', array('conditions' => array('User.role_id' => 7)));
         $this->set(compact('datas', 'data1', 'supervisor', 'agent', 'technician'));
     }
@@ -173,6 +171,7 @@ class RoastersController extends AppController {
 
     function roasterview() {
         $this->loadModel('RoasterHistorie');
+        $this->loadModel('StaticRoaster');
         $this->loadModel('User');
 //        Morning Afternoon Night
         $data = $this->RoasterHistorie->query("SELECT * FROM roasters_histories            
@@ -225,13 +224,10 @@ class RoastersController extends AppController {
                 left join users nia11 on nia11.id = roasters_histories.nia11
                 ORDER BY roasters_histories.id ASC");
 
-        $th = $this->RoasterHistorie->query("SELECT * FROM roasters_histories ");
-//        pr($th); exit;
-        $data1 = $th[6]['roasters_histories'];
-//        pr($data1); exit;
+        $th = $this->StaticRoaster->query("SELECT * FROM static_roasters ");
+        $data1 = $th[6]['static_roasters'];
         $datas = $data;
         $agent = $this->User->find('list', array('conditions' => array('User.role_id' => 9)));
-//        pr($agent .' '.$supervisor); exit;
         $supervisor = $this->User->find('list', array('conditions' => array('User.role_id' => 7)));
         $this->set(compact('datas', 'data1', 'supervisor', 'technician'));
     }

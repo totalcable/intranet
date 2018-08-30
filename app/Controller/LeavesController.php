@@ -18,7 +18,6 @@ class LeavesController extends AppController {
             return $this->redirect('/admins/login');
 //  echo 'here'; exit; //(array('action' => 'deshboard'));
         }
-
         $this->Auth->allow('');
     }
 
@@ -170,10 +169,12 @@ class LeavesController extends AppController {
         //update emp table remaining leave
         $e = $this->Emp->query("SELECT * FROM `emps` WHERE `user_id` = $user_id");
         $id_e = $e[0]['emps']['id'];
+        
+        
         //$s = $e[0]['emps']['sick'];
         // $c = $e[0]['emps']['casual'];
         $r_leave = $e[0]['emps']['r_leave'];
-
+pr($data_e.' '.$r_leave); exit;
         $y = count($data_e);
 
 //        $r_leaves = (($s + $c) - ($y + $old_leave));
@@ -258,10 +259,7 @@ class LeavesController extends AppController {
         $date = new DateTime('now');
         $date->modify('last day of this month');
         $d_l = $date->format('Y-m-d');
-
-
         $conditions = " roaster_details.date >=' " . $d_f . "' AND  roaster_details.date <='" . $d_l . "'";
-
 
         $absent = $this->RoasterDetail->query("SELECT count(attend_status)as total_absent FROM `roaster_details` WHERE roaster_details.`attend_status` = 'absent' and $conditions");
         $total_absent = $absent[0][0]['total_absent'];
@@ -310,9 +308,6 @@ class LeavesController extends AppController {
         $d_l = $date->format('Y-m-d');
 
         $conditions = " roaster_details.date >=' " . $d_f . "' AND  roaster_details.date <='" . $d_l . "'";
-
-//        $absent = $this->RoasterDetail->query("SELECT count(attend_status)as total_absent FROM `roaster_details` WHERE roaster_details.`attend_status` = 'absent' and $conditions");
-//         $total_absent = $absent[0][0]['total_absent'];
         $late = $this->RoasterDetail->query("SELECT emp_id,roaster_details.date,roaster_details.id,users.name,count(roaster_details.late_time)as total_late                
                 FROM `roaster_details` 
                 left join users on users.id = roaster_details.emp_id 
@@ -320,10 +315,6 @@ class LeavesController extends AppController {
              
                 WHERE roaster_details.`late_time` != '00:00:00' and $conditions group by roaster_details.emp_id");
         $total_late = $late[0][0]['total_late'];
-//        echo $this->RoasterDetail->getLastQuery();
-//        pr($late);
-//        exit;
-
         $this->set(compact('late'));
     }
     
@@ -344,17 +335,11 @@ class LeavesController extends AppController {
         $date->modify('last day of this month');
         $d_l = $date->format('Y-m-d');
         $id = $this->params['pass'][0];
-//        pr($this->request->data);
-//        exit;
         $conditions = " roaster_details.date >=' " . $d_f . "' AND  roaster_details.date <='" . $d_l . "'";
 
         $late = $this->RoasterDetail->query("SELECT * FROM `roaster_details` 
                 left join users on users.id = roaster_details.emp_id
                 WHERE roaster_details.`late_time` != '00:00:00' AND emp_id = $id  AND $conditions");
-       
-//        echo $this->RoasterDetail->getLastQuery();
-//        pr($late);
-//        exit;
         $this->set(compact('late'));
     }
 

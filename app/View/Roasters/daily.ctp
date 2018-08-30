@@ -391,11 +391,11 @@
                                     );
                                     ?>
                                 </div>
-                                <label class="control-label col-md-2">
+<!--                                <label class="control-label col-md-2">
                                     <a target="_blank" title="Click here for set swap :-)" href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'set_swap')) ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
                                         Swap
                                     </a> 
-                                </label>
+                                </label>-->
                             </div>
                             <br>
                             <br>

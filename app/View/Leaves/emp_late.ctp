@@ -44,10 +44,10 @@
                                     <tr >                                    
                                         <td>
                                             <b>Name :</b>  <?php echo $us['name']; ?><br>
-                                            <b>Emp ID : </b><b title="Emp Id" style="color:orange;"><?php echo $la['emp_id']; ?></b>
+                                            <b>Emp ID : </b><b title="Emp Id" style="color:orange;"><?php echo $la['user_id']; ?></b>
                                         </td>
                                         <td>
-                                            <a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late_detail',$la['emp_id'])) ?>" title="Click here for more information" style="font-weight: normal; color: blue;"><?php echo $single[0]['total_late']; ?></a>
+                                            <a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late_detail',$la['user_id'])) ?>" title="Click here for more information" style="font-weight: normal; color: blue;"><?php echo $single[0]['total_late']; ?></a>
                                         </td>                                     
                                     </tr>
                                     <?php

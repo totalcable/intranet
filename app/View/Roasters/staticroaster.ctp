@@ -447,13 +447,13 @@
                                     ?>                               
                                     <tr>
                                         <td class="hidden-480">                                             
-                                            <a target="_blank" title="Click here for update data :-)" href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'roaster_edit', $results['id'])) ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
+                                            <a target="_blank" title="Click here for update static roaster :-)" href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'roaster_edit', $results['id'])) ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
                                                 <?php echo $results['id']; ?> 
                                             </a>                                           
 
                                         </td>
                                         <td class="hidden-480">
-                                            <a title="Click here for update data :-)" href="#product-pop-up<?php echo $results['id']; ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
+                                            <a title="Click here for view roaster :-)" href="#product-pop-up<?php echo $results['id']; ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
                                                 <?php
 //                                                $convert_date = strtotime($results['date']);
 //                                                $name_day = date('l', $convert_date);

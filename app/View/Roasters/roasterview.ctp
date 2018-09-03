@@ -90,7 +90,7 @@
                                     <tr>
 
                                         <td class="hidden-480">
-                                            <a title="Click here for update data :-)" href="#product-pop-up<?php echo $results['id']; ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
+                                            <a title="Click here for roaster view :-)" href="#product-pop-up<?php echo $results['id']; ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
                                                 <?php
                                                 echo $results['date'];
                                                 ?> 
@@ -228,6 +228,8 @@
                                                                         <?php } ?>   
                                                                     </td>
                                                                 </tr>
+                                                                  <?php if (!empty($a5['name'] || $data['afa5']['name'] || $data['nia5']['name'])) { ?>
+                                                              
                                                                 <tr>
                                                                     <td>
                                                                         <?php if (!empty($a5['name'])) { ?>
@@ -245,6 +247,7 @@
                                                                         <?php } ?>   
                                                                     </td>
                                                                 </tr>
+                                                                 <?php } ?> 
                                                                 <?php if (!empty($a6['name'] || $data['afa6']['name'] || $data['nia6']['name'])) { ?>
                                                                     <tr>
                                                                         <td> <?php if (!empty($a6['name'])) { ?>

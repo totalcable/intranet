@@ -109,11 +109,16 @@ class AdminsController extends AppController {
                     $currentDateTime = $date . ' ' . $in;
 
                     $loggedUser = $this->Auth->user();
-                    // pr($loggedUser); exit;
-
                     $u_id = $loggedUser['id'];
+                    //pc , ip and date time collect start
+                    $myIp = getHostByName(php_uname('n'));
+                    $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+                    $date = date("Y-m-d h:i:sa");
+                    $date_movie = date("Y-m-d");
+                    $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
+                    //pc , ip and date time collect end
                     //Find out updateable data from roaster detail table
-                    $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $u_id  AND attend_status != 'approve' order by alphabet");
+                    $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND user_id = $u_id  AND attend_status != 'approve' order by alphabet");
                     //$shift = $duty[0]['roaster_details']['shift_name_time'];
                     if (!empty($duty[0]['roaster_details']['shift_name_time'])) {
 
@@ -145,6 +150,7 @@ class AdminsController extends AppController {
                                 $this->request->data['User']['last_in_time'] = $in;
                                 $this->request->data['User']['last_duty_sift'] = $shift;
                                 $this->request->data['User']['log_status'] = 'request';
+                                $this->request->data['User']['pc_id_user']= $pc_info;
                                 $this->User->id = $id;
 //                                   pr($this->request->data); exit;
                                 $this->User->save($this->request->data['User']);
@@ -176,6 +182,7 @@ class AdminsController extends AppController {
                                 $this->request->data['User']['last_out_time'] = '00:00:00';
                                 $this->request->data['User']['last_duty_sift'] = $shift;
                                 $this->request->data['User']['log_status'] = 'request';
+                                $this->request->data['User']['pc_id_user']= $pc_info;
                                 $this->User->id = $id;
                                 $this->User->save($this->request->data['User']);
                             }
@@ -208,6 +215,7 @@ class AdminsController extends AppController {
                                 $this->request->data['User']['last_out_time'] = '00:00:00';
                                 $this->request->data['User']['last_duty_sift'] = $shift;
                                 $this->request->data['User']['log_status'] = 'request';
+                                $this->request->data['User']['pc_id_user']= $pc_info;
                                 $this->User->id = $id;
                                 $this->User->save($this->request->data['User']);
                             }
@@ -285,13 +293,12 @@ class AdminsController extends AppController {
         $in = date("h:i:sa");
         //Time take in variable for validation end 
         $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details                 
-        inner join users on users.id = roaster_details.emp_id
+        inner join users on users.id = roaster_details.user_id
         WHERE `date`= '$date' AND attend_status = 'no' order by alphabet");
         //pr($duty); exit;
         $users = $this->User->find('list', array('order' => array('User.name' => 'ASC')));
         $this->set(compact('duty', 'users'));
     }
-
 
     function user_status_absent($id) {
         $this->loadModel('RoasterDetail');
@@ -356,6 +363,7 @@ class AdminsController extends AppController {
         $new_info = $this->User->query("SELECT * FROM users where id = $id");
         $in = $new_info[0]['users']['last_in_time'];
         $shift = $new_info[0]['users']['last_duty_sift'];
+        $pc_first_log_info = $new_info[0]['users']['pc_id_user'];
 //        $in = '09:20:00pm';
         $in_office = strtotime($in); // last log in time present of office
         $out = $new_info[0]['users']['last_out_time'];
@@ -365,7 +373,7 @@ class AdminsController extends AppController {
 
         //data retrive for update roaster detail table end
         //data retrive by date , record id start
-        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $id  order by alphabet");
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND user_id = $id  order by alphabet");
 
         #$a_status = $duty[0]['roaster_details']['attend_status'];
         $r_id = $duty[0]['roaster_details']['id'];
@@ -469,6 +477,7 @@ class AdminsController extends AppController {
             'id' => $r_id,
             'in_time' => $in,
             'out_time' => $out,
+            'user_login_info' => $pc_first_log_info,
             'attend_status' => $att_status
         );
         $this->RoasterDetail->save($data4rd);
@@ -514,7 +523,7 @@ class AdminsController extends AppController {
         $date = date("Y-m-d");
         $loggedUser = $this->Auth->user();
         $u_id = $loggedUser['id'];
-        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $u_id  AND attend_status != 'approve' order by alphabet");
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND user_id = $u_id  AND attend_status != 'approve' order by alphabet");
         $this->set(compact('duty'));
     }
 
@@ -531,12 +540,12 @@ class AdminsController extends AppController {
                 $conditions = " roaster_details.date >= '$ds' AND  roaster_details.date <= '$de'";
             }
             $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details
-                    inner join users on users.id = roaster_details.emp_id
+                    inner join users on users.id = roaster_details.user_id
                      WHERE attend_status = 'approve' AND $conditions");
 //            echo $this->RoasterDetail->getLastQuery();
             $this->set(compact('duty'));
         } else {
-            $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.emp_id WHERE attend_status = 'approve'");
+            $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.user_id WHERE attend_status = 'approve'");
             $this->set(compact('duty'));
         }
     }
@@ -544,7 +553,7 @@ class AdminsController extends AppController {
     function attend_one($id) {
         $this->loadModel('RoasterDetail');
         $this->loadModel('User');
-        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.emp_id WHERE attend_status = 'approve' AND roaster_details.emp_id = $id order by roaster_details.id limit 0,31");
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.user_id WHERE attend_status = 'approve' AND roaster_details.user_id = $id order by roaster_details.id limit 0,31");
         $this->set(compact('duty'));
     }
 
@@ -557,7 +566,7 @@ class AdminsController extends AppController {
         $id = $this->Auth->user('id');
         $last_in_time = $this->Auth->user('last_in_time');
 
-        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $id  order by alphabet");
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND user_id = $id  order by alphabet");
         $l_in = $duty[0]['roaster_details']['in_time'];
 
         if ($l_in == '00:00:00') {

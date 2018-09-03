@@ -127,13 +127,13 @@
 //                                    pr($single); exit;
                                     $data = $single['roaster_details'];
                                     $user = $single['users'];
-                                    $id = $data['emp_id'];
+                                    $id = $data['user_id'];
                                     ?>
                                     <tr >
                                         <td>
                                             <b>Name:</b> <?php echo $user['name']; ?><br><b>Emp Id: </b> (<a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'attend_one', $id)) ?>"  target="_blank" title="Click here for individual information :-)">
-                                                <?php // echo $data['emp_id']; ?>
-                                                    <b title="Emp Id" style="color:tomato;"><?php echo $data['emp_id']; ?></b>
+                                                <?php // echo $data['user_id']; ?>
+                                                    <b title="Emp Id" style="color:tomato;"><?php echo $data['user_id']; ?></b>
                                             </a>)
                                         </td>
                                         <td><?php echo $data['date']; ?></td>  

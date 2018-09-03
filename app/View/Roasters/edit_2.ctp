@@ -12,14 +12,14 @@
         <!-- BEGIN PAGE CONTENT-->
         <div class="row">
             <div class="col-md-12">
-                <div class="portlet box green">
+                <br>
+                <div class="portlet box green-jungle">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-plus"></i>Search & Edit roaster information
+                            <i class="fa "></i>Search & Edit roaster information
                         </div>
                         <div class="tools">
-                            <a href="javascript:;" class="reload">
-                            </a>
+                            
                         </div>
                     </div>
                     <div class="portlet-body form">
@@ -51,6 +51,7 @@
                                     echo $this->Form->input(
                                             'emp_id', array(
                                         'class' => 'form-control required',
+                                        'placeholder' => 'Write emp Id after click on search button',
                                         'type' => 'text'
                                             )
                                     );
@@ -87,11 +88,10 @@
         <div class="row">
             <div class="col-md-12">
                 <!-- BEGIN EXAMPLE TABLE PORTLET-->
-                <div class="portlet box green">
+                <div class="portlet box green-jungle">
                     <div class="portlet-title">
                         <div class="tools">
-                            <a href="javascript:;" class="reload">
-                            </a>
+                           
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -109,13 +109,14 @@
                                 <?php
                                 foreach ($duty as $single):
                                     $data = $single['roaster_details'];
+//                                    pr($data); exit;
                                     $user = $single['users'];
                                     $id = $data['id'];
                                     ?>
                                     <tr>
                                         <td><?php echo $data['date']; ?></td>  
                                         <td>                                           
-                                            <?php echo $user['name']; ?> <b title="Emp Id" style="color:orange;">(<?php echo $data['emp_id']; ?>)</b>
+                                            <?php echo $user['name']; ?> <b title="Emp Id" style="color:orange;">(<?php echo $data['user_id']; ?>)</b>
                                         </td>
                                         <td>
                                             <?php
@@ -150,10 +151,42 @@
                                                             )
                                                     );
                                                     ?>
+                                                    
                                                     <?php
                                                     echo $this->Form->input('id', array(
                                                         'type' => 'hidden',
                                                         'value' => $id,
+                                                            )
+                                                    );
+                                                    ?>
+                                                    
+                                                    <?php
+                                                    echo $this->Form->input('date', array(
+                                                        'type' => 'hidden',
+                                                        'value' => $data['date'],
+                                                            )
+                                                    );
+                                                    ?>
+                                                    
+                                                    <?php
+                                                    echo $this->Form->input('shift_name_time', array(
+                                                        'type' => 'hidden',
+                                                        'value' => $data['shift_name_time'],
+                                                            )
+                                                    );
+                                                    ?>
+                                                    
+                                                    <?php
+                                                    echo $this->Form->input('alphabet', array(
+                                                        'type' => 'hidden',
+                                                        'value' => $data['alphabet'],
+                                                            )
+                                                    );
+                                                    ?>
+                                                    <?php
+                                                    echo $this->Form->input('old_id', array(
+                                                        'type' => 'hidden',
+                                                        'value' => $data['user_id']
                                                             )
                                                     );
                                                     ?>

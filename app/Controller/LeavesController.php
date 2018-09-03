@@ -63,7 +63,7 @@ class LeavesController extends AppController {
         $date = new DateTime('now');
         $date->modify('last day of this month');
         $l_d = $date->format('Y-m-d');
-        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` <= '$l_d' AND emp_id = $u_id  AND attend_status != 'approve' order by alphabet");
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` <= '$l_d' AND user_id = $u_id  AND attend_status != 'approve' order by alphabet");
         $this->set(compact('r_l', 'name', 'duty', 'cities'));
     }
 
@@ -138,7 +138,7 @@ class LeavesController extends AppController {
         $u_id = $this->params['pass'][2];
 
         $conditions = " roaster_details.date >=' " . $start . "' AND  roaster_details.date <='" . $end . "'";
-        $data_e = $this->RoasterDetail->query("SELECT * FROM `roaster_details` left join users on users.id = roaster_details.emp_id WHERE `emp_id` = $u_id and $conditions order by date");
+        $data_e = $this->RoasterDetail->query("SELECT * FROM `roaster_details` left join users on users.id = roaster_details.user_id WHERE roaster_details.`user_id` = $u_id and $conditions order by date");
         $this->set(compact('data_e'));
     }
 
@@ -155,7 +155,7 @@ class LeavesController extends AppController {
         $date = date("Y-m-d h:i:sa");
         $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
 
-        $user_id = $this->request->data['Leave']['user_id'];
+        $user_id = $this->request->data['Leave']['emp_id'];
         $start = $this->request->data['Leave']['from_date'];
         $end = $this->request->data['Leave']['to_date'];
 
@@ -172,7 +172,7 @@ class LeavesController extends AppController {
             $conditions = " roaster_details.date >=' " . $start . "' AND  roaster_details.date <='" . $end . "'";
         }
         //total duty count in this leaves and set status leave
-        $data_e = $this->RoasterDetail->query("SELECT * FROM `roaster_details` WHERE `emp_id` = $user_id and $conditions");
+        $data_e = $this->RoasterDetail->query("SELECT * FROM `roaster_details` WHERE `user_id` = $user_id and $conditions");
         $y = count($data_e);
 
         //update emp table remaining leave
@@ -301,12 +301,12 @@ class LeavesController extends AppController {
         $d_l = $date->format('Y-m-d');
 
         $conditions = " roaster_details.date >=' " . $d_f . "' AND  roaster_details.date <='" . $d_l . "'";
-        $late = $this->RoasterDetail->query("SELECT emp_id,roaster_details.date,roaster_details.id,users.name,count(roaster_details.late_time)as total_late                
+        $late = $this->RoasterDetail->query("SELECT roaster_details.user_id,roaster_details.date,roaster_details.id,users.name,count(roaster_details.late_time)as total_late                
                 FROM `roaster_details` 
-                left join users on users.id = roaster_details.emp_id 
-                left join emps on emps.id = roaster_details.emp_id 
+                left join users on users.id = roaster_details.user_id 
+                left join emps on emps.user_id = roaster_details.user_id 
              
-                WHERE roaster_details.`late_time` != '00:00:00' and $conditions group by roaster_details.emp_id");
+                WHERE roaster_details.`late_time` != '00:00:00' and $conditions group by roaster_details.user_id");
         $total_late = $late[0][0]['total_late'];
         $this->set(compact('late'));
     }
@@ -331,8 +331,8 @@ class LeavesController extends AppController {
         $conditions = " roaster_details.date >=' " . $d_f . "' AND  roaster_details.date <='" . $d_l . "'";
 
         $late = $this->RoasterDetail->query("SELECT * FROM `roaster_details` 
-                left join users on users.id = roaster_details.emp_id
-                WHERE roaster_details.`late_time` != '00:00:00' AND emp_id = $id  AND $conditions");
+                left join users on users.id = roaster_details.user_id
+                WHERE roaster_details.`late_time` != '00:00:00' AND roaster_details.user_id = $id  AND $conditions");
         $this->set(compact('late'));
     }
 

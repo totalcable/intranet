@@ -46,7 +46,7 @@
                                     <tr >                                    
                                         <td>
                                             <b>Name :</b>  <?php echo $us['name']; ?><br>
-                                            <b>Emp ID : </b><b title="Emp Id" style="color:orange;"><?php echo $la['emp_id']; ?></b>
+                                            <b>Emp ID : </b><b title="Emp Id" style="color:orange;"><?php echo $la['user_id']; ?></b>
                                         </td>
                                         <td><?php echo $la['shift_name_time']; ?></td>
                                         <td><?php echo $la['date']; ?></td>

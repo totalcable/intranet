@@ -19,7 +19,8 @@
         <!-- BEGIN PAGE CONTENT-->
         <div class="row">
             <div class="col-md-12">
-                <div class="portlet box green">
+                <br>
+                <div class="portlet box green-jungle">
                     <div class="portlet-title">
                         <div class="caption">
                             Daily roaster set  
@@ -187,7 +188,7 @@
                                     echo $this->Form->input('shift_incharge_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $array2['1'],
+                                        'value' => $array2[1],
                                         'empty' => 'Select Shift Incharge',
                                         'class' => 'form-control select2me'
                                             )
@@ -254,21 +255,22 @@
                                     );
                                     ?>
                                 </div>
-                                <label class="control-label col-md-2">Agent three:
+                                 <label class="control-label col-md-2">Agent three:
                                 </label>
-                                <div class="col-md-2">                                                               
+                                <div class="col-md-2">   
                                     <?php
                                     echo $this->Form->input('a3', array(
                                         'type' => 'select',
                                         'options' => $agent,
                                         'value' => $array2[7],
                                         'empty' => 'Select agent',
-                                        'class' => 'form-control select2me ',
+                                        'class' => 'form-control select2me'
                                             )
                                     );
                                     ?>
                                 </div>
                             </div>
+                            
                             <br>
                             <div class="row">                                    
                                 <label class="control-label col-md-2">Agent four:
@@ -289,12 +291,13 @@
                                 </label>
                                 <div class="col-md-2">                                                               
                                     <?php
+//                                      pr($array2['7']); 
                                     echo $this->Form->input('a5', array(
                                         'type' => 'select',
                                         'options' => $agent,
                                         'value' => $array2[9],
                                         'empty' => 'Select agent',
-                                        'class' => 'form-control select2me   pclass',
+                                        'class' => 'form-control select2me'
                                             )
                                     );
                                     ?>
@@ -309,12 +312,13 @@
                                         'options' => $agent,
                                         'value' => $array2[10],
                                         'empty' => 'Select agent',
-                                        'class' => 'form-control select2me   pclass',
+                                        'class' => 'form-control select2me',
                                             )
                                     );
                                     ?>
                                 </div>
                             </div>
+                            
                             <br>
                             <div class="row"> 
                                 <label class="control-label col-md-2">Agent seven:

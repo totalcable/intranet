@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-xs-4">
                         <div style="text-align: center;">
-                            <h2>Dynamic Roaster</h2>
+                            <h2>Main Roaster</h2>
                             <h3 style="color: blue;">Call Center</h3>                        
                         </div>
                     </div>
@@ -155,7 +155,7 @@
                                                                         <?php } ?> 
                                                                     </td>
 
-                                                                    <td class="hidden-480" style="font-size: 11px; line-height: 31px; background-color: palegreen;"> 
+                                                                    <td class="hidden-480" style="line-height: 31px; background-color: palegreen;"> 
                                                                         <?php if (!empty($nishift_incharge['name'])) { ?> 
                                                                             <?php if (!empty($nishift_incharge['name'])) { ?> 
                                                                                 One : <?php echo $nishift_incharge['name']; ?><br>

@@ -91,10 +91,6 @@ class RoastersController extends AppController {
 
             $sql = "select * from static_roasters where day_name ='$name_day'";
             $roaster = $this->StaticRoaster->query($sql);
-// pr($roaster[0]['static_roasters']['id']);
-//        exit;
-
-
             $id = $roaster[0]['static_roasters']['id'];
             if (!empty($id)) {
                 $data = $this->StaticRoaster->query("SELECT * FROM static_roasters            
@@ -158,13 +154,28 @@ class RoastersController extends AppController {
         $this->loadModel('StaticRoaster');
         $this->loadModel('RoasterDetail');
         $this->loadModel('User');
+        
         $clicked = false;
         if ($this->request->is('post') || $this->request->is('pull')) {
             $date_s = $this->request->data['RoasterHistorie']['date']['year'] . '-' . $this->request->data['RoasterHistorie']['date']['month'] . '-' . $this->request->data['RoasterHistorie']['date']['day'];
+            $date_p = date("Y-m-d");
+              
+           if ($date_s < $date_p) {
+                $msg = '<div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong> You can not modify this date roaster :-) </strong>
+        </div>';
+                $this->Session->setFlash($msg);
+                return $this->redirect($this->referer());
+            }
+            
+            $date_s = $this->request->data['RoasterHistorie']['date']['year'] . '-' . $this->request->data['RoasterHistorie']['date']['month'] . '-' . $this->request->data['RoasterHistorie']['date']['day'];
             $sql = "select * from roasters_histories where date ='$date_s'";
             $roaster = $this->RoasterHistorie->query($sql);
+            if (!empty($roaster)) {
+                $id = $roaster[0]['roasters_histories']['id'];
+            }
 
-            $id = $roaster[0]['roasters_histories']['id'];
             if (!empty($id)) {
                 $data = $this->RoasterHistorie->query("SELECT * FROM roasters_histories            
                 left join users on users.id = roasters_histories.shift_incharge_id 
@@ -233,14 +244,14 @@ class RoastersController extends AppController {
         $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
         $date = date("Y-m-d h:i:sa");
         $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-       
+
 
         $date_s = $this->request->data['RoasterHistorie']['date'];
         $shift_name_time = $this->request->data['RoasterHistorie']['shift'];
         $alphabet = 'A';
         $convert_date1 = strtotime($date_s);
         $day_name = date('l', $convert_date1);
-         //data delete from RoasterDetail
+        //data delete from RoasterDetail
         $this->RoasterDetail->query("DELETE FROM roaster_details WHERE `date` = '$date_s' and shift_name_time = '$shift_name_time'");
         $data_rh = $this->RoasterHistorie->query("SELECT * FROM `roasters_histories` WHERE `date` = '$date_s'");
 
@@ -311,7 +322,7 @@ class RoastersController extends AppController {
         $date_s = $this->request->data['RoasterHistorie']['date'];
         $afshift_name_time2 = 'Afternoon (01:00 - 09:00)';
         $alphabet = 'B';
-         //data delete from RoasterDetail
+        //data delete from RoasterDetail
         $this->RoasterDetail->query("DELETE FROM roaster_details WHERE `date` = '$date_s' and shift_name_time = '$afshift_name_time2'");
         $data_rh = $this->RoasterHistorie->query("SELECT * FROM `roasters_histories` WHERE `date` = '$date_s'");
 
@@ -382,10 +393,10 @@ class RoastersController extends AppController {
         $date_s = $this->request->data['RoasterHistorie']['date'];
         $nishift_name_time3 = 'Night (09:00 - 03:00)';
         $alphabet = 'C';
-         //data delete from RoasterDetail
+        //data delete from RoasterDetail
         $this->RoasterDetail->query("DELETE FROM roaster_details WHERE `date` = '$date_s' and shift_name_time = '$nishift_name_time3'");
         $data_rh = $this->RoasterHistorie->query("SELECT * FROM `roasters_histories` WHERE `date` = '$date_s'");
-     
+
         if (!empty($data_rh)) {
             $id = $data_rh[0]['roasters_histories']['id'];
             $data4rHistory = array();
@@ -409,7 +420,7 @@ class RoastersController extends AppController {
             );
             $this->RoasterHistorie->save($data4rHistory);
         }
-        
+
         if ($this->request->is('post') || $this->request->is('pull')) {
             $data = $this->request->data['RoasterHistorie'];
             $array = array_values($data);
@@ -507,10 +518,7 @@ class RoastersController extends AppController {
             $sql = "select * from static_roasters where day_name ='$name_day'";
             $roaster = $this->StaticRoaster->query($sql);
 
-
             $id = $roaster[0]['static_roasters']['id'];
-
-
             $sql = "select * from static_roasters where id =$id";
             $roaster = $this->StaticRoaster->query($sql);
 
@@ -1181,6 +1189,7 @@ class RoastersController extends AppController {
         </div>';
             $this->Session->setFlash($msg);
             return $this->redirect($this->referer());
+//            return $this->redirect('/roasters/roaster_change/' . $date_s);
         }
     }
 
@@ -1282,6 +1291,7 @@ class RoastersController extends AppController {
         </div>';
             $this->Session->setFlash($msg);
             return $this->redirect($this->referer());
+//             return $this->redirect('/roasters/roaster_change/' . $date_s);
         }
     }
 
@@ -1383,9 +1393,10 @@ class RoastersController extends AppController {
         </div>';
             $this->Session->setFlash($msg);
             return $this->redirect($this->referer());
+//             return $this->redirect('/roasters/roaster_change' . $date_s);
         }
     }
-  
+
     function script() {
         $this->loadModel('TempRs');
         $this->loadModel('RoasterHistorie');
@@ -1689,6 +1700,7 @@ class RoastersController extends AppController {
         </div>';
             $this->Session->setFlash($msg);
             return $this->redirect($this->referer());
+//            return $this->redirect('/customers/edit/' . $this->request->data['PackageCustomer']['id']);setnewroastermorning
         }
     }
 
@@ -1882,6 +1894,43 @@ class RoastersController extends AppController {
             $this->set(compact('array2', 'agent', 'supervisor', 'date_s', 'name_day'));
         }
         $this->set(compact('clicked'));
+    }
+
+    function monthly_roaster() {
+        $this->loadModel('RoasterDetail');
+        $this->loadModel('User');
+        $mon = date('F');
+        $start = strtotime('first day of this month', time());
+        $end = strtotime('last day of this month', time());
+        $month_start = date('Y-m-d', $start);
+        $month_end = date('Y-m-d', $end);
+        $roaster_duty = $this->RoasterDetail->query("SELECT roaster_details.user_id,users.name,COUNT(roaster_details.user_id) as total_duty 
+                FROM `roaster_details` LEFT JOIN users on users.id = roaster_details.user_id where roaster_details.date >= '$month_start'
+                AND roaster_details.date <= '$month_end' AND roaster_details.date !='0000-00-00' GROUP BY roaster_details.user_id ");
+        $this->set(compact('roaster_duty', 'mon'));
+    }
+
+    function emp_duty_detail() {
+        $this->loadModel('User');
+        //Time take in variable for validation end 
+        $this->loadModel('Emp');
+        $this->loadModel('Designation');
+        $this->loadModel('RoasterDetail');
+        $this->loadModel('Leave');
+
+        // First day of this month
+        $d = new DateTime('first day of this month');
+        $d_f = $d->format('Y-m-d');
+
+        $date = new DateTime('now');
+        $date->modify('last day of this month');
+        $d_l = $date->format('Y-m-d');
+        $id = $this->params['pass'][0];
+        $conditions = " roaster_details.date >=' " . $d_f . "' AND  roaster_details.date <='" . $d_l . "'";
+        $data = $this->RoasterDetail->query("SELECT * FROM `roaster_details` 
+                left join users on users.id = roaster_details.user_id
+                WHERE roaster_details.user_id = $id  AND $conditions order by roaster_details.date");
+        $this->set(compact('data'));
     }
 
 }

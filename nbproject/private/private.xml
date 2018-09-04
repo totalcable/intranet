@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="299">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="303">
         <file>
             <url>app/Controller/ReportsController.php</url>
             <bookmark id="221">
@@ -353,12 +353,12 @@
             </bookmark>
             <bookmark id="92">
                 <name/>
-                <line>515</line>
+                <line>519</line>
                 <key/>
             </bookmark>
             <bookmark id="91">
                 <name/>
-                <line>614</line>
+                <line>618</line>
                 <key/>
             </bookmark>
         </file>
@@ -372,29 +372,39 @@
         </file>
         <file>
             <url>app/Controller/RoastersController.php</url>
-            <bookmark id="294">
+            <bookmark id="300">
                 <name/>
-                <line>28</line>
+                <line>161</line>
                 <key/>
             </bookmark>
-            <bookmark id="297">
+            <bookmark id="303">
                 <name/>
-                <line>82</line>
+                <line>225</line>
+                <key/>
+            </bookmark>
+            <bookmark id="301">
+                <name/>
+                <line>244</line>
+                <key/>
+            </bookmark>
+            <bookmark id="302">
+                <name/>
+                <line>298</line>
                 <key/>
             </bookmark>
             <bookmark id="298">
                 <name/>
-                <line>1003</line>
+                <line>1289</line>
                 <key/>
             </bookmark>
             <bookmark id="293">
                 <name/>
-                <line>1819</line>
+                <line>1677</line>
                 <key/>
             </bookmark>
             <bookmark id="291">
                 <name/>
-                <line>1993</line>
+                <line>1840</line>
                 <key/>
             </bookmark>
         </file>
@@ -422,11 +432,8 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/server/htdocs/intranet/app/View/Roasters/roaster_change.ctp</file>
-            <file>file:/F:/server/htdocs/intranet/app/View/Roasters/daily.ctp</file>
-            <file>file:/F:/server/htdocs/intranet/app/View/Elements/sadmin-sidebar.ctp</file>
-            <file>file:/F:/server/htdocs/intranet/app/View/Elements/developer-sidebar.ctp</file>
-            <file>file:/F:/server/htdocs/intranet/app/Controller/RoastersController.php</file>
+            <file>file:/F:/server/htdocs/intranet/app/View/Roasters/staticroaster.ctp</file>
+            <file>file:/F:/server/htdocs/intranet/app/View/Roasters/roasterview.ctp</file>
         </group>
     </open-files>
 </project-private>

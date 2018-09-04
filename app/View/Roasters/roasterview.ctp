@@ -88,8 +88,7 @@
                                     $a11 = $data['a11'];
                                     ?>                               
                                     <tr>
-
-                                        <td class="hidden-480">
+                                        <td>
                                             <a title="Click here for roaster view :-)" href="#product-pop-up<?php echo $results['id']; ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
                                                 <?php
                                                 echo $results['date'];
@@ -125,7 +124,7 @@
                                                                     <td style="text-align: center; font-size: 14px; font-weight: bold; color: salmon;" colspan="3"> <u> Shift Incharge</u></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td class="hidden-480" style=" line-height: 31px; background-color: palegreen;">
+                                                                    <td  style=" line-height: 31px; background-color: palegreen;">
                                                                         <?php if (!empty($shift_incharge['name'])) { ?> 
                                                                             One : <?php echo $shift_incharge['name']; ?> <br>
                                                                             <?php if (!empty($shift_incharge2['name'])) { ?> 
@@ -138,7 +137,7 @@
                                                                         <?php } ?> 
                                                                     </td>
 
-                                                                    <td class="hidden-480" style=" line-height: 31px; background-color: palegreen;"> 
+                                                                    <td style=" line-height: 31px; background-color: palegreen;"> 
                                                                         <?php if (!empty($afshift_incharge['name'])) { ?> 
 
                                                                             <?php if (!empty($afshift_incharge['name'])) { ?> 
@@ -155,7 +154,7 @@
                                                                         <?php } ?> 
                                                                     </td>
 
-                                                                    <td class="hidden-480" style="line-height: 31px; background-color: palegreen;"> 
+                                                                    <td  style="line-height: 31px; background-color: palegreen;"> 
                                                                         <?php if (!empty($nishift_incharge['name'])) { ?> 
                                                                             <?php if (!empty($nishift_incharge['name'])) { ?> 
                                                                                 One : <?php echo $nishift_incharge['name']; ?><br>
@@ -359,7 +358,7 @@
                                             <!-- pop up for data change end -->
                                         </td>
 
-                                        <td class="hidden-480"><?php echo $results['day_name']; ?></td>                           
+                                        <td><?php echo $results['day_name']; ?></td>                           
 
                                         <?php if (!empty($shift_incharge['name'])) { ?> 
                                             <td title="This is : <?php echo $shift_incharge['name']; ?> Shift Incharge of Call Center (call : 5053)" class="hidden-480">
@@ -367,16 +366,20 @@
                                             </td>
                                         <?php } ?>                                       
 
-                                        <td class="hidden-480">
+                                        <td >
                                             <?php echo $a1['name']; ?> 
                                         </td>
 
-                                        <td class="hidden-480">
+                                        <td>
                                             <?php echo $a2['name']; ?> 
                                         </td>
 
-                                        <td class="hidden-480">
-                                            <?php echo $a3['name']; ?> 
+                                        <td >
+                                            <?php 
+                                            if(!empty($a3['name'])){
+                                             echo $a3['name'];   
+                                            }
+                                            ?> 
                                         </td>
                                     </tr>                                  
                                 <?php endforeach; ?> 

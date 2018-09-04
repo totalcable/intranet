@@ -138,7 +138,7 @@ class AdminsController extends AppController {
                                 $f_time = strtotime('07:15:00am'); // Morning login time
                                 $l_time = strtotime('01:00:00pm'); //Morning logout time
                             }
-//                             pr($f_time.' '.$pc_time.' '.$l_time); exit;
+                             pr($f_time.' '.$pc_time.' '.$l_time); exit;
                             if ($pc_time >= $f_time && $pc_time <= $l_time) { // duty start and end time
                                 $shift = $duty[0]['roaster_details']['shift_name_time'];
                                 $shift_id = $duty[0]['roaster_details']['id'];

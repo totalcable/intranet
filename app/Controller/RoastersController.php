@@ -86,6 +86,17 @@ class RoastersController extends AppController {
         $clicked = false;
         if ($this->request->is('post') || $this->request->is('pull')) {
             $date_s = $this->request->data['StaticRoaster']['date']['year'] . '-' . $this->request->data['StaticRoaster']['date']['month'] . '-' . $this->request->data['StaticRoaster']['date']['day'];
+            
+            $date_p = date("Y-m-d");
+              
+           if ($date_s < $date_p) {
+                $msg = '<div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong> You can not set this date roaster :-) </strong>
+        </div>';
+                $this->Session->setFlash($msg);
+                return $this->redirect($this->referer());
+            }
             $convert_date1 = strtotime($date_s);
             $name_day = date('l', $convert_date1);
 

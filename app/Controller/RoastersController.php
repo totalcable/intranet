@@ -1819,43 +1819,6 @@ class RoastersController extends AppController {
         $this->set(compact('datas', 'data1', 'supervisor', 'technician'));
     }
 
-    function user_swap() {
-        $this->loadModel('RoasterDetail');
-        $this->loadModel('Swap');
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect start
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $date_movie = date("Y-m-d");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-        //pc , ip and date time collect end      
-        // update roaster detail start
-        $data4rd = array();
-        $data4rd['RoasterDetail'] = array(
-            'id' => $this->request->data['RoasterDetail']['id'],
-            'emp_id' => $this->request->data['RoasterDetail']['new_emp_id']
-        );
-        $this->RoasterDetail->save($data4rd);
-
-        //Swap tbl insert data      
-        $this->request->data['Swap']['user_id'] = $loggedUser['id'];
-        $this->request->data['Swap']['pc_id'] = $pc_info;
-        $this->request->data['Swap']['swap_type'] = $this->request->data['RoasterDetail']['swap_type'];
-        $this->request->data['Swap']['swap_by'] = $this->request->data['RoasterDetail']['new_emp_id'];
-        $this->request->data['Swap']['swap_for'] = $this->request->data['RoasterDetail']['old_emp'];
-        $this->request->data['Swap']['shift_name'] = $this->request->data['RoasterDetail']['shift'];
-        $this->request->data['Swap']['date'] = $this->request->data['RoasterDetail']['date'];
-        $this->request->data['Swap']['comment'] = $this->request->data['RoasterDetail']['comment_swap'];
-        $this->Swap->save($this->request->data);
-
-        $msg = '<div class="alert alert-success">
-				<button type="button" class="close" data-dismiss="alert">&times;</button>
-				<strong> Roaster changed successfully:-) </strong>
-			</div>';
-        $this->Session->setFlash($msg);
-        return $this->redirect($this->referer());
-    }
 
     function modify_roaster() {
         $this->loadModel('RoasterDetail');

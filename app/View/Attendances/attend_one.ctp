@@ -56,29 +56,29 @@
                                 foreach ($duty as $single):
                                     // pr($single); exit;
                                     $data = $single['roaster_details'];
-                                $user = $single['users'];
-                                    $id = $data['emp_id'];
+                                    $user = $single['users'];
+                                    $id = $data['user_id'];
                                     ?>
                                     <tr >
                                         <td>
                                             <b> Name:</b>  <?php echo $user['name']; ?><br>
-                                               <b> ID:</b>  <b title="Emp Id" style="color:tomato;"><?php echo $data['emp_id']; ?></b>
-                                          
+                                            <b> ID:</b>  <b title="Emp Id" style="color:tomato;"><?php echo $data['user_id']; ?></b>
+
                                         </td>
                                         <td><?php echo $data['date']; ?></td>  
                                         <td><?php echo substr($data['shift_name_time'], 0, 7); ?></td>
                                         <td><?php echo $data['in_time']; ?></td>
                                         <td> <b  title="Late time" style="color: red;"><?php
-                                        if($data['late_time']!='00:00:00'){
-                                          echo $data['late_time'];  
-                                        }
-                                        ?></b> </td>
+                                                if ($data['late_time'] != '00:00:00') {
+                                                    echo $data['late_time'];
+                                                }
+                                                ?></b> </td>
                                         <td><?php echo $data['out_time']; ?></td>
-                                        <td><b  title="Late time" style="color: green;"><?php 
-                                        if($data['extra_time']!='00:00:00'){
-                                        echo $data['extra_time']; 
-                                        }
-                                        ?></b></td>
+                                        <td><b  title="Late time" style="color: green;"><?php
+                                                if ($data['extra_time'] != '00:00:00') {
+                                                    echo $data['extra_time'];
+                                                }
+                                                ?></b></td>
                                         <td><?php echo $data['total_duty']; ?></td>
                                         <td><?php echo $data['attend_status']; ?></td>
                                     </tr>

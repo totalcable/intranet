@@ -1,5 +1,41 @@
 <?php
 
+//09-09-2018
+
+ function newcustomers($page, $start, $end) {
+        $this->loadModel('PackageCustomer');
+        $this->loadModel('StatusHistory');
+        $offset = --$page * $this->per_page;
+        $conditions = 'status_histories.status ="sales done" AND status_histories.date >="' . $start .
+                '" AND status_histories.date <="' . $end . '"';
+        $sql = "SELECT * FROM package_customers pc                
+            LEFT JOIN status_histories ON pc.id = status_histories.package_customer_id           
+            left join transactions tr on pc.id = tr.package_customer_id    
+            left join psettings ps on ps.id = pc.psetting_id
+            LEFT JOIN packages p ON p.id = ps.package_id 
+            LEFT JOIN custom_packages cp  ON cp.id = pc.custom_package_id";
+
+        $sql .=" WHERE " . $conditions;
+
+        $sql .= " GROUP BY status_histories.package_customer_id order by status_histories.id desc limit 0,200";
+        $customers = $this->PackageCustomer->query($sql);
+        
+        $temp = $this->PackageCustomer->query("SELECT COUNT(pc.id) as total FROM package_customers pc                
+            LEFT JOIN status_histories ON pc.id = status_histories.package_customer_id           
+            left join transactions tr ON pc.id = tr.package_customer_id    
+            left join psettings ps ON ps.id = pc.psetting_id
+            LEFT JOIN packages p ON p.id = ps.package_id 
+            LEFT JOIN custom_packages cp  ON cp.id = pc.custom_package_id WHERE $conditions");
+        $total = $temp[0][0]['total'];
+        $total_page = ceil($total / $this->per_page);
+      
+        $this->set(compact('total_page'));
+        $return['total'] = $total_page;
+        return $customers;
+    }
+
+
+
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates

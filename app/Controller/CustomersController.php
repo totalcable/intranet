@@ -1847,7 +1847,7 @@ WHERE pc.id=$id");
         $this->request->data['PackageCustomer']['schedule_date'] = $dateformat;
         $this->request->data['PackageCustomer']['troubleshoot_moving_date'] = $dateformat; // this date for troubleshoot : tech/shipment/moving
         $this->request->data['PackageCustomer']['status'] = 'scheduled';
-        pr($this->request->data['PackageCustomer']); exit;
+//        pr($this->request->data['PackageCustomer']); exit;
         $this->PackageCustomer->save($this->request->data['PackageCustomer']);
 
         $this->Installation->save($this->request->data['Installation']);

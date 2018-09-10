@@ -131,7 +131,7 @@
                                     ?>
                                     <tr >
                                         <td>
-                                            <b>Name:</b> <?php echo $user['name']; ?><br><b>Emp Id: </b> (<a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'attend_one', $id)) ?>"  target="_blank" title="Click here for individual information :-)">
+                                            <b>Name:</b> <?php echo $user['name']; ?><br><b>Emp Id: </b> (<a href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'attend_one', $id)) ?>"  target="_blank" title="Click here for individual information :-)">
                                                 <?php // echo $data['user_id']; ?>
                                                     <b title="Emp Id" style="color:tomato;"><?php echo $data['user_id']; ?></b>
                                             </a>)

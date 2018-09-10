@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="303">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="306">
         <file>
             <url>app/Controller/ReportsController.php</url>
             <bookmark id="221">
                 <name/>
-                <line>1885</line>
+                <line>1897</line>
                 <key/>
             </bookmark>
             <bookmark id="230">
                 <name/>
-                <line>1971</line>
+                <line>1983</line>
                 <key/>
             </bookmark>
         </file>
@@ -87,17 +87,17 @@
             </bookmark>
             <bookmark id="278">
                 <name/>
-                <line>530</line>
+                <line>299</line>
                 <key/>
             </bookmark>
             <bookmark id="212">
                 <name/>
-                <line>1560</line>
+                <line>1311</line>
                 <key/>
             </bookmark>
             <bookmark id="279">
                 <name/>
-                <line>1646</line>
+                <line>1397</line>
                 <key/>
             </bookmark>
         </file>
@@ -239,7 +239,7 @@
             <url>app/View/Elements/developer-sidebar.ctp</url>
             <bookmark id="290">
                 <name/>
-                <line>164</line>
+                <line>165</line>
                 <key/>
             </bookmark>
         </file>
@@ -294,7 +294,7 @@
             </bookmark>
             <bookmark id="283">
                 <name/>
-                <line>332</line>
+                <line>333</line>
                 <key/>
             </bookmark>
         </file>
@@ -353,12 +353,12 @@
             </bookmark>
             <bookmark id="92">
                 <name/>
-                <line>519</line>
+                <line>506</line>
                 <key/>
             </bookmark>
             <bookmark id="91">
                 <name/>
-                <line>618</line>
+                <line>605</line>
                 <key/>
             </bookmark>
         </file>
@@ -371,40 +371,38 @@
             </bookmark>
         </file>
         <file>
+            <url>app/Controller/AttendancesController.php</url>
+            <bookmark id="306">
+                <name/>
+                <line>357</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>app/Controller/RoastersController.php</url>
+            <bookmark id="305">
+                <name/>
+                <line>165</line>
+                <key/>
+            </bookmark>
             <bookmark id="300">
                 <name/>
-                <line>161</line>
-                <key/>
-            </bookmark>
-            <bookmark id="303">
-                <name/>
-                <line>225</line>
-                <key/>
-            </bookmark>
-            <bookmark id="301">
-                <name/>
-                <line>244</line>
-                <key/>
-            </bookmark>
-            <bookmark id="302">
-                <name/>
-                <line>298</line>
+                <line>169</line>
                 <key/>
             </bookmark>
             <bookmark id="298">
                 <name/>
-                <line>1289</line>
+                <line>1310</line>
                 <key/>
             </bookmark>
-            <bookmark id="293">
+            <bookmark id="304">
                 <name/>
-                <line>1677</line>
+                <line>1711</line>
                 <key/>
             </bookmark>
             <bookmark id="291">
                 <name/>
-                <line>1840</line>
+                <line>1826</line>
                 <key/>
             </bookmark>
         </file>
@@ -432,8 +430,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/server/htdocs/intranet/app/View/Roasters/staticroaster.ctp</file>
-            <file>file:/F:/server/htdocs/intranet/app/View/Roasters/roasterview.ctp</file>
+            <file>file:/F:/server/htdocs/intranet/app/View/Elements/newcustomer.ctp</file>
+            <file>file:/F:/server/htdocs/intranet/app/Controller/TicketsController.php</file>
+            <file>file:/F:/server/htdocs/intranet/app/Controller/ReportsController.php</file>
+            <file>file:/F:/server/htdocs/intranet/app/View/Elements/cancel.ctp</file>
         </group>
     </open-files>
 </project-private>

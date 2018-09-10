@@ -283,6 +283,7 @@ class LeavesController extends AppController {
         $this->set(compact('emps', 'total_late', 'total_absent'));
     }
 
+  
     function emp_late() {
         $this->loadModel('User');
         //Time take in variable for validation end 

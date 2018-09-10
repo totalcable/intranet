@@ -14,9 +14,8 @@
     <div class="page-content">
         <!-- BEGIN PAGE HEADER-->
         <h3 class="page-title">
-            Manage Requested Agent
+            Requested of Agent
         </h3>
-
         <!-- END PAGE HEADER-->
         <!-- BEGIN PAGE CONTENT-->
         <div class="row">
@@ -27,24 +26,19 @@
                         <div class="caption">
                             <i class="fa fa-user"></i>List of All Request
                         </div>
-
                         <div class="tools">
-                            <a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'create')) ?>" title="Add new admin" class="fa fa-plus">
-                            </a>
+                           
                         </div>
                     </div>
                     <div class="portlet-body">
-
                         <?php echo $this->Session->flash(); ?> 
-
                         <table class="table table-striped table-hover table-bordered" id="sample_editable_1">
                             <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Date</th>
                                     <th>In Time</th>                                
-                                    <th>Out Time</th>                                
-                                   
+                                    <th>Out Time</th> 
                                     <th>Group </th>
                                     <!--<th>Status</th>-->
                                     <th>Action</th>
@@ -52,6 +46,8 @@
                             </thead>
                             <tbody>
                                 <?php
+                                $p =  date_default_timezone_get();
+                                pr($p); exit;
                                 foreach ($request_list as $single):
                                     //pr($single); exit;
                                     $agent = $single['users'];
@@ -88,15 +84,15 @@
                                                 if ($m_time <= 0) {
                                                     // Out time approve
                                                     ?>                                                
-                                                    <a onclick="if (confirm( &quot; Are you sure to approve this Admin? &quot; )) {return true; } return false;"
-                                                        href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'requested_approve', $id)) ?>" title="Approve">
+                                                    <a onclick="if (confirm( &quot; Are you sure to approve this Agent? &quot; )) {return true; } return false;"
+                                                        href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'request_approve', $id)) ?>" title="Approve">
                                                         <span class="fa fa-check"></span>
                                                     </a>                          
                                                     &nbsp;&nbsp;  
 
                                                 <?php } elseif ($log_status == 'request') { // In time approve ?>
-                                                    <a onclick="if (confirm( &quot; Are you sure to approve this Admin? &quot; )) {return true; } return false;"
-                                                        href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'requested_approve', $id)) ?>" title="Approve">
+                                                    <a onclick="if (confirm( &quot; Are you sure to approve this Agent? &quot; )) {return true; } return false;"
+                                                        href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'request_approve', $id)) ?>" title="Approve">
                                                         <span class="fa fa-check"></span>
                                                     </a>
                                                 <?php } ?>

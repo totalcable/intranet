@@ -48,7 +48,7 @@
                                     ?>
                                     <tr>
                                         <td>                                           
-                                            <?php echo $user['name']; ?> <b title="Emp Id" style="color:tomato;">(<?php echo $data['user_id']; ?>)</b>
+                                            <?php echo $user['name']; ?> <b title="Emp Id" style="color:tomato;">(<?php echo $data['emp_id']; ?>)</b>
                                         </td>
                                         <td><?php echo $data['date']; ?></td>  
                                         <td>
@@ -67,11 +67,9 @@
                                             ?>
                                             <b style= "color:<?php echo $c; ?>">  <?php echo $v; ?></b>
                                         </td>
-                                        <td>
-                                            <b title="Emp Id" style="font-size: 12px; color:#000; font-weight: normal;">
-                                                <?php echo ucfirst($data['attend_status']); ?>
-                                            </b>
-                                        </td>
+                                        <td><b title="Emp Id" style="font-size: 12px; color:#000; font-weight: normal;"><?php echo ucfirst($data['attend_status']); ?>
+                                        </td></b>
+
                                     </tr>
                                     <?php
                                 endforeach;

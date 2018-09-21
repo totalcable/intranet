@@ -74,8 +74,7 @@
                         <tbody>
                             <?php
                             foreach ($data as $results):
-                                pr($results); exit;
-                                $package = $results;
+                                //$package = $results['package'];
                                 $mac_his = $results['mh'];
 
                                 $customer = $results['customers'];

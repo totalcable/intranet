@@ -14,23 +14,6 @@
     }
 </style>
 
-
-<style type="text/css">
-    .alert {
-
-        padding: 6px;
-        margin-bottom: 5px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        text-align: center;
-    }
-    .txtArea { width:300px; }
-    ul.pagination {
-        display: flex;
-        justify-content: center;
-    }
-</style>
-
 <div class="page-content-wrapper">
     <div class="page-content">
         <!-- BEGIN PAGE CONTENT-->
@@ -111,9 +94,7 @@
 
                         <hr>
                         <div class="row">
-
                             <div class="col-xs-12">
-
                                 <table class="table table-striped table-hover table-bordered" id="sample_editable_1">
                                     <thead>
                                         <tr> 
@@ -141,7 +122,7 @@
                                             <th class="hidden-480">
                                                 Registration Date
                                             </th>
-                                            <th class="hidden-480">
+                                             <th class="hidden-480">
                                                 Installation Date
                                             </th>
                                         </tr>
@@ -156,7 +137,7 @@
                                             ?>
                                             <tr>
                                                 <td><?php echo $info['pc']['id']; ?></td>
-                                                <td> <a href="<?php echo Router::url(array('controller' => 'customers', 'action' => 'edit', $info['pc']['id'])) ?>" target="_blank"><?php echo $info['pc']['first_name'] . " " . $info['pc']['middle_name'] . " " . $info['pc']['last_name']; ?></a> </td>
+                                                <td> <a href="<?php echo Router::url(array('controller' => 'customers', 'action' => 'edit', $info['pc']['id'])) ?>" target="_blank"><?php echo $info['pc']['first_name'] . " " .$info['pc']['middle_name'] . " " . $info['pc']['last_name']; ?></a> </td>
                                                 <td><?php echo $customer_address; ?></td>
                                                 <td><?php echo $info['pc']['mac']; ?></td>
                                                 <td><?php echo $info['pc']['cell']; ?></td>
@@ -164,10 +145,10 @@
                                                     <?php
                                                     if (!empty($info['pc']['psetting_id'])) {
                                                         echo $info['ps']['name'];
-                                                    } elseif (!empty($info['pc']['custom_package_id'])) {
+                                                    } elseif (!empty ($info['pc']['custom_package_id'])) {
                                                         echo $info['cp']['duration'] . ' Months, Custom package ' . $info['cp']['charge'] . '$';
-                                                    } else {
-                                                        echo 'Package not set !';
+                                                    }else {
+                                                      echo 'Package not set !';
                                                     }
                                                     ?>
                                                 </td>
@@ -181,7 +162,7 @@
                                                     echo $info['tr']['payable_amount'] - $paid;
                                                     ?> USD
                                                 </td>
-                                                <!--<td><?php // echo date('m-d-Y', strtotime($info['tr']['exp_date']));    ?></td>-->                                                
+                                                <!--<td><?php // echo date('m-d-Y', strtotime($info['tr']['exp_date']));  ?></td>-->                                                
                                                 <td><?php echo date('m-d-Y', strtotime($info['pc']['created'])); ?></td>  
                                                 <td><?php echo date('m-d-Y', strtotime($info['pc']['modified'])); ?></td>  
                                             </tr>

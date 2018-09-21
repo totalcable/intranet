@@ -26,7 +26,7 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <b>Total Late : </b> <b ><a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late')) ?>" title="Click here for detail information" style="font-weight: normal; color: blue;"><?php echo $total_late; ?></a></b>&nbsp;
-                            <b>Total Absent : </b> <b ><a target="_blank" href="#" title="Click here for detail information" style="font-weight: normal; color: blueviolet;"><?php echo $total_absent; ?></a></b>
+                            <b>Total Absent : </b> <b ><a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leaveofroaster')) ?>" title="Click here for detail information" style="font-weight: normal; color: blueviolet;"><?php echo $total_absent; ?></a></b>
                                        
                             <i class="fa fa-user"></i>
                         </div>

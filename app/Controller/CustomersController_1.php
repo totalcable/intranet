@@ -11,7 +11,7 @@ App::import('Controller', 'Payments');
 App::import('Controller', 'Reports');
 
 class CustomersController extends AppController {
-
+  
     var $layout = 'admin';
 
     public function beforeFilter() {
@@ -460,95 +460,6 @@ class CustomersController extends AppController {
         return $this->redirect($this->referer());
     }
 
-    function update_status_($id) {
-        $data4statusHistory = array();
-        $this->loadModel('StatusHistory');
-        $this->loadModel('MacHistory');
-        $this->loadModel('PackageCustomer');
-        $loggedUser = $this->Auth->user();
-        $data = array();
-
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-
-        foreach ($this->request->data['UpdateCustomer'] as $key => $arr) {
-            $data[$key] = json_encode($arr);
-        }
-
-        $string = str_replace(array('[', ']'), '', $data);
-
-        $this->request->data['StatusHistory']['id'] = $data['id'];
-        $this->request->data['StatusHistory']['mac'] = '[' . $string['mac'] . ']';
-        $this->request->data['StatusHistory']['status'] = '[' . $string['status'] . ']';
-        $this->request->data['StatusHistory']['system'] = '[' . $string['system'] . ']';
-        $this->request->data['StatusHistory']['date'] = '[' . $string['date'] . ']';
-        $this->request->data['StatusHistory']['user_id'] = '[' . $string['user_id'] . ']';
-
-        $this->request->data['StatusHistory']['package_customer_id'] = $id;
-        $this->request->data['StatusHistory']['log_user_id'] = $loggedUser['id'];
-        $st_lastdata = $this->StatusHistory->save($this->request->data['StatusHistory']);
-
-        $data_mac_history = array(
-            'user_id' => $st_lastdata['StatusHistory']['log_user_id'],
-            'package_customer_id' => $st_lastdata['StatusHistory']['package_customer_id'],
-            'mac' => $st_lastdata['StatusHistory']['mac'],
-            'system' => $st_lastdata['StatusHistory']['system'],
-            'installed_by' => $st_lastdata['StatusHistory']['user_id'],
-            'installation_date' => $st_lastdata['StatusHistory']['date'],
-            'status' => $st_lastdata['StatusHistory']['status']
-        );
-        $this->MacHistory->saveField("pc_id", $pc_info);
-        $this->MacHistory->save($data_mac_history);
-
-        //slect last status of customer from status_histories and update package cusotmer status field
-        $last_id = $this->StatusHistory->query("SELECT id, status FROM status_histories  WHERE package_customer_id = $id order by id desc limit 0,1");
-        $id_l = $last_id[0]['status_histories']['id'];
-
-        $s1 = $this->StatusHistory->query("SELECT id, status FROM status_histories  WHERE STATUS LIKE '%active%'  AND id = $id_l");
-        $st1 = count($s1);
-
-        $s2 = $this->StatusHistory->query("SELECT status FROM status_histories  WHERE STATUS LIKE  '%hold%'  AND id = $id_l");
-        $st2 = count($s2);
-
-        $s3 = $this->StatusHistory->query("SELECT status FROM status_histories  WHERE STATUS LIKE  '%canceled%'  AND id = $id_l");
-        $st3 = count($s3);
-
-        if (!empty($st1)) {
-            $st2 = 0;
-            $st3 = 0;
-            $mac_status = 'Active';
-        }
-
-        if ($st2 > 0) {
-            $st3 = 0;
-            $mac_status = 'Hold';
-        }
-
-        if ($st3 > 0) {
-            $mac_status = 'Canceled';
-        }
-
-        //update data in package customer
-        $this->request->data['PackageCustomer']['id'] = $id;
-        $this->request->data['PackageCustomer']['mac'] = '[' . $string['mac'] . ']';
-        $this->request->data['PackageCustomer']['mac_status'] = '[' . $string['status'] . ']';
-        $this->request->data['PackageCustomer']['system'] = '[' . $string['system'] . ']';
-        $this->request->data['PackageCustomer']['mac_status'] = $mac_status;
-
-//        $this->request->data['PackageCustomer']['pc_id'] = $pc_info;
-        $this->PackageCustomer->save($this->request->data['PackageCustomer']);
-
-        $Msg = '<div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong>Mac updated successfully! </strong>
-        </div>';
-        $this->Session->setFlash($Msg);
-        return $this->redirect($this->referer());
-    }
-
     function update_status($id) {
         $data4statusHistory = array();
         $this->loadModel('StatusHistory');
@@ -557,64 +468,45 @@ class CustomersController extends AppController {
         $this->loadModel('Track');
         $loggedUser = $this->Auth->user();
         $data = array();
-        $last_data = $this->request->data['UpdateCustomer'];
-//        pr($this->request->data['UpdateCustomer']); exit;
-//       $this->PackageCustomer->set($this->request->data);
+        
+//        pr($this->request->data); exit;
+
         //check for new ticket generate start
         $hold = $this->request->data['UpdateCustomer']['status']['0'] = 'hold';
         $cancled = $this->request->data['UpdateCustomer']['status']['0'] = 'cancled';
         $active = $this->request->data['UpdateCustomer']['status']['0'] = 'active';
-//pr($this->request->data); exit;
-        if ($hold || $cancled || $active) {
 
+        if ($hold || $cancled || $active) {
+// pr($cancled); exit;
             $pc_id = $this->params['pass'][0];
             $issue_id20 = 20;
             $issue_id21 = 21;
             $issue_id27 = 27;
-
-            $issue_id29 = 29;
-            $issue_id30 = 30;
-            $issue_id24 = 24;
-            $issue_id31 = 31;
-            $issue_id32 = 32;
-            $issue_id101 = 101;
-            $issue_id28 = 28;
-
             $track_info = $this->Track->query("select `id`, `issue_id`,`ticket_id`,`package_customer_id`,`status` from tracks tr
                     where tr.package_customer_id = $pc_id
-                    AND (tr.issue_id = $issue_id20
-                    OR tr.issue_id = $issue_id21
-                    OR tr.issue_id = $issue_id27
-                        
-                    OR tr.issue_id = $issue_id29
-                    OR tr.issue_id = $issue_id30
-                    OR tr.issue_id = $issue_id24
-                    OR tr.issue_id = $issue_id31
-                    OR tr.issue_id = $issue_id32
-                    OR tr.issue_id = $issue_id101
-                    OR tr.issue_id = $issue_id28)
+                    AND (tr.issue_id = $issue_id20 OR tr.issue_id = $issue_id21 OR tr.issue_id = $issue_id27)
                     order by tr.id desc limit 0,1");
-
+//echo $this->Track->getLastQuery();
             if (!empty($track_info)) {
-
                 $data = $track_info[0]['tr'];
-
                 if ($data['status'] == 'open') {
+//                    pr('one'); exit;
                     $Msg = '<div class="alert alert-success">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong style="color:red;">Please solve the last reconnect / hold / cancel related ticket </strong>
+        <strong style="color:red;">Please solve the last hold/cancel related ticket </strong>
         </div>';
                     $this->Session->setFlash($Msg);
                     return $this->redirect($this->referer());
                 } else {
-//                     pr('hg'); exit;
+//                    pr('two');
+//                    exit;
                     //pc , ip and date time collect
                     $myIp = getHostByName(php_uname('n'));
                     $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
                     $date = date("Y-m-d h:i:sa");
                     $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
 
-                    foreach ($last_data as $key => $arr) {
+                    foreach ($this->request->data['UpdateCustomer'] as $key => $arr) {
                         $data[$key] = json_encode($arr);
                     }
 
@@ -629,7 +521,6 @@ class CustomersController extends AppController {
 
                     $this->request->data['StatusHistory']['package_customer_id'] = $id;
                     $this->request->data['StatusHistory']['log_user_id'] = $loggedUser['id'];
-//                    pr($this->request->data['StatusHistory']); exit;
                     $st_lastdata = $this->StatusHistory->save($this->request->data['StatusHistory']);
 
                     $data_mac_history = array(
@@ -688,7 +579,8 @@ class CustomersController extends AppController {
                     return $this->redirect($this->referer());
                 }
             } else {
-//                 pr('4'); exit;
+//                pr('three');
+//                exit;
                 $Msg = '<div class="alert alert-success">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         <strong style="color:red;">Please create a ticket first </strong>
@@ -708,13 +600,33 @@ class CustomersController extends AppController {
         $this->loadModel('MacDetail');
         $id = $this->params['pass'][0];
         $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
+          //pc , ip and date time collect
         $myIp = getHostByName(php_uname('n'));
         $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
         $date = date("Y-m-d h:i:sa");
         $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
         $concate_data = array();
-
+        
+        //MacDetail table data insert start
+//       $mac_d = $this->request->data['SaveMac']['mac'][0][0];
+//       $system_d = $this->request->data['SaveMac']['system'][0][0];
+//       $status_d = $this->request->data['SaveMac']['status'][0][0];
+//       $date_d = $this->request->data['SaveMac']['date'][0][0];
+//       $user_id_d = $this->request->data['SaveMac']['user_id'][0][0];       
+//       
+//       $mac_detail = array(
+//            'user_id' => $loggedUser['id'],
+//            'package_customer_id' => $id,
+//            'mac' => $mac_d,
+//            'system' => $system_d,
+//            'status' => $status_d,
+//            'installation_date' => $date_d,
+//            'installed_by' => $user_id_d,       
+//            'pc_id' => $pc_info         
+//        );  
+//        $this->MacDetail->save($mac_detail);
+        //MacDetail table data insert end
+       
         //slect last mac info of a customer for update StatusHistory table
         $last_data = $this->StatusHistory->query("SELECT * FROM status_histories  WHERE package_customer_id = $id ORDER BY id DESC LIMIT 1");
         $dcode = $last_data[0]['status_histories'];
@@ -1073,7 +985,7 @@ WHERE transaction_id = " . $statement['tr']['id']
             $ref_name = 0;
             $ref_cell = 0;
         }
-
+        
         $this->set(compact('bonus', 'ref_cell', 'ref_name', 'users', 'allStatus', 'status', 'transactions', 'customer_info', 'c_acc_no', 'macstb', 'custom_package_duration', 'checkMark', 'statusHistories'));
 
 //        Ticket History
@@ -1283,7 +1195,7 @@ WHERE  transactions.id = $param";
                 $c = trim($c_n);
                 $this->request->data['PackageCustomer']['referred'] = $c;
             }
-            // pr($this->request->data); exit;        
+//     pr($this->request->data); exit;        
             $pc = $this->PackageCustomer->save($this->request->data['PackageCustomer']);
 //pr($pc['PackageCustomer']['referred']);
 //            exit;
@@ -1595,7 +1507,7 @@ WHERE pc.status = 'requested' AND pc.follow_up = 1");
                     left join custom_packages cp on cp.id = pc.custom_package_id 
                     left join issues i on pc.issue_id = i.id
                     WHERE (pc.follow_up=0 AND pc.status ='requested' AND 
-                    pc.status != 'old_ready' ) AND shipment =0  ORDER BY pc.created DESC" . " LIMIT " . $offset . "," . $this->per_page);
+                    pc.status != 'old_ready' ) AND shipment =0  ORDER BY pc.created DESC"." LIMIT " . $offset . "," . $this->per_page);
 
         $temp = $this->PackageCustomer->query("SELECT COUNT(pc.id) as total FROM package_customers pc 
                     left join comments c on pc.id = c.package_customer_id 
@@ -1666,7 +1578,7 @@ WHERE pc.status = 'requested' AND pc.follow_up = 1");
             }
         }
         $technician = $this->User->find('list', array('conditions' => array('User.role_id' => 9)));
-        $this->set(compact('filteredData', 'technician', 'total_page'));
+        $this->set(compact('filteredData', 'technician','total_page'));
     }
 
     function schedule_done() {
@@ -1764,8 +1676,6 @@ WHERE pc.id=$id");
         $this->loadModel('Comment');
         $this->PackageCustomer->id = $this->request->data['Comment']['package_customer_id'];
         $this->PackageCustomer->saveField("status", "done");
-        $this->PackageCustomer->saveField("follow_up", "0");
-        $this->PackageCustomer->saveField("follow_date", "");
         $this->Comment->save($this->request->data);
         $msg = '<div class="alert alert-success">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -1829,31 +1739,30 @@ WHERE pc.id=$id");
         $this->loadModel('Installation');
         $loggedUser = $this->Auth->user();
 
+//        $date = $this->request->data['PackageCustomer']['schedule_date'] . ' ' . $this->request->data['PackageCustomer']['seTime'];
         $temp = explode('/', $this->request->data['PackageCustomer']['schedule_date']); //date format change and insert
-        $dateformat = $this->request->data['PackageCustomer']['schedule_date'] = $temp[2] . '-' . $temp[0] . '-' . $temp[1];
 
-        // Insert data in Installation
+        $dateformat = $this->request->data['PackageCustomer']['schedule_date'] = $temp[2] . '-' . $temp[0] . '-' . $temp[1];
+//        $date = $dateformat . ' ' . $this->request->data['PackageCustomer']['seTime'];
         $this->request->data['Installation']['assign_by'] = $loggedUser['id'];
         $this->request->data['Installation']['package_customer_id'] = $this->request->data['PackageCustomer']['id'];
         $this->request->data['Installation']['date'] = $dateformat;
         $this->request->data['Installation']['from'] = $this->request->data['PackageCustomer']['from'];
         $this->request->data['Installation']['to'] = $this->request->data['PackageCustomer']['to'];
         $this->request->data['Installation']['user_id'] = $this->request->data['PackageCustomer']['technician_id'];
+
         $this->request->data['Installation']['status'] = 'scheduled';
         $this->request->data['Installation']['instruction_tech'] = $this->request->data['PackageCustomer']['instruction_tech'];
         $this->request->data['Installation']['c_inform'] = $this->request->data['PackageCustomer']['c_inform'];
 
-        //Package Customer update
         $this->request->data['PackageCustomer']['schedule_date'] = $dateformat;
-        $this->request->data['PackageCustomer']['troubleshoot_moving_date'] = $dateformat; // this date for troubleshoot : tech/shipment/moving
         $this->request->data['PackageCustomer']['status'] = 'scheduled';
-        pr($this->request->data['PackageCustomer']); exit;
-        $this->PackageCustomer->save($this->request->data['PackageCustomer']);
 
-        $this->Installation->save($this->request->data['Installation']);
+        $this->PackageCustomer->save($this->request->data);
+        $this->Installation->save($this->request->data);
         $msg = '<div class="alert alert-success">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong>Schedule done succeesfully</strong></div>';
+        <strong>Shedule done succeesfully</strong></div>';
         $this->Session->setFlash($msg);
         return $this->redirect($this->referer());
     }
@@ -1869,6 +1778,8 @@ WHERE pc.id=$id");
                     left join custom_packages cp on cp.id = pc.custom_package_id 
                     left join issues i on pc.issue_id = i.id
                     WHERE pc.shipment = 1 AND pc.status ='requested'");
+
+
         $filteredData = array();
         $unique = array();
         $index = 0;
@@ -2454,13 +2365,13 @@ where LOWER(i.name) = 'wire problem' and approved = 0");
         $this->loadModel('User');
         $this->loadModel('PackageCustomer');
         $allData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                    left join comments c on pc.id = c.package_customer_id
-                    left join users u on pc.user_id = u.id
-                    left join users ut on pc.technician_id = ut.id
-                    left join psettings ps on ps.id = pc.psetting_id
-                    left join custom_packages cp on cp.id = pc.custom_package_id 
-                    left join issues i on pc.issue_id = i.id
-                    WHERE pc.status = 'old_ready'");
+left join comments c on pc.id = c.package_customer_id
+left join users u on pc.user_id = u.id
+left join users ut on pc.technician_id = ut.id
+left join psettings ps on ps.id = pc.psetting_id
+left join custom_packages cp on cp.id = pc.custom_package_id 
+left join issues i on pc.issue_id = i.id
+WHERE pc.status = 'old_ready'");
         $filteredData = array();
         $unique = array();
         $index = 0;
@@ -2518,7 +2429,6 @@ where LOWER(i.name) = 'wire problem' and approved = 0");
         $this->set(compact('filteredData', 'technician'));
     }
 
-
     function moving() {
         $this->loadModel('User');
         $this->loadModel('PackageCustomer');
@@ -2545,7 +2455,7 @@ where LOWER(i.name) = 'wire problem' and approved = 0");
                 left join psettings ps on ps.id = pc.psetting_id
                 left join custom_packages cp on cp.id = pc.custom_package_id 
                 left join issues i on pc.issue_id = i.id
-                 where (LOWER(i.name) = 'moving' OR LOWER(i.name) = 'Moving by technician' OR LOWER(i.name) = 'Moving (Room change)' OR LOWER(i.name) = 'Moving (Others)') and approved = 0 AND pc.status  = 'old_ready' AND $conditions");
+                where (LOWER(i.name) = 'moving' OR LOWER(i.name) = 'Moving by technician' OR LOWER(i.name) = 'Moving (Room change)' OR LOWER(i.name) = 'Moving (Others)') and approved = 0 AND $conditions");
 
                 $filteredData = array();
                 $unique = array();
@@ -2605,7 +2515,7 @@ where LOWER(i.name) = 'wire problem' and approved = 0");
                 left join psettings ps on ps.id = pc.psetting_id
                 left join custom_packages cp on cp.id = pc.custom_package_id 
                 left join issues i on pc.issue_id = i.id
-                 where (LOWER(i.name) = 'moving' OR LOWER(i.name) = 'Moving by technician' OR LOWER(i.name) = 'Moving (Room change)' OR LOWER(i.name) = 'Moving (Others)') and approved = 0 AND pc.status  = 'old_ready' AND $conditions");
+                where (LOWER(i.name) = 'moving' OR LOWER(i.name) = 'Moving by technician' OR LOWER(i.name) = 'Moving (Room change)' OR LOWER(i.name) = 'Moving (Others)') and approved = 0 AND $conditions");
 
                 $filteredData = array();
                 $unique = array();
@@ -2657,19 +2567,8 @@ where LOWER(i.name) = 'wire problem' and approved = 0");
             }
         } else {
             $conditions = "";
-            //$p_date = date('Y-m-d');
-            //$p_date = '2015-01-01';
-
-            // $p_date = '2018-09-13';
-            // $conditions .="pc.issue_date >='" . $p_date . "'";
-
-            //for view last 4 days data
-            $datrange['end']=date('Y-m-d');
-            $datrange['start']="" ;
-            $datrange['start']= date('Y-m-d', strtotime($datrange['start'] . "-4 days"));
-            $conditions .="pc.issue_date >='" . $datrange['start'] . "' AND  pc.issue_date <='" . $datrange['end'] . "'";
-
-           // pr($conditions); exit();
+            $p_date = '2015-01-01';
+            $conditions .="pc.issue_date >='" . $p_date . "'";
 
             $allData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
             left join comments c on pc.id = c.package_customer_id
@@ -2678,11 +2577,8 @@ where LOWER(i.name) = 'wire problem' and approved = 0");
             left join psettings ps on ps.id = pc.psetting_id
             left join custom_packages cp on cp.id = pc.custom_package_id 
             left join issues i on pc.issue_id = i.id
-            where (LOWER(i.name) = 'moving' OR LOWER(i.name) = 'Moving by technician' OR LOWER(i.name) = 'Moving (Room change)' OR LOWER(i.name) = 'Moving (Others)') AND approved = 0 AND pc.status  = 'old_ready'  AND $conditions");
-            //echo $this->PackageCustomer->getLastQuery();exit;
-            
-           // pr($allData); exit();
-
+            where (LOWER(i.name) = 'moving' OR LOWER(i.name) = 'Moving by technician' OR LOWER(i.name) = 'Moving (Room change)' OR LOWER(i.name) = 'Moving (Others)') and approved = 0");
+//            echo $this->PackageCustomer->getLastQuery();exit;
             $filteredData = array();
             $unique = array();
             $index = 0;
@@ -2734,8 +2630,6 @@ where LOWER(i.name) = 'wire problem' and approved = 0");
         $technician = $this->User->find('list', array('conditions' => array('User.role_id' => 9)));
         $this->set(compact('filteredData', 'technician'));
     }
-
-
 
     function remote_problem() {
         $this->loadModel('User');
@@ -2949,7 +2843,7 @@ where LOWER(i.name) = 'remote problem' and approved = 0 and LOWER(pc.status)!= '
         return $this->redirect($this->referer());
     }
 
-    function excel_sheet_() {
+    function excel_sheet() {
         $this->loadModel('User');
         $this->loadModel('PackageCustomer');
         $this->loadModel('Referral');
@@ -2986,8 +2880,10 @@ where LOWER(i.name) = 'remote problem' and approved = 0 and LOWER(pc.status)!= '
                     left join installations ins on ins.package_customer_id = pc.id
                     LEFT JOIN referrals on pc.id = ref.referred_for 
                     WHERE (pc.status = 'scheduled' OR pc.status = 'done by tech') and $conditions";
-
+                echo $sql;
+                exit;
                 $allData = $this->PackageCustomer->query($sql);
+//                pr($allData); exit;
                 $filteredData = array();
                 $unique = array();
                 $index = 0;
@@ -3040,6 +2936,7 @@ where LOWER(i.name) = 'remote problem' and approved = 0 and LOWER(pc.status)!= '
 //                        if (!empty($data['ref']['id'])) {
                         $filteredData[$index]['ref'] = $data['ref'];
 //                        }
+//                    pr($data['ref']); exit;
                     }
                 }
             } else {
@@ -3175,7 +3072,6 @@ where LOWER(i.name) = 'remote problem' and approved = 0 and LOWER(pc.status)!= '
                     if (!empty($data['ins']['id'])) {
                         $filteredData[$index]['ins'] = $data['ins'];
                     }
-
                     $filteredData[$index]['comments'] = array();
                     $temp = array('content' => $data['c'], 'user' => $data['u']);
                     $filteredData[$index]['comments'][] = $temp;
@@ -3193,328 +3089,49 @@ where LOWER(i.name) = 'remote problem' and approved = 0 and LOWER(pc.status)!= '
         $this->set(compact('filteredData', 'technician'));
     }
 
-    function excel_sheet($page = 1) {
-        $this->loadModel('User');
-        $this->loadModel('PackageCustomer');
-        $this->loadModel('Referral');
-        $this->loadModel('Installation');
-        $this->loadModel('Log');
-        $offset = --$page * $this->per_page;
-        
-        if ($this->request->is('post') || $this->request->is('put')) {
-            if (!empty($this->request->data['PackageCustomer']['daterange'])) {
-                $datrange = json_decode($this->request->data['PackageCustomer']['daterange'], true);
-               
-                $ds = new DateTime($datrange['start']);
-                $timestamp = $ds->getTimestamp(); // Unix timestamp
-                $startd = $ds->format('m/y'); // 2003-10-16
-                $de = new DateTime($datrange['end']);
-                $timestamp = $de->getTimestamp(); // Unix timestamp
-                $endd = $de->format('m/y'); // 2003-10-16
-                $conditions = "";
-                $condition_date = "";
-                if (count($datrange)) {
-                    if ($datrange['start'] == $datrange['end']) {
-                        $nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                        //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                        //CAST(pc.schedule_date as DATE)   
-                        $conditions .="pc.date ='" . $datrange['start'] . "'";
-                    } else {
-                        $conditions .="pc.date >='" . $datrange['start'] . "' AND  pc.date <='" . $datrange['end'] . "'";
-                    }
-                }
-                //pr('1'); exit;
-
-                $sql = "SELECT * FROM package_customers pc 
-                left join psettings ps on ps.id = pc.psetting_id
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join installations ins on ins.package_customer_id = pc.id
-                WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') 
-                OR (dealer !='' AND pc.status ='requested') OR
-                (pc.shipment = 1 AND pc.status ='requested') OR (pc.follow_up = 0 AND pc.status = 'done' AND pc.follow_date != ''))                     
-                and $conditions LIMIT $offset,$this->per_page";
-                //echo $sql;
-               // exit;
-            } else {
-                 //pr('2'); exit;
-                $conditions = "";
-                $p_date = '2015-01-01';
-                $conditions .="pc.date >='" . $p_date . "'";
-                $sql = "SELECT * FROM package_customers pc 
-                left join psettings ps on ps.id = pc.psetting_id
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join installations ins on ins.package_customer_id = pc.id
-                WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') 
-                OR (dealer !='' AND pc.status ='requested') OR
-                (pc.shipment = 1 AND pc.status ='requested') 
-                OR (pc.follow_up = 0 AND pc.status = 'done' AND pc.follow_date != ''))                     
-                and $conditions LIMIT $offset,$this->per_page";
-
-                $allData = $this->PackageCustomer->query($sql);
-
-                $filteredData = array();
-                $unique = array();
-                $index = 0;
-                foreach ($allData as $key => $data) {
-                    $pd = $data['pc']['id'];
-                    if (isset($unique[$pd])) {
-                        if ($key != 0)
-                            $index++;
-                        $unique[$pd] = 'set';
-                        $filteredData[$index]['customers'] = $data['pc'];
-                        $filteredData[$index]['package'] = array(
-                            'name' => 'No package dealings',
-                            'duration' => 'Not Applicable',
-                            'amount' => 'not Applicable'
-                        );
-                        if (!empty($data['ps']['id'])) {
-                            $filteredData[$index]['package'] = array(
-                                'name' => $data['ps']['name'],
-                                'duration' => $data['ps']['duration'],
-                                'amount' => $data['ps']['amount']
-                            );
-                        }
-                        if (!empty($data['cp']['id'])) {
-                            $filteredData[$index]['package'] = array(
-                                'name' => $data['cp']['duration'] . ' months custom package',
-                                'duration' => $data['cp']['duration'],
-                                'amount' => $data['cp']['charge']
-                            );
-                        }
-                    }
-                }
-
-            }
-             //pr('3'); exit;
-        } else {
-           
-            $conditions = "";
-            // for today's data view
-           // $p_date = date('Y-m-d');
-           // $p_date = '2015-01-01'; 
-           // $conditions .="pc.date >='" . $p_date . "'";
-
-
-            //for view last 4 days data
-            $datrange['end']=date('Y-m-d');
-            $datrange['start']="" ;
-            $datrange['start']= date('Y-m-d', strtotime($datrange['start'] . "-4 days"));
-            $conditions .="pc.date >='" . $datrange['start'] . "' AND  pc.date <='" . $datrange['end'] . "'";
-
-
-            $sql = "SELECT * FROM package_customers pc 
-                left join psettings ps on ps.id = pc.psetting_id
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join installations ins on ins.package_customer_id = pc.id
-                WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') 
-                OR (dealer !='' AND pc.status ='requested') OR
-                (pc.shipment = 1 AND pc.status ='requested') OR (pc.follow_up = 0 AND pc.status = 'done' AND pc.follow_date != ''))                     
-                and $conditions LIMIT $offset,$this->per_page";
-            //echo $sql; exit;
-        }
-         //pr('5'); exit;
-        $filteredData = $this->PackageCustomer->query($sql);
-        // pagination start
-        $temp = $this->PackageCustomer->query("SELECT COUNT(pc.id) as total FROM package_customers pc                                
-                left join psettings ps on ps.id = pc.psetting_id
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join installations ins on ins.package_customer_id = pc.id
-                WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') 
-                OR (dealer !='' AND pc.status ='requested') OR (pc.shipment = 1 AND pc.status ='requested')
-                OR (pc.follow_up = 0 AND pc.status = 'done' AND pc.follow_date != '')) and $conditions ");
-       // echo $this->PackageCustomer->getLastQuery(); exit;
-        $total = $temp[0][0]['total'];
-        $total_page = ceil($total / $this->per_page);
-
-        $technician = $this->User->find('list', array('conditions' => array('User.role_id' => 9)));
-
-        $this->set(compact('filteredData', 'technician', 'total_page'));
-    }
-
-
-    function troubleshot_excel_sheet($page = 1) {
+    function shipment_excel_sheet() {
         $this->loadModel('User');
         $this->loadModel('PackageCustomer');
         $this->loadModel('Comment');
-        $this->loadModel('Installation');
-        $offset = --$page * $this->per_page;
-        if ($this->request->is('post') || $this->request->is('put')) {
-            if (!empty($this->request->data['PackageCustomer']['daterange'])) {
-                $datrange = json_decode($this->request->data['PackageCustomer']['daterange'], true);
-
-                $start = $datrange['start'];
-                $end = $datrange['end'];
-        
-                if (count($datrange)) {
-                    if ($start == $end) {
-                        $nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                        //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                        //CAST(pc.schedule_date as DATE)                        
-                        $conditions = "pc.date ='" . $datrange['start'] . "'";
-                    } else {
-                        $conditions = "pc.date >='" . $datrange['start'] . "' AND  pc.date <='" . $datrange['end'] . "'";
-                    }
-                }
-                $filteredData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                            left join comments c on pc.id = c.package_customer_id
-                            left join users u on pc.user_id = u.id
-                            left join users ut on pc.technician_id = ut.id
-                            left join psettings ps on ps.id = pc.psetting_id
-                            left join custom_packages cp on cp.id = pc.custom_package_id 
-                            left join installations ins on ins.package_customer_id = pc.id
-                            left join issues i on pc.issue_id = i.id                          
-                            WHERE (pc.status = 'old_ready' AND (pc.issue_id !=17 AND pc.issue_id !=229 AND pc.issue_id !=154 AND 
-                            pc.issue_id !=17 AND pc.issue_id !=192) )  
-                            OR (pc.shipment = 2 and approved = 0 and pc.status ='requested') AND ($conditions OR pc.date != '0000-00-00')
-                            GROUP BY pc.id LIMIT $offset,$this->per_page ");
-
-
-                         
-
-
-
-            } else {
-                $conditions = "";
-                $pc_created = '1969-01-01';
-                $conditions .="pc.date >='" . $pc_created . "'";
-                $filteredData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                            left join comments c on pc.id = c.package_customer_id
-                            left join users u on pc.user_id = u.id
-                            left join users ut on pc.technician_id = ut.id
-                            left join psettings ps on ps.id = pc.psetting_id
-                            left join custom_packages cp on cp.id = pc.custom_package_id 
-                            left join installations ins on ins.package_customer_id = pc.id
-                            left join issues i on pc.issue_id = i.id
-                            WHERE (pc.status = 'old_ready' AND (pc.issue_id !=17 AND pc.issue_id !=229 AND pc.issue_id !=154 AND pc.issue_id !=17 AND pc.issue_id !=192) )  
-                            OR (pc.shipment = 2 and approved = 0 and pc.status ='requested') AND ($conditions OR pc.date != '0000-00-00')GROUP BY pc.id LIMIT $offset,$this->per_page ");
-            }
-        } else {
-            $conditions = "";
-
-           // $pc_created = date('Y-m-d');
-         // $pc_created = '1969-01-01';
-            //$conditions .="pc.date>='" . $pc_created . "'";
-
-             //for view last 4 days data
-            $datrange['end']=date('Y-m-d');
-            $datrange['start']="" ;
-            $datrange['start']= date('Y-m-d', strtotime($datrange['start'] . "-4 days"));
-            $conditions .="pc.issue_date >='" . $datrange['start'] . "' AND  pc.issue_date <='" . $datrange['end'] . "'";
-
-            
-           
-
-
-
-            // $filteredData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-            //                 left join comments c on pc.id = c.package_customer_id
-            //                 left join users u on pc.user_id = u.id
-            //                 left join users ut on pc.technician_id = ut.id
-            //                 left join psettings ps on ps.id = pc.psetting_id
-            //                 left join custom_packages cp on cp.id = pc.custom_package_id 
-            //                 left join installations ins on ins.package_customer_id = pc.id
-            //                 left join issues i on pc.issue_id = i.id
-            //                 WHERE (pc.status = 'old_ready' AND (pc.issue_id !=17 AND pc.issue_id !=229 AND pc.issue_id !=154 AND pc.issue_id !=17 AND pc.issue_id !=192) )  
-            //                 OR (pc.shipment = 2 and approved = 0 and pc.status ='requested') AND ($conditions OR pc.date != '0000-00-00')GROUP BY pc.id LIMIT $offset,$this->per_page ");
-
-           
-         $filteredData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                            left join comments c on pc.id = c.package_customer_id
-                            left join users u on pc.user_id = u.id
-                            left join users ut on pc.technician_id = ut.id
-                            left join psettings ps on ps.id = pc.psetting_id
-                            left join custom_packages cp on cp.id = pc.custom_package_id 
-                            left join installations ins on ins.package_customer_id = pc.id
-                            left join issues i on pc.issue_id = i.id
-                            WHERE $conditions GROUP BY pc.id ");
-
-               
-           //pr($filteredData); exit;
-  //pc.issue_date='$pc_created'
-
-        }
-
-        // pagination start
-        $temp = $this->PackageCustomer->query("SELECT COUNT(pc.id) as total  FROM package_customers pc 
-                                left join comments c on pc.id = c.package_customer_id
-                                left join users u on pc.user_id = u.id
-                                left join users ut on pc.technician_id = ut.id
-                                left join psettings ps on ps.id = pc.psetting_id
-                                left join custom_packages cp on cp.id = pc.custom_package_id 
-                                left join installations ins on ins.package_customer_id = pc.id
-                                left join issues i on pc.issue_id = i.id
-                                WHERE (pc.status = 'old_ready' AND (pc.issue_id !=17 AND pc.issue_id !=229 AND pc.issue_id !=154 AND pc.issue_id !=17 AND pc.issue_id !=192) )  
-                            OR (pc.shipment = 2 and approved = 0 and pc.status ='requested') AND ($conditions OR pc.date != '0000-00-00')GROUP BY pc.id LIMIT $offset,$this->per_page ");
-        $total = $temp[0][0]['total'];
-        $total_page = ceil($total / $this->per_page);
-
-        $technician = $this->User->find('list', array('conditions' => array('User.role_id' => 9)));
-
-         //pr($filteredData); exit;
-        // pr($technician);
-         //pr($total_page); exit;
-
-        $this->set(compact('filteredData', 'technician', 'total_page'));
-    }
-
-
-    function excel_moving() {
-        $this->loadModel('User');
-        $this->loadModel('PackageCustomer');
-        $this->loadModel('Comment');
-        $this->loadModel('Installation');
 
         if ($this->request->is('post') || $this->request->is('put')) {
             if (!empty($this->request->data['PackageCustomer']['daterange'])) {
                 $datrange = json_decode($this->request->data['PackageCustomer']['daterange'], true);
                 $start = $datrange['start'];
                 $end = $datrange['end'];
-                if (count($datrange)) {
-                    if ($start == $end) {
-                        $nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                        //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                        //CAST(pc.schedule_date as DATE)                        
-                        $conditions = "ins.date >='" . $datrange['start'] . "' AND ins.date < '" . $nextday . "'";
-                    } else {
-                        $conditions = "ins.date >='" . $datrange['start'] . "' AND  ins.date <='" . $datrange['end'] . "'";
-                    }
-                }
                 $allData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                left join comments c on pc.id = c.package_customer_id
-                left join users u on pc.user_id = u.id
-                left join users ut on pc.technician_id = ut.id
-                left join psettings ps on ps.id = pc.psetting_id
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join installations ins on ins.package_customer_id = pc.id
-                left join issues i on pc.issue_id = i.id
-                WHERE pc.issue_id = 17 AND (pc.status = 'scheduled' OR pc.status = 'done by tech') AND $conditions GROUP BY pc.id");
+            left join comments c on pc.id = c.package_customer_id
+            left join users u on c.user_id = u.id                    
+            left join users ut on pc.technician_id = ut.id
+            left join psettings ps on ps.id = pc.psetting_id
+            left join custom_packages cp on cp.id = pc.custom_package_id 
+            left join issues i on pc.issue_id = i.id
+            WHERE (((pc.shipment = 1 OR (pc.shipment = 2 AND approved = 0)) AND pc.status ='requested')) AND (pc.created  >= '$start' AND pc.created <= '$end')");
             } else {
                 $conditions = "";
                 $pc_created = '2015-01-01';
                 $conditions .="pc.created >='" . $pc_created . "'";
                 $allData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                left join comments c on pc.id = c.package_customer_id
-                left join users u on pc.user_id = u.id
-                left join users ut on pc.technician_id = ut.id
-                left join psettings ps on ps.id = pc.psetting_id
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join installations ins on ins.package_customer_id = pc.id
-                left join issues i on pc.issue_id = i.id
-               WHERE pc.issue_id = 17 AND (pc.status = 'scheduled' OR pc.status = 'done by tech') AND $conditions GROUP BY pc.id");
+            left join comments c on pc.id = c.package_customer_id
+            left join users u on c.user_id = u.id                    
+            left join users ut on pc.technician_id = ut.id
+            left join psettings ps on ps.id = pc.psetting_id
+            left join custom_packages cp on cp.id = pc.custom_package_id 
+            left join issues i on pc.issue_id = i.id
+            WHERE (((pc.shipment = 1 OR (pc.shipment = 2 AND approved = 0)) AND pc.status ='requested')) AND $conditions");
             }
         } else {
             $conditions = "";
             $pc_created = '2015-01-01';
             $conditions .="pc.created >='" . $pc_created . "'";
             $allData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                left join comments c on pc.id = c.package_customer_id
-                left join users u on pc.user_id = u.id
-                left join users ut on pc.technician_id = ut.id
-                left join psettings ps on ps.id = pc.psetting_id
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join installations ins on ins.package_customer_id = pc.id
-                left join issues i on pc.issue_id = i.id
-                WHERE pc.issue_id = 17 AND (pc.status = 'scheduled' OR pc.status = 'done by tech') AND $conditions GROUP BY pc.id");
+            left join comments c on pc.id = c.package_customer_id
+            left join users u on c.user_id = u.id                    
+            left join users ut on pc.technician_id = ut.id
+            left join psettings ps on ps.id = pc.psetting_id
+            left join custom_packages cp on cp.id = pc.custom_package_id 
+            left join issues i on pc.issue_id = i.id
+            WHERE (((pc.shipment = 1 OR (pc.shipment = 2 AND approved = 0)) AND pc.status ='requested')) AND $conditions");
         }
         $filteredData = array();
         $unique = array();
@@ -3555,9 +3172,6 @@ where LOWER(i.name) = 'remote problem' and approved = 0 and LOWER(pc.status)!= '
                         'duration' => $data['cp']['duration'],
                         'amount' => $data['cp']['charge']
                     );
-                }
-                if (!empty($data['ins']['id'])) {
-                    $filteredData[$index]['ins'] = $data['ins'];
                 }
 
                 if (!empty($data['c']['content'])) {

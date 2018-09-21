@@ -19,8 +19,7 @@
         <!-- BEGIN PAGE CONTENT-->
         <div class="row">
             <div class="col-md-12">
-                <br>
-                <div class="portlet box green-jungle">
+                <div class="portlet box green">
                     <div class="portlet-title">
                         <div class="caption">
                             Daily roaster set  
@@ -78,7 +77,7 @@
                                     <?php
                                     echo $this->Form->input('shift', array(
                                         'type' => 'select',
-                                        'options' => array('Morning (07:30 - 01:00)' => 'Morning (07:30 - 01:00)', 'Afternoon (01:00 - 09:00)' => 'Afternoon (01:00 - 09:00)', 'Night (09:00 - 03:00)' => 'Night (09:00 - 03:00)'),
+                                        'options' => array('Morning (07.30 - 12.00)' => 'Morning (07.30 - 12.00)', 'Afternoon (12.00 - 20.00)' => 'Afternoon (12.00 - 20.00)', 'Night (20.00-02.00)' => 'Night (20.00-02.00)'),
                                         'empty' => 'Select Shift',
                                         'class' => 'form-control select2me required'
                                             )
@@ -185,10 +184,12 @@
                                 </label>
                                 <div class="col-md-2">                                                                
                                     <?php
+                                    
+                                                                       
                                     echo $this->Form->input('shift_incharge_id', array(
                                         'type' => 'select',
                                         'options' => $supervisor,
-                                        'value' => $array2[1],
+                                        'value' => $array2['1'],
                                         'empty' => 'Select Shift Incharge',
                                         'class' => 'form-control select2me'
                                             )
@@ -255,22 +256,21 @@
                                     );
                                     ?>
                                 </div>
-                                 <label class="control-label col-md-2">Agent three:
+                                <label class="control-label col-md-2">Agent three:
                                 </label>
-                                <div class="col-md-2">   
+                                <div class="col-md-2">                                                               
                                     <?php
                                     echo $this->Form->input('a3', array(
                                         'type' => 'select',
                                         'options' => $agent,
                                         'value' => $array2[7],
                                         'empty' => 'Select agent',
-                                        'class' => 'form-control select2me'
+                                        'class' => 'form-control select2me ',
                                             )
                                     );
                                     ?>
                                 </div>
                             </div>
-                            
                             <br>
                             <div class="row">                                    
                                 <label class="control-label col-md-2">Agent four:
@@ -291,13 +291,12 @@
                                 </label>
                                 <div class="col-md-2">                                                               
                                     <?php
-//                                      pr($array2['7']); 
                                     echo $this->Form->input('a5', array(
                                         'type' => 'select',
                                         'options' => $agent,
                                         'value' => $array2[9],
                                         'empty' => 'Select agent',
-                                        'class' => 'form-control select2me'
+                                        'class' => 'form-control select2me   pclass',
                                             )
                                     );
                                     ?>
@@ -312,13 +311,12 @@
                                         'options' => $agent,
                                         'value' => $array2[10],
                                         'empty' => 'Select agent',
-                                        'class' => 'form-control select2me',
+                                        'class' => 'form-control select2me   pclass',
                                             )
                                     );
                                     ?>
                                 </div>
                             </div>
-                            
                             <br>
                             <div class="row"> 
                                 <label class="control-label col-md-2">Agent seven:
@@ -395,11 +393,11 @@
                                     );
                                     ?>
                                 </div>
-<!--                                <label class="control-label col-md-2">
+                                <label class="control-label col-md-2">
                                     <a target="_blank" title="Click here for set swap :-)" href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'set_swap')) ?>" class="fancybox-fast-view" style="overflow: -webkit-paged-x;">
                                         Swap
                                     </a> 
-                                </label>-->
+                                </label>
                             </div>
                             <br>
                             <br>

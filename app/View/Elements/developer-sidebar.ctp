@@ -22,7 +22,7 @@
 
             <li 
             <?php
-            $admins = array('Logisticsmanage', 'Empsmanage', 'Logisticsadd_product', 'Customersref_bonus', 'Customersmanage_delete_data', 'Otherspaymentsmanage', 'Otherspaymentscreate', 'Otherspaymentsedit', 'AdminsmanageRole', 'Adminsaddrole', 'Adminseditrole', 'AdminsadjustmentMemo', 'AdminsmanageDepartment', 'Adminsadddepartment', 'Adminseditdepartment', 'Messagesmanage', 'Messagesadd', 'Messagesedit', 'Adminsmanage', 'Adminscreate', 'Adminsedit_admin', 'AdminsmanageIssue', 'Adminsaddissue', 'Adminseditissue');
+            $admins = array('Logisticsmanage','Empsmanage', 'Logisticsadd_product', 'Customersref_bonus', 'Customersmanage_delete_data', 'Otherspaymentsmanage', 'Otherspaymentscreate', 'Otherspaymentsedit', 'AdminsmanageRole', 'Adminsaddrole', 'Adminseditrole', 'AdminsadjustmentMemo', 'AdminsmanageDepartment', 'Adminsadddepartment', 'Adminseditdepartment', 'Messagesmanage', 'Messagesadd', 'Messagesedit', 'Adminsmanage', 'Adminscreate', 'Adminsedit_admin', 'AdminsmanageIssue', 'Adminsaddissue', 'Adminseditissue');
             if (in_array($this->name . '' . $this->action, $admins)):
                 ?>
                     class="active"
@@ -61,7 +61,7 @@
                             <i class="fa fa-dashboard"></i>
                             Admin</a>
                     </li>
-
+                    
                     <li <?php if ($this->name . '' . $this->action == 'Empsmanage'): ?> class="active" <?php endif; ?> >
                         <a href="<?php echo Router::url(array('controller' => 'emps', 'action' => 'manage')) ?>"> <i class="fa fa-dashboard "> </i> Emp Manage</a>
                     </li>
@@ -118,9 +118,17 @@
                             Adjustment Memo</a>
                     </li>
 
-                    <li   <?php if ($this->name . '' . $this->action == 'Otherspaymentsmanage' || $this->name . '' . $this->action == 'Otherspaymentscreate' || $this->name . '' . $this->action == 'Otherspaymentsedit'):
-                            ?> class="active" <?php endif; ?> > <a href="<?php echo Router::url(array('controller' => 'otherspayments', 'action' => 'manage')) ?>">
-                            <i class="fa fa-dashboard"></i> Tech Payment</a>
+                    <li
+                    <?php if ($this->name . '' . $this->action == 'Otherspaymentsmanage' || $this->name . '' . $this->action == 'Otherspaymentscreate' || $this->name . '' . $this->action == 'Otherspaymentsedit'):
+                        ?>
+                            class="active"
+                            <?php
+                        endif;
+                        ?>
+                        >
+                        <a href="<?php echo Router::url(array('controller' => 'otherspayments', 'action' => 'manage')) ?>">
+                            <i class="fa fa-dashboard"></i>
+                            Tech Payment</a>
                     </li>
 
                     <li <?php if ($this->name . '' . $this->action == 'Customersmanage_delete_data'): ?> class="active"  <?php endif; ?> >
@@ -139,9 +147,55 @@
                 </ul>
             </li>
 
-            <li <?php $services = array('Customerssearch');
-                        if (in_array($this->name . '' . $this->action, $services)):
-                            ?>  class="active" <?php endif; ?> >                 
+            <!--             Roaster menu start 
+                        <li <?php
+            $roaster = array('Roastersstaticroaster', 'Roasterssetroaster', 'Roastersedit', 'Roastersscript');
+            if (in_array($this->name . '' . $this->action, $roaster)):
+                ?> class="active"<?php endif; ?> ><a href="javascript:;">
+                                <i class="fa fa-envelope"></i> <span class="title">Roaster manage</span>  <span class="arrow "></span> </a>
+                            <ul class="sub-menu">                
+                                <li <?php if ($this->name . '' . $this->action == 'Roastersstaticroaster'): ?> class="active" <?php endif; ?> >
+                                    <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'staticroaster')) ?>"> <i class="fa fa-search"></i> Static roaster</a>
+                                </li>      
+            
+                                <li <?php if ($this->name . '' . $this->action == 'Roasterssetroaster'): ?> class="active" <?php endif; ?> >
+                                    <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'setroaster')) ?>"> <i class="fa fa-search"></i> Set roaster</a>
+                                </li> 
+            
+                                <li <?php if ($this->name . '' . $this->action == 'Roastersedit'): ?> class="active" <?php endif; ?> >
+                                    <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'edit')) ?>"> <i class="fa fa-search"></i> Roaster edit</a>
+                                </li>      
+            
+                                <li <?php if ($this->name . '' . $this->action == 'Roastersscript'): ?> class="active" <?php endif; ?> >
+                                    <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'script')) ?>"> <i class="fa fa-exchange"></i> Script</a>
+                                </li>      
+            
+            
+                            </ul>
+                        </li>
+                         approave by admin for attendance 
+                        <li <?php
+            $atten = array('Adminsapproave', 'Adminsrequested_agent');
+            if (in_array($this->name . '' . $this->action, $atten)):
+                ?> class="active"<?php endif; ?> ><a href="javascript:;">
+                                <i class="fa fa-envelope"></i> <span class="title"> Attendance</span>  <span class="arrow "></span> </a>
+                            <ul class="sub-menu">
+            
+                                <li <?php if ($this->name . '' . $this->action == 'Adminsrequested_agent'): ?> class="active" <?php endif; ?> >
+                                    <a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'requested_agent')) ?>"> <i class="fa fa-search"></i> Agent <span class="arrow "></span></a>
+                                </li>
+                            </ul>
+                        </li>-->
+            <li 
+            <?php
+            $services = array('Customerssearch');
+            if (in_array($this->name . '' . $this->action, $services)):
+                ?>
+                    class="active"
+                    <?php
+                endif;
+                ?>
+                >                 
                 <a href="<?php echo Router::url(array('controller' => 'customers', 'action' => 'search')) ?>">
                     <i class="fa fa-search"></i>
                     <span class="title">Search</span>
@@ -151,105 +205,90 @@
 
             <!-- Roaster menu start -->
             <li <?php
-            $roaster = array('Roastersemp_duty_detail', 'Roastersmonthly_roaster', 'Roastersroaster_modify', 'Roastersroaster_change', 'Roastersroaster_edit', 'Roastersstaticroaster', 'Roasterssetroaster', 'Roastersroaster_update', 'Roastersscript', 'Roastersdaily', 'Roastersroasterview');
+            $roaster = array('Roastersstaticroaster', 'Roasterssetroaster', 'Roastersedit', 'Roastersscript', 'Roastersdaily', 'Roastersroasterview');
             if (in_array($this->name . '' . $this->action, $roaster)):
                 ?> class="active"<?php endif; ?> ><a href="javascript:;">
-                    <i class="fa fa-maxcdn"></i> <span class="title">Roaster manage</span>  <span class="arrow "></span> </a>
+                    <i class="fa fa-envelope"></i> <span class="title">Roaster manage</span>  <span class="arrow "></span> </a>
                 <ul class="sub-menu">                
-                    <li <?php if ($this->name . '' . $this->action == 'Roastersstaticroaster' || $this->name . '' . $this->action == 'Roastersroaster_edit'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'staticroaster')) ?>"> <i class="fa fa-plus-circle"></i> Static Roaster</a>
-                    </li>  
+                    <li <?php if ($this->name . '' . $this->action == 'Roastersstaticroaster'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'staticroaster')) ?>"> <i class="fa fa-search"></i> Static roaster</a>
+                    </li>      
 
-<!--                    <li <?php if ($this->name . '' . $this->action == 'Roasterssetroaster'): ?> class="active" <?php endif; ?> >
-    <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'setroaster')) ?>"> <i class="fa fa-search"></i> Set roaster</a>
-</li> -->
-
-                    <li <?php if ($this->name . '' . $this->action == 'Roastersroaster_change'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'roaster_change')) ?>"> <i class="fa fa-search"></i> Set Roaster</a>
+                    <li <?php if ($this->name . '' . $this->action == 'Roasterssetroaster'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'setroaster')) ?>"> <i class="fa fa-search"></i> Set roaster</a>
                     </li> 
-<!--                    <li <?php if ($this->name . '' . $this->action == 'Roastersscript'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'script')) ?>"> <i class="fa fa-exchange"></i> Script</a>
-                    </li>      -->
 
-<!--                    <li <?php if ($this->name . '' . $this->action == 'Roastersdaily'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'daily')) ?>"> <i class="fa fa-tasks"></i> Daily</a>
-                    </li>-->
+                    <li <?php if ($this->name . '' . $this->action == 'Roastersedit'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'edit')) ?>"> <i class="fa fa-search"></i> Roaster edit</a>
+                    </li>      
+
+                    <li <?php if ($this->name . '' . $this->action == 'Roastersscript'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'script')) ?>"> <i class="fa fa-exchange"></i> Script</a>
+                    </li>      
+
+                    <li <?php if ($this->name . '' . $this->action == 'Roastersdaily'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'daily')) ?>"> <i class="fa fa-exchange"></i> Daily</a>
+                    </li>
 
                     <li <?php if ($this->name . '' . $this->action == 'Roastersroasterview'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'roasterview')) ?>"> <i class="fa fa-eye"></i> Main Roaster</a>
+                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'roasterview')) ?>"> <i class="fa fa-exchange"></i> Roaster view</a>
                     </li>
-
-                    <li <?php if ($this->name . '' . $this->action == 'Roastersroaster_modify'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'roaster_modify')) ?>"> <i class="fa fa-edit"></i> Roaster Modify</a>
-                    </li>
-
-                    <li <?php if ($this->name . '' . $this->action == 'Roastersmonthly_roaster' || $this->name . '' . $this->action == 'Roastersemp_duty_detail'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'monthly_roaster')) ?>"> <i class="fa fa-search"></i> Monthly Duty</a>
-                    </li>
-
-<!--                    <li <?php if ($this->name . '' . $this->action == 'Roastersroaster_update'): ?> class="active" <?php endif; ?> >
-    <a href="<?php echo Router::url(array('controller' => 'roasters', 'action' => 'roaster_update')) ?>"> <i class="fa fa-edit"></i> Roaster edit</a>
-</li>  -->
                 </ul>
             </li>
             <!-- approave by admin for attendance -->
             <li <?php
-            $atten = array('Attendancesemp_attend_byadmin','Attendancespresent_roaster', 'Adminsapproave', 'Attendancesrequest_agent', 'Attendancesrequest_si', 'Attendancesattend_all');
+            $atten = array('Adminspresent_roaster','Adminsapproave', 'Adminsrequested_agent', 'Adminsrequested_si', 'Adminsattend_all');
             if (in_array($this->name . '' . $this->action, $atten)):
                 ?> class="active"<?php endif; ?> ><a href="javascript:;">
                     <i class="fa fa-envelope"></i> <span class="title"> Attendance</span>  <span class="arrow "></span> </a>
                 <ul class="sub-menu">
 
-                    <li <?php if ($this->name . '' . $this->action == 'Attendancesrequest_agent'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'request_agent')) ?>"> <i class="fa fa-search"></i> Agent Request<span class="arrow "></span></a>
+                    <li <?php if ($this->name . '' . $this->action == 'Adminsrequested_agent'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'requested_agent')) ?>"> <i class="fa fa-search"></i> Agent <span class="arrow "></span></a>
                     </li>                    
 
-                    <li <?php if ($this->name . '' . $this->action == 'Attendancesrequest_si'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'request_si')) ?>"> <i class="fa fa-search"></i> SI Request<span class="arrow "></span></a>
+                    <li <?php if ($this->name . '' . $this->action == 'Adminsrequested_si'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'requested_si')) ?>"> <i class="fa fa-search"></i> SI <span class="arrow "></span></a>
+                    </li>
+                    
+                    <li <?php if ($this->name . '' . $this->action == 'Adminspresent_roaster'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'present_roaster')) ?>"> <i class="fa fa-search"></i> Present roaster <span class="arrow "></span></a>
                     </li>
 
-                    <li <?php if ($this->name . '' . $this->action == 'Attendancespresent_roaster'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'present_roaster')) ?>"> <i class="fa fa-search"></i> Today's Roaster<span class="arrow "></span></a>
-                    </li>
-
-                    <li <?php if ($this->name . '' . $this->action == 'Attendancesattend_all'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'attend_all')) ?>"> <i class="fa fa-search"></i> Attendance History <span class="arrow "></span></a>
-                    </li>
-
-                    <li <?php if ($this->name . '' . $this->action == 'Attendancesemp_attend_byadmin'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'attendances', 'action' => 'emp_attend_byadmin')) ?>"> <i class="fa fa-pencil"></i> Set Late Attendance<span class="arrow "></span></a>
+                    <li <?php if ($this->name . '' . $this->action == 'Adminsattend_all'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'admins', 'action' => 'attend_all')) ?>"> <i class="fa fa-search"></i> Attend history <span class="arrow "></span></a>
                     </li>
                 </ul>
             </li>
-
+            
             <li <?php
-            $leave = array('Leavesleaveofroaster', 'Leavesemp_late_detail', 'Leavesemp_late', 'Leavesemp_leave', 'Leavesmanage', 'Leavesleave_approve', 'Leavesleave_approve_admin', 'Leavesadd', 'Leavesuser_leave', 'Leavesleave_approve_si');
+            $leave = array('Leavesemp_leave','Leavesmanage','Leavesleave_approve','Leavesleave_approve_admin','Leavesadd','Leavesuser_leave','Leavesleave_approve_si');
             if (in_array($this->name . '' . $this->action, $leave)):
                 ?> class="active"<?php endif; ?> ><a href="javascript:;">
                     <i class="fa fa-envelope"></i> <span class="title"> Leave</span>  <span class="arrow "></span> </a>
                 <ul class="sub-menu">
-                    <li <?php if ($this->name . '' . $this->action == 'Leavesemp_late_detail' || $this->name . '' . $this->action == 'Leavesemp_leave' || $this->name . '' . $this->action == 'Leavesemp_late'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_leave')) ?>"> <i class="fa fa-pencil"></i> Set Leave <span class="arrow "></span></a>
+                    <li <?php if ($this->name . '' . $this->action == 'Leavesemp_leave'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_leave')) ?>"> <i class="fa fa-search"></i> Set Leave <span class="arrow "></span></a>
                     </li> 
-
+                    
                     <li <?php if ($this->name . '' . $this->action == 'Leavesadd'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'add')) ?>"> <i class="fa fa-envelope"></i> Leave Request <span class="arrow "></span></a>
+                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'add')) ?>"> <i class="fa fa-search"></i> Add <span class="arrow "></span></a>
                     </li>
-
+                    
                     <li <?php if ($this->name . '' . $this->action == 'Leavesmanage'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'manage')) ?>"> <i class="fa fa-book"></i> Manage <span class="arrow "></span></a>
+                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'manage')) ?>"> <i class="fa fa-search"></i> Manage <span class="arrow "></span></a>
                     </li>
-
+                    
                     <li <?php if ($this->name . '' . $this->action == 'Leavesleave_approve_si'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leave_approve_si')) ?>"> <i class="fa fa-check"></i> Approve SI<span class="arrow "></span></a>
+                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leave_approve_si')) ?>"> <i class="fa fa-search"></i> Approve SI<span class="arrow "></span></a>
                     </li>
-
+                    
                     <li <?php if ($this->name . '' . $this->action == 'Leavesleave_approve_admin'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leave_approve_admin')) ?>"> <i class="fa fa-check"></i> Approve Admin<span class="arrow "></span></a>
+                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leave_approve_admin')) ?>"> <i class="fa fa-search"></i> Approve Admin<span class="arrow "></span></a>
                     </li>
-
-                    <li <?php if ($this->name . '' . $this->action == 'Leavesleave_approve' || $this->name . '' . $this->action == 'Leavesleaveofroaster'): ?> class="active" <?php endif; ?> >
-                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leave_approve')) ?>"> <i class="fa fa-check"></i> Approved Leaves<span class="arrow "></span></a>
+                    
+                    <li <?php if ($this->name . '' . $this->action == 'Leavesleave_approve'): ?> class="active" <?php endif; ?> >
+                        <a href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leave_approve')) ?>"> <i class="fa fa-search"></i> Approved Leaves<span class="arrow "></span></a>
                     </li>
 
                 </ul>
@@ -540,21 +579,21 @@
      <a href="<?php echo Router::url(array('controller' => 'transactions', 'action' => 'processAutoRecurring')) ?>"> <i class="fa fa-wrench"> </i> Process</a>
  </li>-->
 
-<?php if ($invoice_created > 0) : ?>
+                    <?php if ($invoice_created > 0) : ?>
                         <li <?php if ($this->name . '' . $this->action == 'Reportsflagmodify'): ?> class="active"  <?php endif; ?>  > 
                             <a href="<?php echo Router::url(array('controller' => 'reports', 'action' => 'flagmodify')) ?>"> <i class="fa fa-wrench"> </i> Modify invoice flag <b title="Total flag have to change" style="color: lightseagreen;"> ( <?php echo $invoice_created; ?> )</b></a>
                         </li>
-<?php endif; ?>
+                    <?php endif; ?>
 
                     <li <?php if ($this->name . '' . $this->action == 'Reportsmodify_customer'): ?> class="active"  <?php endif; ?>  > 
                         <a href="<?php echo Router::url(array('controller' => 'reports', 'action' => 'notify_customer')) ?>"> <i class="fa fa-search"> </i> Card expiration</a>
                     </li>                    
 
-<?php if ($total_declined_sadmin > 0) : ?>
+                    <?php if ($total_declined_sadmin > 0) : ?>
                         <li <?php if ($this->name . '' . $this->action == 'Reportsdecline'): ?> class="active" <?php endif; ?> >
                             <a href="<?php echo Router::url(array('controller' => 'reports', 'action' => 'decline')) ?>"> <i class="fa fa-search"></i> Decline  <b title="Total decline" style="color: lightseagreen;"> ( <?php echo $total_declined_sadmin; ?> )</b></a>
                         </li>
-<?php endif; ?>
+                    <?php endif; ?>
                 </ul>
             </li>
             <li <?php
@@ -567,7 +606,7 @@
                         <a title="Total next month recurring :-)" href="<?php echo Router::url(array('controller' => 'customers', 'action' => 'next_month_recurring')) ?>"><i class="fa fa-search"></i> Next month recurring 
                             <?php if ($total_month_cus > 0) { ?>
                                 ( <b title="Total month recurring" style="color: red;"><?php echo $total_month_cus; ?></b> )
-<?php } ?>
+                            <?php } ?>
                         </a>
                     </li>
                     <li <?php if ($this->name . '' . $this->action == 'Customersdata_next_recurring'): ?> class="active"  <?php endif; ?>  > 

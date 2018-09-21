@@ -17,8 +17,8 @@
 <div class="page-content-wrapper">
     <div class="page-content">
         <!-- BEGIN PAGE HEADER-->
-        <h3 class="page-title"><br>
-            Promise to-pay tickets <small></small>
+        <h3 class="page-title">
+            In-progress tickets <small>You can resolve, unresolve or froward</small>
         </h3>
 
         <!-- END PAGE HEADER-->

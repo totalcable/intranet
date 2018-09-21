@@ -10,77 +10,77 @@
 <div class="page-content-wrapper">
     <div class="page-content">
         <!-- BEGIN PAGE CONTENT-->
-        <!--        <div class="row">
-                    <div class="col-md-12">
-                        <div class="portlet box green">
-                            <div class="portlet-title">
-                                <div class="caption">
-                                    <i class="fa fa-plus"></i>Leave
-                                </div>
-                                <div class="tools">
-                                    <a href="javascript:;" class="reload">
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="portlet-body form">
-                                 BEGIN FORM
-        <?php
-        echo $this->Form->create('RoasterDetail', array(
-            'inputDefaults' => array(
-                'label' => false,
-                'div' => false
-            ),
-            'id' => 'form-validate',
-            'class' => 'form-horizontal',
-            'novalidate' => 'novalidate',
-            'enctype' => 'multipart/form-data',
-            'url' => array('controller' => 'roasters', 'action' => 'edit')
-                )
-        );
-        ?>
-                                <div class="form-body">
-                                    <div class="alert alert-danger display-hide">
-                                        <button class="close" data-close="alert"></button>
-                                        You have some form errors. Please check below.
-                                    </div>
-        <?php echo $this->Session->flash(); ?>
-                                    <div class="form-group">                                
-                                        <label class="control-label col-md-3" for="required"> Enter emp Id</label>
-                                        <div class="col-md-4">
-        <?php
-        echo $this->Form->input(
-                'emp_id', array(
-            'class' => 'form-control required',
-            'type' => 'text'
-                )
-        );
-        ?>
-                                        </div>
-                                    </div>
-        
-                                </div>
-                                <div class="form-actions">
-                                    <div class="row">
-                                        <div class="col-md-offset-5 col-md-4">
-        <?php
-        echo $this->Form->button(
-                'Search', array('class' => 'btn btn-success', 'type' => 'submit')
-        );
-        ?>
-                                        </div>
-                                    </div>
-                                </div>
-        <?php echo $this->Form->end(); ?>
-                                 END FORM
-                            </div>
-                             END VALIDATION STATES
-                        </div>                
+<!--        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet box green">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-plus"></i>Leave
+                        </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="reload">
+                            </a>
+                        </div>
                     </div>
-                </div>-->
+                    <div class="portlet-body form">
+                         BEGIN FORM
+                        <?php
+                        echo $this->Form->create('RoasterDetail', array(
+                            'inputDefaults' => array(
+                                'label' => false,
+                                'div' => false
+                            ),
+                            'id' => 'form-validate',
+                            'class' => 'form-horizontal',
+                            'novalidate' => 'novalidate',
+                            'enctype' => 'multipart/form-data',
+                            'url' => array('controller' => 'roasters', 'action' => 'edit')
+                                )
+                        );
+                        ?>
+                        <div class="form-body">
+                            <div class="alert alert-danger display-hide">
+                                <button class="close" data-close="alert"></button>
+                                You have some form errors. Please check below.
+                            </div>
+                            <?php echo $this->Session->flash(); ?>
+                            <div class="form-group">                                
+                                <label class="control-label col-md-3" for="required"> Enter emp Id</label>
+                                <div class="col-md-4">
+                                    <?php
+                                    echo $this->Form->input(
+                                            'emp_id', array(
+                                        'class' => 'form-control required',
+                                        'type' => 'text'
+                                            )
+                                    );
+                                    ?>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-offset-5 col-md-4">
+                                    <?php
+                                    echo $this->Form->button(
+                                            'Search', array('class' => 'btn btn-success', 'type' => 'submit')
+                                    );
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php echo $this->Form->end(); ?>
+                         END FORM
+                    </div>
+                     END VALIDATION STATES
+                </div>                
+            </div>
+        </div>-->
         <!-- END PAGE CONTENT -->
         <?php // if ($clicked): ?> 
         <h3 class="page-title">
-            SI can approve Leave<small></small>
+          SI can approve Leave<small></small>
         </h3>
         <!-- END PAGE HEADER-->
         <!-- BEGIN PAGE CONTENT-->
@@ -173,14 +173,17 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
-                                                    <div class=" col-md-2">
-                                                        <?php
-                                                        echo $this->Form->button(
-                                                                'approve', array('class' => 'btn green', 'type' => 'submit')
-                                                        );
-                                                        ?>
-                                                    </div>                                                     
+                                                    <div class="form-actions">
+                                                        <div class="row">
+                                                            <div class="col-md-offset-4 col-md-2">
+                                                                <?php
+                                                                echo $this->Form->button(
+                                                                        'approve', array('class' => 'btn green', 'type' => 'submit')
+                                                                );
+                                                                ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <?php echo $this->Form->end(); ?>
                                                 </div>
                                             </div>

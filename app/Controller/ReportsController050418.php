@@ -36,6 +36,32 @@ class ReportsController extends AppController {
         $this->set(compact('due_customers'));
     }
 
+    function cancel($page = 1, $start, $end) {
+        $this->loadModel('PackageCustomer');
+        $this->loadModel('Transaction');
+        $this->loadModel('StatusHistory');
+        $offset = --$page * $this->per_page;
+
+        $conditions = 'status_histories.status = "canceled" AND status_histories.date >="' . $start . '" AND status_histories.date <="' . $end . '"';
+
+        $sql = "SELECT * FROM status_histories  
+            LEFT JOIN package_customers  ON package_customers.id = status_histories.package_customer_id 
+            left join transactions  on package_customers.id = transactions.package_customer_id    
+            left join psettings  on psettings.id = package_customers.psetting_id
+            LEFT JOIN packages  ON packages.id = psettings.package_id 
+            LEFT JOIN custom_packages  ON custom_packages.id = package_customers.custom_package_id 
+            where $conditions GROUP BY status_histories.id  LIMIT $offset,$this->per_page";
+
+        $data = $this->PackageCustomer->query($sql);
+
+        $temp = $this->StatusHistory->query("SELECT COUNT(status_histories.id) as total FROM status_histories where $conditions");
+        $total = $temp[0][0]['total'];
+        $total_page = ceil($total / $this->per_page);
+        $this->set(compact('total_page'));
+
+        return $data;
+    }
+
     function payment_history($page, $start, $end, $pay_mode) {
 
         $this->loadModel('Transaction');
@@ -205,26 +231,27 @@ class ReportsController extends AppController {
         $this->set(compact('packageList'));
     }
 
-    function package($start, $end, $psetting) {
+    function package($start, $end, $psetting, $mac) {
         $this->loadModel('PackageCustomer');
+        pr($this->params['pass'][1]); exit;
         $start = $this->params['pass'][1];
         $end = $this->params['pass'][2];
         if (!empty($this->params['pass'][3])) {
             $psetting = $this->params['pass'][3];
         }
 
-        $conditions = " pc.mac_status = 'active' AND ";
+        $conditions = " pc.status = 'active' AND ";
         if ($psetting != '#') {
             $conditions .=" pc.psetting_id = '" . $psetting . "' AND ";
         }
         if ($start != '#') {
             if ($start == $end) {
-                $conditions .="sh.date >=' " . $start . " ' AND  sh.date <= '" . $end . " ' AND ";
+                $conditions .="pc.date >=' " . $start . " ' AND  pc.date <= '" . $end . " ' AND ";
             } else {
-                $conditions .=" sh.date >='" . $start . " ' AND  sh.date <='" . $end . " ' AND ";
+                $conditions .=" pc.date >='" . $start . " ' AND  pc.date <='" . $end . " ' AND ";
             }
         }
-
+//        pr($conditions); exit;
         $conditions.="###";
         $conditions = str_replace("AND###", "", $conditions);
         $conditions = str_replace("AND ###", "", $conditions);
@@ -232,10 +259,8 @@ class ReportsController extends AppController {
         $sql = "SELECT * FROM package_customers pc
                 left join psettings ps on ps.id = pc.psetting_id
                 LEFT JOIN packages p ON p.id = ps.package_id 
-                LEFT JOIN custom_packages cp on pc.custom_package_id = cp.id
-                LEFT JOIN status_histories sh on pc.id = sh.package_customer_id
+                left join custom_packages cp on pc.custom_package_id = cp.id
                  WHERE $conditions";
-//        echo $sql; exit;
         $package_info = $this->PackageCustomer->query($sql);
         $return['package_info'] = $package_info;
         return $return;
@@ -1145,7 +1170,7 @@ class ReportsController extends AppController {
         $this->set(compact('filteredData', 'technician'));
     }
 
-    function all($action = null, $page = 1, $start = null, $end = null, $issue = '#', $agent = '#', $status = '#', $pay_mode = '#', $psetting = '#') {
+    function all($mac = null, $action = null, $page = 1, $start = null, $end = null, $issue = '#', $agent = '#', $status = '#', $pay_mode = '#', $psetting = '#') {
         $this->loadModel('Issue');
         $this->loadModel('User');
         $this->loadModel('Role');
@@ -1194,10 +1219,13 @@ class ReportsController extends AppController {
             }
 
             if ($action == 'paymenthistory') {
+
                 $pay_mode = $this->request->data['Role']['pay_mode'];
+
                 if (empty($pay_mode)) {
                     $pay_mode = '#';
                 }
+
                 if (!isset($start)) {
                     $start = '1970-05-01';
                     $end = date('Y-m-d');
@@ -1208,11 +1236,17 @@ class ReportsController extends AppController {
                         $end = $dateRange->end;
                     }
                 }
+
                 $this->redirect("/reports/all/$action/1/$start/$end/$pay_mode");
             }
 
             if ($action == 'package') {
                 $psetting = $this->request->data['Role']['psetting_id'];
+//                $mac = $this->request->data['Role']['mac'];
+  
+//                if (empty($mac)) {
+//                    $mac = '#';
+//                }
                 if (empty($psetting)) {
                     $psetting = '#';
                 }
@@ -1228,7 +1262,8 @@ class ReportsController extends AppController {
                         $end = $dateRange->end;
                     }
                 }
-                $this->redirect("/reports/all/$action/$start/$end/$psetting");
+                 
+                $this->redirect("/reports/all/$action/$start/$end/$psetting/$mac");
             }
 
             if ($action == 'overdueinvoice') {
@@ -1254,9 +1289,11 @@ class ReportsController extends AppController {
             $data = $this->newcustomers($page, $start, $end);
         }
         if ($action == 'paymenthistory') {
+
             $data = $this->payment_history($page, $start, $end, $issue); // Here $issue variable is overwrite by $paymode
         }
         if ($action == 'package') {
+           
             $data = $this->package($start, $end, $psetting);
         }
         if ($action == 'cancel') {
@@ -1338,22 +1375,6 @@ class ReportsController extends AppController {
 
         if ($action == 'failedpayment') {
             $data = $this->failedpayment($page, $start, $end);
-        }
-
-        if ($action == 'salesquery') {
-            $data = $this->salesquery($page, $start, $end);
-        }
-
-        if ($action == 'salesreport') {
-            $data = $this->salesreport($page, $start, $end);
-        }
-
-        if ($action == 'newinstallation') {
-            $data = $this->newinstallation($page, $start, $end);
-        }
-
-        if ($action == 'hold') {
-            $data = $this->hold($page, $start, $end);
         }
 
         $users = $this->User->find('list', array('fields' => array('id', 'name',), 'order' => array('User.name' => 'ASC')));
@@ -1693,443 +1714,6 @@ class ReportsController extends AppController {
         $return['totalCustomer'] = $totalCustomer;
         $return['totalPayment'] = $totalPayment;
         return $return;
-    }
-
-    function salesreport($page, $start, $end) {
-        $this->loadModel('User');
-        $this->loadModel('PackageCustomer');
-        if (count($start)) {
-            if ($start == $end) {
-                //$nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                //CAST(pc.schedule_date as DATE)                        
-                 $conditions = "pc.created ='" . $start . "'";
-            } else {
-                $conditions = "pc.created >='" . $start . "' AND  pc.created <='" . $end . "'";
-            }
-        }
-
-//        $conditions = 'pc.created >="' . $start . '" AND pc.created <="' . $end . '"';
-        $allData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                left join comments c on pc.id = c.package_customer_id 
-                left join users u on c.user_id = u.id 
-                left join users ut on pc.technician_id = ut.id 
-                left join psettings ps on ps.id = pc.psetting_id 
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join issues i on pc.issue_id = i.id
-                WHERE (((pc.follow_up=0 AND pc.status ='requested' AND pc.status != 'old_ready') 
-                AND shipment =0) OR (pc.shipment = 1 AND pc.status ='requested')) AND ($conditions) GROUP BY pc.id");
-        
-        $temp = $this->PackageCustomer->query("SELECT COUNT(pc.id) as total FROM package_customers pc 
-                left join comments c on pc.id = c.package_customer_id 
-                left join users u on c.user_id = u.id 
-                left join users ut on pc.technician_id = ut.id 
-                left join psettings ps on ps.id = pc.psetting_id 
-                left join custom_packages cp on cp.id = pc.custom_package_id 
-                left join issues i on pc.issue_id = i.id
-                WHERE (((pc.follow_up=0 AND pc.status ='requested' AND pc.status != 'old_ready') 
-                AND shipment =0) OR (pc.shipment = 1 AND pc.status ='requested')) AND ($conditions)");
-        $total = $temp[0][0]['total'];
-        $total_page = ceil($total / $this->per_page);
-        $return['total_page'] = $total_page;
-// $this->set(compact('msg'));
-        $this->set(compact('total_page'));
-
-        $filteredData = array();
-        $unique = array();
-        $index = 0;
-        foreach ($allData as $key => $data) {
-            $pd = $data['pc']['id'];
-            if (isset($unique[$pd])) {
-//  echo 'already exist'.$key.'<br/>';
-                if (!empty($data['c']['content'])) {
-
-                    $temp = array('content' => $data['c'], 'user' => $data['u']);
-                    $filteredData[$index]['comments'][] = $temp;
-                }
-            } else {
-                if ($key != 0)
-                    $index++;
-                $unique[$pd] = 'set';
-
-                $filteredData[$index]['customers'] = $data['pc'];
-                $filteredData[$index]['users'] = $data['u'];
-                $filteredData[$index]['tech'] = $data['ut'];
-
-                $filteredData[$index]['package'] = array(
-                    'name' => 'No package dealings',
-                    'duration' => 'Not Applicable',
-                    'amount' => 'not Applicable'
-                );
-
-                if (!empty($data['ps']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['ps']['name'],
-                        'duration' => $data['ps']['duration'],
-                        'amount' => $data['ps']['amount']
-                    );
-                }
-
-                if (!empty($data['cp']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['cp']['duration'] . ' months custom package',
-                        'duration' => $data['cp']['duration'],
-                        'amount' => $data['cp']['charge']
-                    );
-                }
-
-                $filteredData[$index]['comments'] = array();
-                if (!empty($data['c']['content'])) {
-                    $temp = array('content' => $data['c'], 'user' => $data['u']);
-                    $filteredData[$index]['comments'][] = $temp;
-                }
-
-                $filteredData[$index]['issue'] = array();
-                if (!empty($data['i']['id'])) {
-                    $temp = array('name' => $data['i']);
-                    $filteredData[$index]['issue'][] = $temp;
-                }
-            }
-        }
-        return $allData;
-    }
-
-    function salesquery($page, $start, $end) {
-        $this->loadModel('PackageCustomer');
-        if (count($start)) {
-            if ($start == $end) {
-                //$nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                //CAST(pc.schedule_date as DATE)                        
-                $conditions = "pc.created ='" . $start . "'";
-            } else {
-                $conditions = "pc.created >='" . $start . "' AND  pc.created <='" . $end . "'";
-            }
-        }
-//        pr($start); exit;
-//        $conditions = 'pc.created >="' . $start . '" AND pc.created <="' . $end . '"';
-        $allData = $this->PackageCustomer->query("SELECT * FROM package_customers pc 
-                    left join comments c on pc.id = c.package_customer_id
-                    left join users u on c.user_id = u.id
-                    left join psettings ps on ps.id = pc.psetting_id
-                    left join custom_packages cp on cp.id = pc.custom_package_id 
-                    left join issues i on pc.issue_id = i.id
-                    WHERE pc.status = 'requested' AND pc.follow_up = 1 AND $conditions");
-//        echo $this->PackageCustomer->getLastQuery();
-//        pr($allData); exit;
-        $filteredData = array();
-        $unique = array();
-        $index = 0;
-        foreach ($allData as $key => $data) {
-            $pd = $data['pc']['id'];
-            if (isset($unique[$pd])) {
-//  echo 'already exist'.$key.'<br/>';
-                if (!empty($data['c']['content'])) {
-                    $temp = array('content' => $data['c'], 'user' => $data['u']);
-                    $filteredData[$index]['comments'][] = $temp;
-                }
-            } else {
-                if ($key != 0)
-                    $index++;
-                $unique[$pd] = 'set';
-
-                $filteredData[$index]['customers'] = $data['pc'];
-                $filteredData[$index]['users'] = $data['u'];
-
-                $filteredData[$index]['package'] = array(
-                    'name' => 'No package dealings',
-                    'duration' => 'Not Applicable',
-                    'amount' => 'not Applicable'
-                );
-
-                if (!empty($data['i']['id'])) {
-                    $filteredData[$index]['issue'] = $data['i'];
-                }
-
-                if (!empty($data['ps']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['ps']['name'],
-                        'duration' => $data['ps']['duration'],
-                        'amount' => $data['ps']['amount']
-                    );
-                }
-                if (!empty($data['cp']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['cp']['duration'] . ' months custom package',
-                        'duration' => $data['cp']['duration'],
-                        'amount' => $data['cp']['charge']
-                    );
-                }
-                $filteredData[$index]['comments'] = array();
-                if (!empty($data['c']['content'])) {
-                    $temp = array('content' => $data['c'], 'user' => $data['u']);
-                    $filteredData[$index]['comments'][] = $temp;
-                }
-            }
-        }
-        return $filteredData;
-//        $this->set(compact('filteredData')); 
-    }
-
-    function newinstallation($page, $start, $end) {
-        $this->loadModel('PackageCustomer');
-        if (count($start)) {
-            if ($start == $end) {
-                //$nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                //CAST(pc.schedule_date as DATE)                        
-                $conditions = "pc.date ='" . $start . "'";
-            } else {
-                $conditions = "pc.date >='" . $start . "' AND  pc.date <='" . $end . "'";
-            }
-        }
-//        pr('here'); exit;
-//        $conditions = 'pc.installation_date >="' . $start . '" AND pc.installation_date <="' . $end . '"';
-        $sql = "SELECT * FROM package_customers pc 
-                    left join comments c on pc.id = c.package_customer_id
-                    left join psettings ps on ps.id = pc.psetting_id
-                    left join custom_packages cp on cp.id = pc.custom_package_id 
-                    left join installations ins on ins.package_customer_id = pc.id
-                    WHERE ins.status = 'done' and $conditions group BY pc.id ASC";
-        $allData = $this->PackageCustomer->query($sql);
-//        pr($allData); exit;
-//echo $this->PackageCustomer->getLastQuery();
-        $filteredData = array();
-        $unique = array();
-        $index = 0;
-        foreach ($allData as $key => $data) {
-            $pd = $data['pc']['id'];
-            if (isset($unique[$pd])) {
-                $temp = array('content' => $data['c']);
-                $filteredData[$index]['comments'][] = $temp;
-            } else {
-                if ($key != 0)
-                    $index++;
-                $unique[$pd] = 'set';
-
-                $filteredData[$index]['customers'] = $data['pc'];
-
-
-                $filteredData[$index]['package'] = array(
-                    'name' => 'No package dealings',
-                    'duration' => 'Not Applicable',
-                    'amount' => 'not Applicable'
-                );
-//                if (!empty($data['i']['id'])) {
-//                    $filteredData[$index]['issue'] = $data['i'];
-//                }
-
-                if (!empty($data['ps']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['ps']['name'],
-                        'duration' => $data['ps']['duration'],
-                        'amount' => $data['ps']['amount']
-                    );
-                }
-                if (!empty($data['cp']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['cp']['duration'] . ' months custom package',
-                        'duration' => $data['cp']['duration'],
-                        'amount' => $data['cp']['charge']
-                    );
-                }
-
-                if (!empty($data['ins']['id'])) {
-                    $filteredData[$index]['ins'] = $data['ins'];
-                }
-
-
-                $filteredData[$index]['comments'] = array();
-                $temp = array('content' => $data['c']);
-                $filteredData[$index]['comments'][] = $temp;
-            }
-        }
-
-        return $filteredData;
-    }
-
-    function hold($page, $start, $end) {
-        $this->loadModel('PackageCustomer');
-        $offset = --$page * $this->per_page;
-        if (count($start)) {
-            if ($start == $end) {
-                //$nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                //CAST(pc.schedule_date as DATE)                        
-               //$conditions = "ins.date ='" . $start . "'";
-//                $conditions = " CAST(mh.created as DATE)  >=' " . $start . "'";
-                $conditions = " CAST(mh.created as DATE)  =' " . $start . "'";
-                
-            } else {
-//                $conditions = "ins.date >='" . $start . "' AND  ins.date <='" . $end . "'";
-                $conditions = " CAST(mh.created as DATE)  >=' " . $start . "' AND  CAST(mh.created as DATE) <= '" . $end . "'";
-            }
-        }
-        
-//        $conditions = " CAST(mh.created as DATE)  >=' " . $start . "' AND  CAST(mh.created as DATE) <= '" . $end . "'";
-        $sql = "SELECT * FROM package_customers pc 
-                    left join comments c on pc.id = c.package_customer_id
-                    left join psettings ps on ps.id = pc.psetting_id
-                    left join custom_packages cp on cp.id = pc.custom_package_id 
-                    left join mac_histories mh on mh.package_customer_id = pc.id
-                    left join installations ins on ins.package_customer_id = pc.id
-                    WHERE LOWER(mac_status) = 'hold' and $conditions group BY pc.id " . " LIMIT " . $offset . "," . $this->per_page;
-//        echo $sql;
-//        exit;
-        $allData = $this->PackageCustomer->query($sql);
-
-        $sql = "SELECT * FROM package_customers pc 
-                    left join comments c on pc.id = c.package_customer_id
-                    left join psettings ps on ps.id = pc.psetting_id
-                    left join custom_packages cp on cp.id = pc.custom_package_id 
-                    left join mac_histories mh on mh.package_customer_id = pc.id
-                    left join installations ins on ins.package_customer_id = pc.id
-                    WHERE LOWER(mac_status) = 'hold' and $conditions group BY pc.id ";
-        $temp = $this->PackageCustomer->query($sql);
-        $c = count($temp);
-        $total = $c;
-
-        $total_page = ceil($total / $this->per_page);
-        $this->set(compact('total_page'));
-
-        $filteredData = array();
-        $unique = array();
-        $index = 0;
-        foreach ($allData as $key => $data) {
-            //$mac = $data['mh'];
-//            pr($mac); exit;
-            $pd = $data['pc']['id'];
-            if (isset($unique[$pd])) {
-                $temp = array('content' => $data['c']);
-                $filteredData[$index]['comments'][] = $temp;
-            } else {
-                if ($key != 0)
-                    $index++;
-                $unique[$pd] = 'set';
-
-                $filteredData[$index]['customers'] = $data['pc'];
-
-
-                $filteredData[$index]['package'] = array(
-                    'name' => 'No package dealings',
-                    'duration' => 'Not Applicable',
-                    'amount' => 'not Applicable'
-                );
-//                if (!empty($data['i']['id'])) {
-//                    $filteredData[$index]['issue'] = $data['i'];
-//                }
-
-                if (!empty($data['ps']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['ps']['name'],
-                        'duration' => $data['ps']['duration'],
-                        'amount' => $data['ps']['amount']
-                    );
-                }
-                if (!empty($data['cp']['id'])) {
-                    $filteredData[$index]['package'] = array(
-                        'name' => $data['cp']['duration'] . ' months custom package',
-                        'duration' => $data['cp']['duration'],
-                        'amount' => $data['cp']['charge']
-                    );
-                }
-
-                if (!empty($data['mh']['id'])) {
-                    $filteredData[$index]['mh'] = array(
-                        'created' => $data['mh']['created']
-                    );
-//                    $filteredData[$index]['mh'] = $data['mh']['created'];
-                }
-                $filteredData[$index]['comments'] = array();
-                $temp = array('content' => $data['c']);
-                $filteredData[$index]['comments'][] = $temp;
-            }
-        }
-
-        return $filteredData;
-    }
-
-    function cancel($page, $start, $end) {
-        $this->loadModel('PackageCustomer');
-        $offset = --$page * $this->per_page;
-        if (count($start)) {
-            if ($start == $end) {
-                //$nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                //CAST(pc.schedule_date as DATE)                        
-                $conditions = "pc.date ='" . $start . "'";
-            } else {
-                $conditions = "pc.date >='" . $start . "' AND  pc.date <='" . $end . "'";
-            }
-        }
-//        $conditions = " CAST(mh.created as DATE)  >=' " . $start . "' AND  CAST(mh.created as DATE) <= '" . $end . "'";
-        $sql = "SELECT * FROM package_customers pc 
-                left join mac_histories mh on mh.package_customer_id = pc.id
-                WHERE LOWER(mac_status) = 'Canceled' and $conditions group BY pc.id " . " LIMIT " . $offset . "," . $this->per_page;
-
-        $allData = $this->PackageCustomer->query($sql);
-        $sql = "SELECT * FROM package_customers pc 
-                left join mac_histories mh on mh.package_customer_id = pc.id
-                WHERE LOWER(mac_status) = 'Canceled' and $conditions group BY pc.id";
-
-        $temp = $this->PackageCustomer->query($sql);
-        $c = count($temp);
-        $total = $c;
-
-        $total_page = ceil($total / $this->per_page);
-        $this->set(compact('total_page'));
-
-        $filteredData = array();
-        $unique = array();
-        $index = 0;
-        foreach ($allData as $key => $data) {
-            $pd = $data['pc']['id'];
-            if (isset($unique[$pd])) {
-                $temp = array('content' => $data['c']);
-                $filteredData[$index]['comments'][] = $temp;
-            } else {
-                if ($key != 0)
-                    $index++;
-                $unique[$pd] = 'set';
-
-                $filteredData[$index]['customers'] = $data['pc'];
-
-
-//                $filteredData[$index]['package'] = array(
-//                    'name' => 'No package dealings',
-//                    'duration' => 'Not Applicable',
-//                    'amount' => 'not Applicable'
-//                );
-//                if (!empty($data['i']['id'])) {
-//                    $filteredData[$index]['issue'] = $data['i'];
-//                }
-//                if (!empty($data['ps']['id'])) {
-//                    $filteredData[$index]['package'] = array(
-//                        'name' => $data['ps']['name'],
-//                        'duration' => $data['ps']['duration'],
-//                        'amount' => $data['ps']['amount']
-//                    );
-//                }
-//                if (!empty($data['cp']['id'])) {
-//                    $filteredData[$index]['package'] = array(
-//                        'name' => $data['cp']['duration'] . ' months custom package',
-//                        'duration' => $data['cp']['duration'],
-//                        'amount' => $data['cp']['charge']
-//                    );
-//                }
-
-                if (!empty($data['mh']['id'])) {
-                    $filteredData[$index]['mh'] = $data['mh'];
-                }
-
-
-//                $filteredData[$index]['comments'] = array();
-//                $temp = array('content' => $data['c']);
-//                $filteredData[$index]['comments'][] = $temp;
-            }
-        }
-
-        return $filteredData;
     }
 
     function customerFilter($status = 0, $system = 0) {

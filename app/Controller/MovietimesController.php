@@ -276,7 +276,7 @@ class MovietimesController extends AppController {
             $m_history = $this->MovieHistorie->save($this->request->data['MovieHistorie']);
         }
 
-        //MovieDetail delete start
+        //MovieDetail insert start
         $this->MovieDetail->query("DELETE FROM movie_details WHERE movie_details.date = '$date_4_search'");
 
         $data = $this->request->data['MovieHistorie'];

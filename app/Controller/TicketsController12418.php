@@ -30,7 +30,6 @@ class TicketsController extends AppController {
         $this->loadModel('MacHistory');
 
         $this->PackageCustomer->id = $cid;
-//        pr($status.' '.$cid); exit;
         $this->PackageCustomer->saveField("status", $status);
         $sql = "select * from statushistories";
 
@@ -60,9 +59,7 @@ class TicketsController extends AppController {
         $this->PackageCustomer->id = $cid;
         $data['PackageCustomer'] = array(
             "issue_id" => $issue_id,
-            "troubleshoot_moving_issue" => $issue_id,
             "approved" => 0,
-            "status" => 'old_ready',
             "issue_date" => date("Y-m-d"),
             "new_addr" => $new_addr
         );
@@ -83,16 +80,6 @@ class TicketsController extends AppController {
         $this->loadModel('Issue');
         $this->loadModel('TicketDepartment');
         $this->loadModel('PackageCustomer');
-        $this->loadModel('Mac');
-        $this->loadModel('MacDetail');
-
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-
         if ($this->request->is('post')) {
 
             $this->Ticket->set($this->request->data);
@@ -107,7 +94,6 @@ class TicketsController extends AppController {
                     $this->Session->setFlash($msg);
                     return $this->redirect($this->referer());
                 }
-                //pr($this->request->data); exit;
                 if (trim($this->request->data['Ticket']['issue_id']) == 21 ||
                         trim($this->request->data['Ticket']['issue_id']) == 30 ||
                         trim($this->request->data['Ticket']['issue_id']) == 36 ||
@@ -133,6 +119,8 @@ class TicketsController extends AppController {
                     $cusinfo = $this->PackageCustomer->save($data);
                 }
 
+
+
                 $status = 'open';
                 if (trim($this->request->data['Ticket']['action_type']) == 'solved' ||
                         trim($this->request->data['Ticket']['action_type']) == 'ready' ||
@@ -142,9 +130,8 @@ class TicketsController extends AppController {
                     $this->request->data['Ticket']['status'] = 'solved';
                     $status = 'solved';
                 }
-
+//                pr($this->request->data['Ticket']); exit;
                 $tickect = $this->Ticket->save($this->request->data['Ticket']); // Data save in Ticket
-
                 $trackData['Track'] = array(
                     'issue_id' => $this->request->data['Ticket']['issue_id'],
                     'package_customer_id' => $customer_id,
@@ -157,28 +144,30 @@ class TicketsController extends AppController {
                 );
 
 //              moving.........
-//              pr($this->request->data); exit;
+//                pr($this->request->data); exit;
                 if (trim($this->request->data['Ticket']['issue_id']) == 17 || trim($this->request->data['Ticket']['issue_id']) == 154 || trim($this->request->data['Ticket']['issue_id']) == 192 || trim($this->request->data['Ticket']['issue_id']) == 229) {
                     $issue_id = $this->request->data['Ticket']['issue_id'];
                     $this->addNewAddr($this->request->data['Ticket']['new_addr'], $customer_id, $issue_id);
                     $trackData['Track']['status'] = 'close';
                 }
 
+
                 if (trim($this->request->data['Ticket']['issue_id']) == 21 || trim($this->request->data['Ticket']['issue_id']) == 30) {
-                    // $this->updateCustomer('Request to hold', $customer_id);
+                    $this->updateCustomer('Request to hold', $customer_id);
                     // $trackData['Track']['status'] = 'others';
                     $mac = json_encode($this->request->data['mac']);
                     $data = array(
                         'cancel_mac' => $mac,
                         'hold_date' => $this->request->data['Ticket']['hold_date']
                     );
+//                    pr($data); exit;
                     $cusinfo = $this->PackageCustomer->save($data);
                 }
 
                 if (trim($this->request->data['Ticket']['issue_id']) == 147 || trim($this->request->data['Ticket']['issue_id']) == 149 ||
                         trim($this->request->data['Ticket']['issue_id']) == 150 ||
                         trim($this->request->data['Ticket']['issue_id']) == 181) {
-                    //$this->updateCustomer('Request to cancel', $customer_id);
+                    $this->updateCustomer('Request to cancel', $customer_id);
                     // $trackData['Track']['status'] = 'others';
 //                    $mac = json_encode($this->request->data['mac']);
                     $data = array(
@@ -191,7 +180,7 @@ class TicketsController extends AppController {
 
 
                 if (trim($this->request->data['Ticket']['issue_id']) == 27 || trim($this->request->data['Ticket']['issue_id']) == 29) {
-                    //$this->updateCustomer('Request to reconnection', $customer_id);
+                    $this->updateCustomer('Request to reconnection', $customer_id);
                     // $trackData['Track']['status'] = 'others';
 //                    $mac = json_encode($this->request->data['mac']);
 //                    pr($this->request->data['Ticket']); exit;
@@ -204,20 +193,20 @@ class TicketsController extends AppController {
                     $cusinfo = $this->PackageCustomer->save($data);
                 }
 //pr('hfh'); exit;
-//                if (trim($this->request->data['Ticket']['issue_id']) == 36) {
-//                    $this->updateCustomer('Request to reconnection', $customer_id);
-//                    $trackData['Track']['status'] = 'others';
-//                    $mac = json_encode($this->request->data['mac']);
-//                    $data = array(
-//                        'cancel_mac' => $mac,
-//                        'reconnect_date' => $this->request->data['Ticket']['reconnect_date']
-//                    );
-//
-//                    $cusinfo = $this->PackageCustomer->save($data);
-//                }
+                if (trim($this->request->data['Ticket']['issue_id']) == 36) {
+                    $this->updateCustomer('Request to reconnection', $customer_id);
+                    $trackData['Track']['status'] = 'others';
+                    $mac = json_encode($this->request->data['mac']);
+                    $data = array(
+                        'cancel_mac' => $mac,
+                        'reconnect_date' => $this->request->data['Ticket']['reconnect_date']
+                    );
+
+                    $cusinfo = $this->PackageCustomer->save($data);
+                }
 
                 if (trim($this->request->data['Ticket']['issue_id']) == 24 || trim($this->request->data['Ticket']['issue_id']) == 31) {
-                    //$this->updateCustomer('Request to unhold', $customer_id);
+                    $this->updateCustomer('Request to unhold', $customer_id);
                     // $trackData['Track']['status'] = 'others';
                     $data = array(
                         'unhold_date' => $this->request->data['Ticket']['unhold_date']
@@ -234,7 +223,7 @@ class TicketsController extends AppController {
                     $this->request->data['Ticket']['cancelled_date'] = $this->getFormatedDate($this->request->data['Ticket']['cancelled_date']);
                     $this->request->data['Ticket']['pickup_date'] = $this->getFormatedDate($this->request->data['Ticket']['pickup_date']);
 
-                    //$this->updateCustomer('request to cancel', $customer_id);
+                    $this->updateCustomer('request to cancel', $customer_id);
                     if (!array_key_exists('mac', $this->request->data)) {
                         $msg = '<div class="alert alert-danger">
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -256,20 +245,15 @@ class TicketsController extends AppController {
                 if (trim($this->request->data['Ticket']['action_type']) == "ready") {
                     $data['PackageCustomer'] = array(
                         'status' => 'old_ready',
-                        'issue_date' => date('Y-m-d'),
-                        'troubleshoot_shipment' => 'tro',
                         'shipment_equipment' => $this->request->data['Ticket']['shipment_equipment'],
-                        'troubleshoot_moving_issue' => $this->request->data['Ticket']['issue_id'],
                         'shipment_note' => $this->request->data['Ticket']['shipment_note']
                     );
                     $this->PackageCustomer->id = $customer_id;
-                    //pr($data['PackageCustomer']); exit;
-
                     $this->PackageCustomer->save($data['PackageCustomer']);
                 }
 
                 if (trim($this->request->data['Ticket']['action_type']) == 'shipment') {
-                    // pr($this->request->data); exit;
+
                     if ($this->request->data['Ticket']['shipment_equipment'] == 'OTHER') {
                         $this->request->data['Ticket']['shipment_equipment'] = $this->request->data['Ticket']['shipment_equipment_other'];
                     }
@@ -277,10 +261,7 @@ class TicketsController extends AppController {
                         'id' => $customer_id,
                         'shipment' => 2,
                         'approved' => 0,
-                        'issue_date' => date('Y-m-d'),
-                        'troubleshoot_shipment' => 'shi',
                         'shipment_equipment' => $this->request->data['Ticket']['shipment_equipment'],
-                        'troubleshoot_moving_issue' => $this->request->data['Ticket']['issue_id'],
                         'shipment_note' => $this->request->data['Ticket']['shipment_note']
                     );
                     $this->PackageCustomer->save($data['PackageCustomer']);
@@ -339,7 +320,6 @@ class TicketsController extends AppController {
                 $this->Session->setFlash($msg);
             }
         }
-        
         $users = $this->User->find('list', array('fields' => array('id', 'name',), 'order' => array('User.name' => 'ASC')));
 //        $issues = $this->Issue->find('list', array('fields' => array('id', 'name',), 'order' => array('Issue.name' => 'ASC')));
         $roles = $this->Role->find('list', array('fields' => array('id', 'name',), 'order' => array('Role.name' => 'ASC')));
@@ -934,15 +914,16 @@ class TicketsController extends AppController {
         $this->loadModel('Role');
         $offset = --$page * $this->per_page;
         $tickets = $this->Track->query("SELECT * FROM tracks tr 
-                    LEFT JOIN tickets t ON tr.ticket_id = t.id 
-                    LEFT JOIN users fb ON tr.forwarded_by = fb.id 
-                    LEFT JOIN roles fd ON tr.role_id = fd.id 
-                    LEFT JOIN users fi ON tr.user_id = fi.id 
-                    LEFT JOIN issues i ON tr.issue_id = i.id 
-                    LEFT join package_customers pc on tr.package_customer_id = pc.id 
-                    Where (t.status = 'open' AND tr.status != 'outbound'  AND tr.issue_id !=181 AND tr.issue_id !=150 AND tr.issue_id !=167 AND tr.issue_id !=149 AND tr.issue_id !=147 AND tr.issue_id !=28 AND tr.issue_id !=31 AND tr.issue_id !=30 AND tr.issue_id !=29 AND tr.issue_id !=89 AND tr.issue_id !=229 AND tr.issue_id !=154) AND  (t.content NOT LIKE '%be expired%' AND t.content NOT LIKE '%Error Code%' AND t.content NOT LIKE '%successful%'
-                    AND t.content NOT LIKE '%declined%' AND t.content NOT LIKE '%leatest card information%')ORDER BY tr.created " . " LIMIT " . $offset . "," . $this->per_page);
+                LEFT JOIN tickets t ON tr.ticket_id = t.id 
+                LEFT JOIN users fb ON tr.forwarded_by = fb.id 
+                LEFT JOIN roles fd ON tr.role_id = fd.id 
+                LEFT JOIN users fi ON tr.user_id = fi.id 
+                LEFT JOIN issues i ON tr.issue_id = i.id 
+                LEFT join package_customers pc on tr.package_customer_id = pc.id 
+                Where (t.status = 'open' AND tr.status != 'outbound' AND tr.issue_id != 22 AND tr.issue_id != 172 AND tr.issue_id != 23 AND tr.issue_id !=181 AND tr.issue_id !=150 AND tr.issue_id !=167 AND tr.issue_id !=149 AND tr.issue_id !=147 AND tr.issue_id !=28 AND tr.issue_id !=20 AND tr.issue_id !=31 AND tr.issue_id !=30 AND tr.issue_id !=24 AND tr.issue_id !=21 AND tr.issue_id !=27 AND tr.issue_id !=29 AND tr.issue_id !=89) AND  (t.content NOT LIKE '%be expired%' AND t.content NOT LIKE '%Error Code%' AND t.content NOT LIKE '%successful%'
+                AND t.content NOT LIKE '%declined%' AND t.content NOT LIKE '%leatest card information%')ORDER BY tr.created " . " LIMIT " . $offset . "," . $this->per_page);
 //        echo $this->Track->getLastQuery(); exit;
+
         $temp = $this->Track->query("SELECT COUNT(tr.id) as total FROM tracks tr 
                 LEFT JOIN tickets t ON tr.ticket_id = t.id 
                 LEFT JOIN users fb ON tr.forwarded_by = fb.id 
@@ -950,7 +931,7 @@ class TicketsController extends AppController {
                 LEFT JOIN users fi ON tr.user_id = fi.id 
                 LEFT JOIN issues i ON tr.issue_id = i.id 
                 LEFT join package_customers pc on tr.package_customer_id = pc.id 
-                Where (t.status = 'open' AND tr.status != 'outbound'  AND tr.issue_id !=181 AND tr.issue_id !=150 AND tr.issue_id !=167 AND tr.issue_id !=149 AND tr.issue_id !=147 AND tr.issue_id !=28 AND tr.issue_id !=31 AND tr.issue_id !=30 AND tr.issue_id !=29 AND tr.issue_id !=89 AND tr.issue_id !=229 AND tr.issue_id !=154) AND  (t.content NOT LIKE '%be expired%' AND t.content NOT LIKE '%Error Code%' AND t.content NOT LIKE '%successful%'
+                Where (t.status = 'open' AND tr.status != 'outbound' AND tr.issue_id != 22 AND tr.issue_id != 172 AND tr.issue_id != 23 AND tr.issue_id !=181 AND tr.issue_id !=150 AND tr.issue_id !=167 AND tr.issue_id !=149 AND tr.issue_id !=147 AND tr.issue_id !=28 AND tr.issue_id !=20 AND tr.issue_id !=31 AND tr.issue_id !=30 AND tr.issue_id !=24 AND tr.issue_id !=21 AND tr.issue_id !=27 AND tr.issue_id !=29 AND tr.issue_id !=89) AND  (t.content NOT LIKE '%be expired%' AND t.content NOT LIKE '%Error Code%' AND t.content NOT LIKE '%successful%'
                 AND t.content NOT LIKE '%declined%' AND t.content NOT LIKE '%leatest card information%')");
         $total = $temp[0][0]['total'];
         $total_page = ceil($total / $this->per_page);
@@ -960,7 +941,7 @@ class TicketsController extends AppController {
         $index = 0;
         foreach ($tickets as $key => $ticket) {
             $t = $ticket['t']['id'];
-
+            
             if (isset($unique[$t])) {
                 //  echo 'already exist'.$key.'<br/>';
                 $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
@@ -975,14 +956,14 @@ class TicketsController extends AppController {
             }
         }
 
-        $data = $filteredTicket;
+        $data = $filteredTicket; 
 //        pr($data); exit;
         $users = $this->User->find('list', array('fields' => array('id', 'name',), 'order' => array('User.name' => 'ASC')));
         $roles = $this->Role->find('list', array('fields' => array('id', 'name',), 'order' => array('Role.name' => 'ASC')));
-        $this->set(compact('data', 'users', 'roles', 'total', 'total_page'));
+        $this->set(compact('data', 'users', 'roles', 'total','total_page'));
     }
-
-    function promise_pay($page = 1) {
+    
+      function promise_pay($page = 1) {
         $this->loadModel('Track');
         $this->loadModel('Ticket');
         $this->loadModel('User');
@@ -997,9 +978,8 @@ class TicketsController extends AppController {
                         INNER join package_customers pc on tr.package_customer_id = pc.id
                         WHERE tr.`issue_id` = '204' and tr.`status` = 'open' ORDER BY tr.created DESC  " . " LIMIT " . $offset . "," . $this->per_page);
         echo $this->Track->getLastQuery();
-        pr($tickets);
-        exit;
-
+        pr($tickets); exit;
+        
         $temp = $this->Ticket->query("SELECT COUNT(tr.id) as total FROM tracks tr
                         INNER JOIN tickets t ON tr.ticket_id = t.id
                         INNER JOIN users fb ON tr.forwarded_by = fb.id
@@ -1035,6 +1015,7 @@ class TicketsController extends AppController {
         //  pr($roles); exit;
         $this->set(compact('data', 'users', 'roles', 'total_page', 'total'));
     }
+
 
     function refund_bonus() {
         $this->loadModel('Track');
@@ -1118,14 +1099,6 @@ class TicketsController extends AppController {
         $this->loadModel('Role');
         $offset = --$page * $this->per_page;
 
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-
-
         $tickets = $this->Track->query("SELECT * FROM tracks tr
                         left JOIN tickets t ON tr.ticket_id = t.id
                         left JOIN users fb ON tr.forwarded_by = fb.id
@@ -1136,313 +1109,6 @@ class TicketsController extends AppController {
                          WHERE t.status = 'solved' ORDER BY t.id DESC" . " LIMIT " . $offset . "," . $this->per_page);
 
         $temp = $this->Ticket->query("SELECT COUNT(tickets.id) as total FROM `tickets` WHERE tickets.status = 'solved'");
-        $total = $temp[0][0]['total'];
-        $total_page = ceil($total / $this->per_page);
-
-        $filteredTicket = array();
-        $unique = array();
-        $index = 0;
-        foreach ($tickets as $key => $ticket) {
-            $t = $ticket['t']['id'];
-            if (isset($unique[$t])) {
-                //  echo 'already exist'.$key.'<br/>';
-                $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                $filteredTicket[$index]['history'][] = $temp;
-            } else {
-                if ($key != 0)
-                    $index++;
-                $unique[$t] = 'set';
-                $filteredTicket[$index]['ticket'] = $ticket['t'];
-                $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                $filteredTicket[$index]['history'][] = $temp;
-            }
-        }
-        $data = $filteredTicket;
-        $users = $this->User->find('list', array('fields' => array('id', 'name',), 'order' => array('User.name' => 'ASC')));
-        $roles = $this->Role->find('list', array('fields' => array('id', 'name',), 'order' => array('Role.name' => 'ASC')));
-        $this->set(compact('data', 'users', 'roles', 'total_page', 'total'));
-    }
-
-    function verification($page = 1) {
-        $this->loadModel('Track');
-        $this->loadModel('User');
-        $this->loadModel('Role');
-        $offset = --$page * $this->per_page;
-
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-
-
-        $tickets = $this->Track->query("SELECT * FROM tracks tr
-                        left JOIN tickets t ON tr.ticket_id = t.id
-                        left JOIN users fb ON tr.forwarded_by = fb.id
-                        left JOIN roles fd ON tr.role_id = fd.id
-                        left JOIN users fi ON tr.user_id = fi.id
-                        left JOIN issues i ON tr.issue_id = i.id
-                        left join package_customers pc on tr.package_customer_id = pc.id
-                         WHERE t.status = 'solved' AND t.verification_date = '0000-00-00'  ORDER BY t.id DESC" . " LIMIT " . $offset . "," . $this->per_page);
-        $temp = $this->Ticket->query("SELECT COUNT(tickets.id) as total FROM `tickets` WHERE tickets.status = 'solved' AND tickets.verification_date = '0000-00-00'");
-        $total = $temp[0][0]['total'];
-        $total_page = ceil($total / $this->per_page);
-
-        $filteredTicket = array();
-        $unique = array();
-        $index = 0;
-        foreach ($tickets as $key => $ticket) {
-            $t = $ticket['t']['id'];
-            if (isset($unique[$t])) {
-                //  echo 'already exist'.$key.'<br/>';
-                $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                $filteredTicket[$index]['history'][] = $temp;
-            } else {
-                if ($key != 0)
-                    $index++;
-                $unique[$t] = 'set';
-                $filteredTicket[$index]['ticket'] = $ticket['t'];
-                $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                $filteredTicket[$index]['history'][] = $temp;
-            }
-        }
-        //$rf= end($filteredTicket[$index]['history']);
-        //pr($rf); exit;
-        $data = $filteredTicket;
-
-        $users = $this->User->find('list', array('fields' => array('id', 'name',), 'order' => array('User.name' => 'ASC')));
-        $roles = $this->Role->find('list', array('fields' => array('id', 'name',), 'order' => array('Role.name' => 'ASC')));
-        $this->set(compact('data', 'users', 'roles', 'total_page', 'total'));
-    }
-
-    function ticket_verify() {
-        $this->loadModel('Ticket');
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-        $this->Ticket->set($this->request->data);
-        $this->request->data['Ticket']['pc_info'] = $pc_info;
-        $this->request->data['Ticket']['verification_solve'] = $this->request->data['Ticket']['verification_solve'];
-        $this->request->data['Ticket']['verification_date'] = date("Y-m-d");
-        $this->request->data['Ticket']['id'] = $this->request->data['Ticket']['id'];
-       // pr($this->request->data['Ticket']); exit;
-        $this->Ticket->save($this->request->data['Ticket']);
-        $msg = '<div class="alert alert-success">
-		<button type="button" class="close" data-dismiss="alert">&times;</button>
-		<strong> Verification completed:-) </strong>
-		</div>';
-        $this->Session->setFlash($msg);
-        return $this->redirect($this->referer());
-    }
-
-    function open_ticket() {
-        $this->loadModel('Track');
-        $this->loadModel('Ticket');
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-
-        //take tracks id start
-        $t_id = $this->request->data['Track']['ticket_id'];
-        $sql = "SELECT * FROM `tracks` WHERE `ticket_id` = $t_id ORDER BY id DESC LIMIT 0,1";
-        $track = $this->Track->query($sql);
-        $id = $track[0]['tracks']['id'];
-        //take tracks id end
-       
-        $this->Track->id = $id;
-        $this->request->data['Track']['status'] = 'open';
-        $this->request->data['Track']['forwarded_by'] = $loggedUser['id'];
-        $this->request->data['Track']['user_id'] = $this->request->data['Track']['user_id'];
-//         pr($this->request->data); 
-//        exit;
-        $this->Track->save($this->request->data['Track']);
-
-        $this->Ticket->id = $this->request->data['Track']['ticket_id'];
-        $this->request->data['Ticket']['verification_date'] = date("Y-m-d");
-        $this->request->data['Ticket']['status'] = 'open';
-
-        $this->request->data['Ticket']['pc_info'] = $pc_info;
-        $this->request->data['Ticket']['verification_not_solve'] = $this->request->data['Track']['verification_not_solve'];
-        $data = $this->Ticket->save($this->request->data['Ticket']);
-        $msg = '<div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <strong> Ticket is Open succeesfully </strong>
-        </div>';
-        $this->Session->setFlash($msg);
-        return $this->redirect($this->referer());
-    }
-
-    function oldticket_open($page = 1) {
-        $this->loadModel('Track');
-        $this->loadModel('Ticket');
-        $offset = --$page * $this->per_page;
-        $clicked = false;
-        if ($this->request->is('post') || $this->request->is('put')) {
-            if (!empty($this->request->data['Ticket']['daterange'])) {
-                $datrange = json_decode($this->request->data['Ticket']['daterange'], true);
-                $ds = new DateTime($datrange['start']);
-                $timestamp = $ds->getTimestamp(); // Unix timestamp
-                $startd = $ds->format('m/y'); // 2003-10-16
-                $de = new DateTime($datrange['end']);
-                $timestamp = $de->getTimestamp(); // Unix timestamp
-                $endd = $de->format('m/y'); // 2003-10-16
-                $conditions = "";
-                if (count($datrange)) {
-                    if ($datrange['start'] == $datrange['end']) {
-                        $nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                        //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                        //CAST(pc.schedule_date as DATE)
-                        $conditions .="t.verification_date >=' " . $datrange['start'] . "' AND t.verification_date < '" . $nextday . "'";
-                    } else {
-                        $conditions .="t.verification_date >='" . $datrange['start'] . "' AND  t.verification_date <='" . $datrange['end'] . "'";
-                    }
-                }
-            } else {
-                $conditions = "";
-                $p_date = '2015-01-01';
-                $conditions .="t.verification_date >='" . $p_date . "'";
-            }
-           // pr($conditions); exit;
-            $tickets = $this->Track->query("SELECT * FROM tracks tr
-                        left JOIN tickets t ON tr.ticket_id = t.id
-                        left JOIN users fb ON tr.forwarded_by = fb.id
-                        left JOIN roles fd ON tr.role_id = fd.id
-                        left JOIN users fi ON tr.user_id = fi.id
-                        left JOIN issues i ON tr.issue_id = i.id
-                        left join package_customers pc on tr.package_customer_id = pc.id
-                         WHERE t.verification_not_solve != '' AND $conditions ORDER BY t.id DESC" . " LIMIT " . $offset . "," . $this->per_page);
-
-
-            $temp = $this->Ticket->query("SELECT COUNT(tickets.id) as total FROM `tickets` WHERE tickets.verification_not_solve != ''");
-            $total = $temp[0][0]['total'];
-            $total_page = ceil($total / $this->per_page);
-
-            $filteredTicket = array();
-            $unique = array();
-            $index = 0;
-            foreach ($tickets as $key => $ticket) {
-                $t = $ticket['t']['id'];
-                if (isset($unique[$t])) {
-                    //  echo 'already exist'.$key.'<br/>';
-                    $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                    $filteredTicket[$index]['history'][] = $temp;
-                } else {
-                    if ($key != 0)
-                        $index++;
-                    $unique[$t] = 'set';
-                    $filteredTicket[$index]['ticket'] = $ticket['t'];
-                    $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                    $filteredTicket[$index]['history'][] = $temp;
-                }
-            }
-
-            $clicked = true;
-            $data = $filteredTicket;           
-            $this->set(compact('data', 'total_page', 'total'));
-        }
-        $this->set(compact('clicked'));
-    }
-    
-    function verified($page = 1) {
-        $this->loadModel('Track');
-        $this->loadModel('Ticket');
-        $offset = --$page * $this->per_page;
-        $clicked = false;
-        if ($this->request->is('post') || $this->request->is('put')) {
-            if (!empty($this->request->data['Ticket']['daterange'])) {
-                $datrange = json_decode($this->request->data['Ticket']['daterange'], true);
-                $ds = new DateTime($datrange['start']);
-                $timestamp = $ds->getTimestamp(); // Unix timestamp
-                $startd = $ds->format('m/y'); // 2003-10-16
-                $de = new DateTime($datrange['end']);
-                $timestamp = $de->getTimestamp(); // Unix timestamp
-                $endd = $de->format('m/y'); // 2003-10-16
-                $conditions = "";
-                if (count($datrange)) {
-                    if ($datrange['start'] == $datrange['end']) {
-                        $nextday = date('Y-m-d', strtotime($datrange['end'] . "+1 days"));
-                        //  convert(varchar(10),pc.schedule_date, 120) = '2014-02-07'
-                        //CAST(pc.schedule_date as DATE)
-                        $conditions .="t.verification_date >=' " . $datrange['start'] . "' AND t.verification_date < '" . $nextday . "'";
-                    } else {
-                        $conditions .="t.verification_date >='" . $datrange['start'] . "' AND  t.verification_date <='" . $datrange['end'] . "'";
-                    }
-                }
-            } else {
-                $conditions = "";
-                $p_date = '2015-01-01';
-                $conditions .="t.verification_date >='" . $p_date . "'";
-            }
-           // pr($conditions); exit;
-            $tickets = $this->Track->query("SELECT * FROM tracks tr
-                        left JOIN tickets t ON tr.ticket_id = t.id
-                        left JOIN users fb ON tr.forwarded_by = fb.id
-                        left JOIN roles fd ON tr.role_id = fd.id
-                        left JOIN users fi ON tr.user_id = fi.id
-                        left JOIN issues i ON tr.issue_id = i.id
-                        left join package_customers pc on tr.package_customer_id = pc.id
-                         WHERE t.verification_solve != '' AND $conditions ORDER BY t.id DESC" . " LIMIT " . $offset . "," . $this->per_page);
-
-
-            $temp = $this->Ticket->query("SELECT COUNT(tickets.id) as total FROM `tickets` WHERE tickets.verification_solve != ''");
-            $total = $temp[0][0]['total'];
-            $total_page = ceil($total / $this->per_page);
-
-            $filteredTicket = array();
-            $unique = array();
-            $index = 0;
-            foreach ($tickets as $key => $ticket) {
-                $t = $ticket['t']['id'];
-                if (isset($unique[$t])) {
-                    //  echo 'already exist'.$key.'<br/>';
-                    $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                    $filteredTicket[$index]['history'][] = $temp;
-                } else {
-                    if ($key != 0)
-                        $index++;
-                    $unique[$t] = 'set';
-                    $filteredTicket[$index]['ticket'] = $ticket['t'];
-                    $temp = array('tr' => $ticket['tr'], 'fb' => $ticket['fb'], 'fd' => $ticket['fd'], 'fi' => $ticket['fi'], 'i' => $ticket['i'], 'pc' => $ticket['pc']);
-                    $filteredTicket[$index]['history'][] = $temp;
-                }
-            }
-
-            $clicked = true;
-            $data = $filteredTicket;           
-            $this->set(compact('data', 'total_page', 'total'));
-        }
-        $this->set(compact('clicked'));
-    }
-
-    function verified_back($page = 1) {
-        $this->loadModel('Track');
-        $this->loadModel('User');
-        $this->loadModel('Role');
-        $offset = --$page * $this->per_page;
-
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-        $tickets = $this->Track->query("SELECT * FROM tracks tr
-                        left JOIN tickets t ON tr.ticket_id = t.id
-                        left JOIN users fb ON tr.forwarded_by = fb.id
-                        left JOIN roles fd ON tr.role_id = fd.id
-                        left JOIN users fi ON tr.user_id = fi.id
-                        left JOIN issues i ON tr.issue_id = i.id
-                        left join package_customers pc on tr.package_customer_id = pc.id
-                         WHERE t.verification_info != '' AND t.verification_date != '' ORDER BY t.id DESC" . " LIMIT " . $offset . "," . $this->per_page);
-
-        $temp = $this->Ticket->query("SELECT COUNT(tickets.id) as total FROM `tickets` WHERE tickets.verification_info != ''");
         $total = $temp[0][0]['total'];
         $total_page = ceil($total / $this->per_page);
 

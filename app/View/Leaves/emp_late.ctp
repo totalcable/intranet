@@ -7,7 +7,9 @@
         border-radius: 4px;
         text-align: center;
     }
+
 </style>
+
 <div class="page-content-wrapper">
     <div class="page-content">
         <!-- BEGIN PAGE HEADER-->
@@ -23,6 +25,9 @@
                 <div class="portlet box green">
                     <div class="portlet-title">
                         <div class="caption">
+<!--                            <b>Total Late : </b> <b ><a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late')) ?>" title="Click here for detail information" style="font-weight: normal; color: blue;"><?php echo $total_late; ?></a></b>&nbsp;
+                            <b>Total Absent : </b> <b ><a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'leaveofroaster')) ?>" title="Click here for detail information" style="font-weight: normal; color: blueviolet;"><?php echo $total_absent; ?></a></b>
+                                       -->
                             <i class="fa fa-user"></i>
                         </div>
                     </div>
@@ -32,23 +37,36 @@
                             <thead>
                                 <tr>
                                     <th>Emp Information</th>                                    
+                                    <th>Date </th>
                                     <th>Late</th>
+                                  
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 foreach ($late as $single):
+//                                    $data = $single['leaves'];
+//                                    $des = $single['designations'];
+//                                    $dep = $single['departments'];
+//                                    $emp = $single['emps'];
                                     $la = $single['roaster_details'];
                                     $us = $single['users'];
+//                                    $id = $emp['id'];
                                     ?>
                                     <tr >                                    
                                         <td>
                                             <b>Name :</b>  <?php echo $us['name']; ?><br>
-                                            <b>Emp ID : </b><b title="Emp Id" style="color:orange;"><?php echo $la['user_id']; ?></b>
+                                            <b>Emp ID : </b><b title="Emp Id" style="color:orange;"><?php echo $la['emp_id']; ?></b>
+                                           
                                         </td>
+                                        <td><?php echo $la['date']; ?></td>
                                         <td>
-                                            <a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late_detail',$la['user_id'])) ?>" title="Click here for more information" style="font-weight: normal; color: blue;"><?php echo $single[0]['total_late']; ?></a>
+                                            
+                                            <a target="_blank" href="<?php echo Router::url(array('controller' => 'leaves', 'action' => 'emp_late')) ?>" title="Click here for more information" style="font-weight: normal; color: blue;"><?php echo $single[0]['total_late']; ?></a>
+                                        
                                         </td>                                     
+                                        
+                                       
                                     </tr>
                                     <?php
                                 endforeach;

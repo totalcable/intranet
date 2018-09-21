@@ -6,20 +6,6 @@
             <hr>
             <div class="row">
                 <div class="col-xs-12">
-
-                    <ul class="pagination" >
-                        <?php
-                        for ($i = 1; $i <= $total_page; $i++):
-                            $active = '';
-                            if (isset($this->params['pass'][0]) && $this->params['pass'][0] == $i) {
-                                $active = 'active';
-                            }
-                            ?>
-                            <li class="paginate_button <?php echo $active; ?>" aria-controls="sample_editable_1" tabindex="<?php echo $i; ?>">
-                                <a href="<?php echo Router::url(array('controller' => 'reports', 'action' => 'newcustomers', $action, $i, $start, $end)) ?>"><?php echo $i; ?></a>
-                            </li>
-                        <?php endfor; ?>
-                    </ul>
                     <table class="table table-striped table-hover table-bordered" id="sample_editable_1">
                         <thead>
                             <tr> 
@@ -87,7 +73,7 @@
                                         echo $info['tr']['payable_amount'] - $paid;
                                         ?> USD
                                     </td>
-                                    <!--<td><?php // echo date('m-d-Y', strtotime($info['tr']['exp_date']));    ?></td>-->                                                
+                                    <!--<td><?php // echo date('m-d-Y', strtotime($info['tr']['exp_date']));   ?></td>-->                                                
                                     <td><?php echo date('m-d-Y', strtotime($info['pc']['created'])); ?></td>  
                                     <td><?php echo date('m-d-Y', strtotime($info['pc']['modified'])); ?></td>  
                                 </tr>

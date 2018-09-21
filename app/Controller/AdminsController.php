@@ -109,17 +109,11 @@ class AdminsController extends AppController {
                     $currentDateTime = $date . ' ' . $in;
 
                     $loggedUser = $this->Auth->user();
+                    // pr($loggedUser); exit;
+
                     $u_id = $loggedUser['id'];
-                    //pc , ip and date time collect start
-                    $myIp = getHostByName(php_uname('n'));
-                    $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-                    $date = date("Y-m-d h:i:sa");
-                    $date_s = date("Y-m-d");
-                    $pc_info = $myIp . ' ' . $pc . ' ' . $date . ' ' . $loggedUser['name'];
-                    //pc , ip and date time collect end
                     //Find out updateable data from roaster detail table
-//                    pr($date_s.' '.$u_id); exit;
-                    $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date_s' AND user_id = $u_id  AND attend_status != 'approve' order by alphabet");
+                    $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $u_id  AND attend_status != 'approve' order by alphabet");
                     //$shift = $duty[0]['roaster_details']['shift_name_time'];
                     if (!empty($duty[0]['roaster_details']['shift_name_time'])) {
 
@@ -139,7 +133,7 @@ class AdminsController extends AppController {
                                 $f_time = strtotime('07:15:00am'); // Morning login time
                                 $l_time = strtotime('01:00:00pm'); //Morning logout time
                             }
-                            //pr($f_time.' '.$pc_time.' '.$l_time); exit;
+//                             pr($f_time.' '.$pc_time.' '.$l_time); exit;
                             if ($pc_time >= $f_time && $pc_time <= $l_time) { // duty start and end time
                                 $shift = $duty[0]['roaster_details']['shift_name_time'];
                                 $shift_id = $duty[0]['roaster_details']['id'];
@@ -151,7 +145,6 @@ class AdminsController extends AppController {
                                 $this->request->data['User']['last_in_time'] = $in;
                                 $this->request->data['User']['last_duty_sift'] = $shift;
                                 $this->request->data['User']['log_status'] = 'request';
-                                $this->request->data['User']['pc_id_user'] = $pc_info;
                                 $this->User->id = $id;
 //                                   pr($this->request->data); exit;
                                 $this->User->save($this->request->data['User']);
@@ -183,7 +176,6 @@ class AdminsController extends AppController {
                                 $this->request->data['User']['last_out_time'] = '00:00:00';
                                 $this->request->data['User']['last_duty_sift'] = $shift;
                                 $this->request->data['User']['log_status'] = 'request';
-                                $this->request->data['User']['pc_id_user'] = $pc_info;
                                 $this->User->id = $id;
                                 $this->User->save($this->request->data['User']);
                             }
@@ -216,7 +208,6 @@ class AdminsController extends AppController {
                                 $this->request->data['User']['last_out_time'] = '00:00:00';
                                 $this->request->data['User']['last_duty_sift'] = $shift;
                                 $this->request->data['User']['log_status'] = 'request';
-                                $this->request->data['User']['pc_id_user'] = $pc_info;
                                 $this->User->id = $id;
                                 $this->User->save($this->request->data['User']);
                             }
@@ -227,7 +218,11 @@ class AdminsController extends AppController {
                         // pr('Task End'); exit; 
                     }
                     //pr('cant in'); exit;
-                    return $this->redirect('/customers/search');
+                    //return $this->redirect('/customers/search');
+                    
+                    return $this->redirect('/admins/dashboard');
+
+
                 } else {
                     // user is not activated
                     // log the user out
@@ -246,6 +241,73 @@ class AdminsController extends AppController {
                 $this->Session->setFlash($msg);
             }
         }
+    }
+
+    function requested_si() {
+        $this->loadModel('User');
+        $this->loadModel('RoasterDetail');
+        $date = date("Y-m-d");
+        $in = date("h:i:sa");
+        $si = $this->User->query("
+                SELECT * FROM users
+                left join roles on roles.id = users.role_id
+                WHERE (log_status = 'complete' OR log_status = 'request') AND role_id = 1 AND last_duty_date = '$date' AND status = 'active'");
+        $request_list = $si;
+        $this->set(compact('request_list'));
+    }
+
+    function requested_agent() {
+        $this->loadModel('User');
+        $this->loadModel('RoasterDetail');
+        $date = date("Y-m-d");
+        $in = date("h:i:sa");
+        $agent = $this->User->query("SELECT * FROM users
+                left join roles on roles.id = users.role_id
+                WHERE (log_status = 'complete' OR log_status = 'request') AND role_id = 14 AND last_duty_date = '$date' AND status = 'active'");
+        if (!empty($agent)) {
+            $fix_time = $agent[0]['users']['last_duty_sift'];
+            $log_status = $agent[0]['users']['log_status'];
+        }
+        //Time take in variable for validation start
+        // in time end
+        if ($fix_time = 'Morning (07:30 - 01:00)') {
+            $s_time = substr($fix_time, 9, 5); //fix time  
+        } elseif ($fix_time = 'Afternoon (01:00 - 09:00)') {
+            $s_time = substr($fix_time, 11, 5); //fix time 
+        } elseif ($fix_time = 'Night(09:00 - 03:00') {
+            $s_time = substr($fix_time, 7, 5); //fix time 
+        }
+        //Time take in variable for validation end 
+        $request_list = $agent;
+        $this->set(compact('request_list', 's_time', 'log_status', 'fix_time'));
+    }
+
+    function present_roaster() {
+        $this->loadModel('User');
+        $this->loadModel('RoasterDetail');
+        $date = date("Y-m-d");
+        $in = date("h:i:sa");
+        //Time take in variable for validation end 
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details                 
+        inner join users on users.id = roaster_details.emp_id
+        WHERE `date`= '$date' AND attend_status = 'no' order by alphabet");
+        //pr($duty); exit;
+        $users = $this->User->find('list', array('order' => array('User.name' => 'ASC')));
+        $this->set(compact('duty', 'users'));
+    }
+
+
+    function user_status_absent($id) {
+        $this->loadModel('RoasterDetail');
+        $this->RoasterDetail->id = $id;
+        $this->RoasterDetail->saveField("total_duty", '00:00:00');
+        $this->RoasterDetail->saveField("attend_status", 'absent');
+        $msg = '<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		<strong> Status change successfully:-) </strong>
+		</div>';
+        $this->Session->setFlash($msg);
+        return $this->redirect('present_roaster');
     }
 
     function user_status_leave($id, $a) {
@@ -289,12 +351,204 @@ class AdminsController extends AppController {
         }
     }
 
+    function requested_approve($id) {
+        $this->loadModel('User');
+        $this->loadModel('RoasterDetail');
+        $date = date("Y-m-d");
+        $id = $this->params['pass'][0];
+        //data retrive data for update roaster detail table start
+        $new_info = $this->User->query("SELECT * FROM users where id = $id");
+        $in = $new_info[0]['users']['last_in_time'];
+        $shift = $new_info[0]['users']['last_duty_sift'];
+//        $in = '09:20:00pm';
+        $in_office = strtotime($in); // last log in time present of office
+        $out = $new_info[0]['users']['last_out_time'];
+//        $out_office = strtotime($out); // last log in time present of office
+        $out_office = strtotime('09:00:00pm'); // last log in time present of office
+        $a_status = $new_info[0]['users']['log_status'];
+
+        //data retrive for update roaster detail table end
+        //data retrive by date , record id start
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $id  order by alphabet");
+
+        #$a_status = $duty[0]['roaster_details']['attend_status'];
+        $r_id = $duty[0]['roaster_details']['id'];
+
+        if ($a_status == 'request') {
+            //pr($shift.'Morning (07:30 - 01:00)'); exit;
+            //Shift name set
+            if ($shift == 'Morning (07:30 - 01:00)') {
+                //pr($shift.'Morning (07:30 - 01:00)'); exit;
+                $f_time = strtotime('07:45:00am'); // fix office time
+            } elseif ($shift == 'Afternoon (01:00 - 09:00)') {
+                $f_time = strtotime('01:15:00pm'); // fix office time
+            } elseif ($shift == 'Night (09:00 - 03:00)') {
+                $f_time = strtotime('09:15:00pm'); // fix office time
+            }
+            //pr($in_office.' I f '.$f_time);
+
+            if ($in_office > $f_time) { //for late time
+                pr('one');
+                exit;
+                $in_office1 = strtotime('+15 minutes', $in_office); // +15 minius for find out late time
+
+                $total_time = ($in_office1 - $f_time) / 60;
+                $e_minutes = floor(($total_time / 60) % 60); //h
+                $e_seconds = $total_time % 60; //min
+                $e_td = $e_minutes . ':' . $e_seconds;
+                //pr($e_td.' lat'); exit;
+                $this->RoasterDetail->id = $r_id;
+                $this->RoasterDetail->saveField("late_time", $e_td);
+            } elseif ($f_time > $in_office) {//for extra time
+                //pr('two'); exit;
+                $in_office1 = strtotime('-15 minutes', $f_time); // -15 minius for find out extra time
+                $total_time = ($in_office1 - $in_office) / 60;
+                $e_minutes = floor(($total_time / 60) % 60);
+                $e_seconds = $total_time % 60;
+                $e_td = $e_minutes . ':' . $e_seconds;
+                $minus = substr($e_td, 2, 1); // find minus 
+                if ($minus == '-') {
+                    $e_td = '00:00:00';
+                }
+                //pr($e_td.'  ext'.'start '.$minus); exit;
+                $this->RoasterDetail->id = $r_id;
+                $this->RoasterDetail->saveField("extra_time", $e_td);
+            }
+            //pr('last'); exit;
+            $att_status = 'start';
+        } elseif ($a_status == 'complete') {
+            //Shift name set
+            if ($shift == 'Morning (07:30 - 01:00)') {
+                $f_time = strtotime('07:45:00am'); // fixt office in time
+                $o_time = strtotime('01:00:00pm'); // fixt office out time
+            } elseif ($shift == 'Afternoon (01:00 - 09:00)') {
+                $f_time = strtotime('01:15:00pm'); // fix office time
+                $o_time = strtotime('09:00:00pm'); // fixt office out time
+            } elseif ($shift == 'Night (09:00 - 03:00)') {
+                $f_time = strtotime('09:15:00pm'); // fix office time
+                $o_time = strtotime('03:00:00am'); // fixt office out time
+            }
+            // pr($o_time . ' ' . $out_office);
+//            exit;
+            if ($in_office <= $f_time && $out_office >= $o_time) { // When an employee come time to time
+                //  pr('y'); 
+                // $in_office1 = strtotime('+15 minutes', $out_office); // +15 minius for find out late time
+//                $total_time = ($out_office - $in_office) / 60;
+//                $e_minutes = floor(($total_time / 60) % 60); //h
+//                $e_seconds = $total_time % 60; //min
+//                $e_td = $e_minutes . ':' . $e_seconds;
+                if ($shift == 'Morning (07:30 - 12:00)') {
+                    $e_td = '05:30:00';
+                } elseif ($shift == 'Afternoon (01:00 - 09:00)') {
+                    $e_td = '08:00:00';
+                } elseif ($shift == 'Night (09:00 - 03:00)') {
+                    $e_td = '06:00:00';
+                }
+                // pr($e_td. ' ' . 'good');
+                //  exit;
+                $this->RoasterDetail->id = $r_id;
+                $this->RoasterDetail->saveField("total_duty", $e_td);
+            } elseif ($in_office >= $f_time) {//// When an employee come late
+                //$f_time = strtotime('07:30:00am'); // fix office in time
+                //$total_late_time = ($in_office - $f_time); // fixt office in time
+                //$in_office1 = strtotime('-15 minutes', $out_office); // -15 minius for find out extra time
+                // pr($in_office . ' >' . $out_office . 'pp');
+                $total_time = ($out_office - $in_office) / 60;
+                $e_minutes = floor(($total_time / 60) % 60);
+                $e_seconds = $total_time % 60;
+                $e_td = $e_minutes . ':' . $e_seconds;
+
+                // pr($e_td.' last'); exit;
+                $this->RoasterDetail->id = $r_id;
+                $this->RoasterDetail->saveField("total_duty", $e_td);
+            }
+            //pr('last 2');
+            //exit;
+            $att_status = 'approve';
+        }
+
+        // update roaster detail start
+        $data4rd = array();
+        $data4rd['RoasterDetail'] = array(
+            'id' => $r_id,
+            'in_time' => $in,
+            'out_time' => $out,
+            'attend_status' => $att_status
+        );
+        $this->RoasterDetail->save($data4rd);
+        // update roaster detail end
+        // user table update start
+        $this->User->id = $id;
+        $this->User->saveField("log_status", "no");
+        //user table update end
+        //user table update for blank start
+        if ($a_status == 'complete') {
+            $this->User->id = $id;
+            $this->User->saveField("last_duty_date", "0000-00-00");
+            $this->User->saveField("last_in_time", "00:00:00");
+            $this->User->saveField("last_out_time", "00:00:00");
+            $this->User->saveField("last_duty_sift", "");
+        }
+        //user table update for blank end
+        $msg = '<div class="alert alert-successful">
+                           <button type="button" class="close" data-dismiss="alert">×</button>
+                           <strong> Approved</strong>
+                        </div>';
+        $this->Session->setFlash($msg);
+        return $this->redirect($this->referer());
+    }
+
+    function requested_delete($id = null) {
+        $this->loadModel('User');
+        $this->User->id = $id;
+        $this->User->saveField("log_status", "no");
+        $this->User->saveField("last_duty_date", '0000-00-00');
+        $this->User->saveField("last_in_time", '');
+        $this->User->saveField("last_out_time", '');
+        $msg = '<div class="alert alert-successful">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <strong> Record has been deleted</strong>
+                </div>';
+        $this->Session->setFlash($msg);
+        return $this->redirect($this->referer());
+    }
+
     function attend() {
         $this->loadModel('RoasterDetail');
         $date = date("Y-m-d");
         $loggedUser = $this->Auth->user();
         $u_id = $loggedUser['id'];
-        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND user_id = $u_id  AND attend_status != 'approve' order by alphabet");
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $u_id  AND attend_status != 'approve' order by alphabet");
+        $this->set(compact('duty'));
+    }
+
+    function attend_all() {
+        $this->loadModel('RoasterDetail');
+        $this->loadModel('User');
+        if ($this->request->is('post')) {
+            $datrange = json_decode($this->request->data['RoasterDetail']['daterange'], true);
+            $ds = $datrange['start'];
+            $de = $datrange['end'];
+            if ($ds == $de) {
+                $conditions = "roaster_details.date >= '$ds' AND  roaster_details.date <= '$de'";
+            } else {
+                $conditions = " roaster_details.date >= '$ds' AND  roaster_details.date <= '$de'";
+            }
+            $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details
+                    inner join users on users.id = roaster_details.emp_id
+                     WHERE attend_status = 'approve' AND $conditions");
+//            echo $this->RoasterDetail->getLastQuery();
+            $this->set(compact('duty'));
+        } else {
+            $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.emp_id WHERE attend_status = 'approve'");
+            $this->set(compact('duty'));
+        }
+    }
+
+    function attend_one($id) {
+        $this->loadModel('RoasterDetail');
+        $this->loadModel('User');
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details inner join users on users.id = roaster_details.emp_id WHERE attend_status = 'approve' AND roaster_details.emp_id = $id order by roaster_details.id limit 0,31");
         $this->set(compact('duty'));
     }
 
@@ -302,29 +556,19 @@ class AdminsController extends AppController {
         $this->loadModel('User');
         $this->loadModel('RoasterDetail');
         $date = date("Y-m-d");
-        
-        $loggedUser = $this->Auth->user();
-        //pc , ip and date time collect
-        $myIp = getHostByName(php_uname('n'));
-        $pc = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-        $date_log = date("Y-m-d h:i:sa");
-        $pc_info = $myIp . ' ' . $pc . ' ' . $date_log . ' ' . $loggedUser['name'];
         //$out = date("h:i:s");// out time dynamic
         $out = '03:00:00am'; // out time static
         $id = $this->Auth->user('id');
         $last_in_time = $this->Auth->user('last_in_time');
 
-        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND user_id = $id AND attend_status = 'start'  order by alphabet");
-        if (!empty($duty)) {
-            $l_in = $duty[0]['roaster_details']['in_time'];
-        }
+        $duty = $this->RoasterDetail->query("SELECT * FROM roaster_details WHERE `date` = '$date' AND emp_id = $id  order by alphabet");
+        $l_in = $duty[0]['roaster_details']['in_time'];
 
         if ($l_in == '00:00:00') {
             $this->User->id = $id;
             $this->User->saveField("last_out_time", '00:00:00');
         } else {
             $this->User->id = $id;
-            $this->User->saveField("user_logout_info", $pc_info);
             $this->User->saveField("last_out_time", $out);
             $this->User->saveField("log_status", "complete");
         }
@@ -337,14 +581,327 @@ class AdminsController extends AppController {
         return $this->redirect($this->Auth->logout());
     }
 
-    function dashboard() {
+
+
+     
+      function dashboard($page = 1) 
+    {
         if (!$this->Auth->loggedIn()) {
             return $this->redirect('/admins/login');
-            //  echo 'here'; exit; //(array('action' => 'deshboard'));
+
         }
+              // Load all the required models
+
+              $this->loadModel('User');
+              $this->loadModel('PackageCustomer');
+              $this->loadModel('Referral');
+              $this->loadModel('Installation');
+              $this->loadModel('Ticket');
+              $this->loadModel('Log');
+              $this->loadModel('Transaction');
+
+
+              $offset = --$page * $this->per_page;
+              
+    
+             //*****Customer Section*****  
+
+             $data=$this->PackageCustomer->find('all');
+
+             $conditions0 = "";
+             $datrange0['mend']=date('Y-m-d');
+             $datrange0['mstart']="" ;
+             $datrange0['mstart']= date('Y-m-d', strtotime($datrange0['mstart'] . "-7 days"));
+             $conditions0 .="pc.date >='" . $datrange0['mstart'] . "' AND  pc.date <='" . $datrange0['mend'] . "'";
+
+             $conditions1 = "";
+             $datrange1['mend']=date('Y-m-d');
+             $datrange1['mstart']="" ;
+             $datrange1['mstart']= date('Y-m-d', strtotime($datrange1['mstart'] . "-15 days"));
+             $conditions1 .="pc.date >='" . $datrange1['mstart'] . "' AND  pc.date <='" . $datrange1['mend'] . "'";
+
+             $conditions2 = "";
+             $datrange2['end']=date('Y-m-d');
+             $datrange2['start']="" ;
+             $datrange2['start']= date('Y-m-d', strtotime($datrange2['start'] . "-30 days"));
+             $conditions2 .="pc.date >='" . $datrange2['start'] . "' AND  pc.date <='" . $datrange2['end'] . "'";
+             
+                //data collected from package_customers table
+              $dd7= $this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE $conditions0 ");
+              $dd15= $this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE $conditions1 ");
+              $mm= $this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE $conditions2 ");
+              $Customer['last7day']=count($dd7);
+              $Customer['last15day']=count($dd15);
+              $Customer['lastmonth']=count($mm);
+
+
+
+              //*****Sales Status Section*****
+
+             $conditions3 = "";
+             $datrange3['mend']=date('Y-m-d');
+             $datrange3['mstart']="" ;
+             $datrange3['mstart']= date('Y-m-d', strtotime($datrange3['mstart'] . "-7 days"));
+             $conditions3 .="pc.date >='" . $datrange3['mstart'] . "' AND  pc.date <='" . $datrange3['mend'] . "'";
+
+
+                $sql3 = "SELECT * FROM package_customers pc
+                left join psettings ps on ps.id = pc.psetting_id
+                left join custom_packages cp on cp.id = pc.custom_package_id 
+                left join installations ins on ins.package_customer_id = pc.id
+                WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') 
+                OR (dealer !='' AND pc.status ='requested') OR
+                (pc.shipment = 1 AND pc.status ='requested') 
+                OR (pc.follow_up = 0 AND pc.status = 'done' AND pc.follow_date != ''))                     
+                and $conditions3 LIMIT $offset,$this->per_page";
+
+                $allData1 = $this->PackageCustomer->query($sql3);
+
+                
+
+             $conditions4="";
+             $datrange4['mend']=date('Y-m-d');
+             $datrange4['mstart']="" ;
+             $datrange4['mstart']= date('Y-m-d', strtotime($datrange4['mstart'] . "-15 days"));
+             $conditions4 .="pc.date >='" . $datrange4['mstart'] . "' AND  pc.date <='" . $datrange4['mend'] . "'";
+
+
+                $sql4 = "SELECT * FROM package_customers pc 
+                left join psettings ps on ps.id = pc.psetting_id
+                left join custom_packages cp on cp.id = pc.custom_package_id 
+                left join installations ins on ins.package_customer_id = pc.id
+                WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') 
+                OR (dealer !='' AND pc.status ='requested') OR
+                (pc.shipment = 1 AND pc.status ='requested') 
+                OR (pc.follow_up = 0 AND pc.status = 'done' AND pc.follow_date != ''))                     
+                and $conditions4 LIMIT $offset,$this->per_page";
+
+                $allData2 = $this->PackageCustomer->query($sql4);
+
+                  
+             $conditions7="";
+             $datrange7['mend']=date('Y-m-d');
+             $datrange7['mstart']="" ;
+             $datrange7['mstart']= date('Y-m-d', strtotime($datrange7['mstart'] . "-30 days"));
+             $conditions7 .="pc.date >='" . $datrange7['mstart'] . "' AND  pc.date <='" . $datrange7['mend'] . "'";
+
+
+                $sql7 = "SELECT * FROM package_customers pc 
+                left join psettings ps on ps.id = pc.psetting_id
+                left join custom_packages cp on cp.id = pc.custom_package_id 
+                left join installations ins on ins.package_customer_id = pc.id
+                WHERE  (pc.status = 'canceled' OR (shipment = 0 AND pc.follow_up= 0 AND dealer ='' AND pc.status ='requested') 
+                OR (dealer !='' AND pc.status ='requested') OR
+                (pc.shipment = 1 AND pc.status ='requested') 
+                OR (pc.follow_up = 0 AND pc.status = 'done' AND pc.follow_date != ''))                     
+                and $conditions7 LIMIT $offset,$this->per_page";
+
+                $allData3 = $this->PackageCustomer->query($sql7);
+
+
+                $sales['last7day']=count($allData1);
+                $sales['last15day']=count($allData2);
+                $sales['lastmonth']=count($allData3);
+
+                
+
+
+             //*****Customer Status Section*****
+
+             $conditions9="";
+             $datrange9['mend']=date('Y-m-d H:i:s');
+             $datrange9['mstart']="" ;
+             $datrange9['mstart']= date('Y-m-d H:i:s', strtotime($datrange9['mstart'] . "-7 days"));
+             $conditions9 .="modified >='" . $datrange9['mstart'] . "' AND  modified <='" . $datrange9['mend'] . "'";
+
+              //data collected from package_customers table
+             $active1=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Active' AND  $conditions9 ");
+             $hold1=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Hold' AND  $conditions9 ");
+             $canceled1=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Canceled' AND  $conditions9 ");
+               
+              $Service['active7']=count($active1);
+              $Service['hold7']=count($hold1);
+              $Service['canceled7']=count($canceled1);
+
+
+             $conditions10="";
+             $datrange10['mend']=date('Y-m-d H:i:s');
+             $datrange10['mstart']="" ;
+             $datrange10['mstart']= date('Y-m-d H:i:s', strtotime($datrange10['mstart'] . "-15 days"));
+             $conditions10 .="modified >='" . $datrange10['mstart'] . "' AND  modified <='" . $datrange10['mend'] . "'";
+
+             
+              //data collected from package_customers table
+             $active2=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Active' AND  $conditions10 ");
+             $hold2=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Hold' AND  $conditions10 ");
+             $canceled2=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Canceled' AND  $conditions10 ");
+
+              $Service['active15']=count($active2);
+              $Service['hold15']=count($hold2);
+              $Service['canceled15']=count($canceled2);
+
+
+              $conditions11="";
+             $datrange11['mend']=date('Y-m-d H:i:s');
+             $datrange11['mstart']="" ;
+             $datrange11['mstart']= date('Y-m-d H:i:s', strtotime($datrange11['mstart'] . "-30 days"));
+             $conditions11 .="modified >='" . $datrange11['mstart'] . "' AND  modified <='" . $datrange11['mend'] . "'";
+
+             
+               //data collected from package_customers table
+             $active3=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Active' AND  $conditions11 ");
+             $hold3=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Hold' AND  $conditions11 ");
+             $canceled3=$this->PackageCustomer->query("SELECT *FROM package_customers pc WHERE mac_status='Canceled' AND  $conditions11 ");
+
+              $Service['active30']=count($active3);
+              $Service['hold30']=count($hold3);
+              $Service['canceled30']=count($canceled3);
+
+
+
+                
+             //*****Ticket Status Section*****
+               
+             $conditions5="";
+             $datrange5['mend']=date('Y-m-d H:i:s');
+             $datrange5['mstart']="" ;
+             $datrange5['mstart']= date('Y-m-d H:i:s', strtotime($datrange5['mstart'] . "-1 days"));
+             $conditions5 .="created >='" . $datrange5['mstart'] . "' AND  created <='" . $datrange5['mend'] . "'";
+
+               //data collected from tickets table
+             $solved1=$this->Ticket->query("SELECT * FROM tickets WHERE status='solved' AND $conditions5 ");
+             $open1=$this->Ticket->query("SELECT * FROM tickets WHERE status='open' AND $conditions5 ");
+
+             $Ticket['openlastday']= count($open1);
+             $Ticket['solvedlastday']= count($solved1);
+             
+
+
+             $conditions6="";
+             $datrange6['mend']=date('Y-m-d H:i:s');
+             $datrange6['mstart']="" ;
+             $datrange6['mstart']= date('Y-m-d H:i:s', strtotime($datrange6['mstart'] . "-7 days"));
+             $conditions6 .="created >='" . $datrange6['mstart'] . "' AND  created <='" . $datrange6['mend'] . "'";
+
+              //data collected from tickets table
+             $solved2=$this->Ticket->query("SELECT * FROM tickets WHERE status='solved' AND $conditions6 ");
+             $open2=$this->Ticket->query("SELECT * FROM tickets WHERE status='open' AND $conditions6 ");
+
+             $Ticket['openlast7']= count($open2);
+             $Ticket['solvedlast7']= count($solved2);
+            
+
+             $conditions8="";
+             $datrange8['mend']=date('Y-m-d H:i:s');
+             $datrange8['mstart']="" ;
+             $datrange8['mstart']= date('Y-m-d H:i:s', strtotime($datrange8['mstart'] . "-15 days"));
+             $conditions8 .="created >='" . $datrange8['mstart'] . "' AND  created <='" . $datrange8['mend'] . "'";
+
+             //data collected from tickets table
+             $solved3=$this->Ticket->query("SELECT * FROM tickets WHERE status='solved' AND $conditions8 ");
+             $open3=$this->Ticket->query("SELECT * FROM tickets WHERE status='open' AND $conditions8 ");
+
+             $Ticket['openlast15']= count($open3);
+             $Ticket['solvedlast15']= count($solved3);
+
+
+             //***********************************************************************************************************
+
+             //auto recurring***************************************
+
+             $total_auto_recurring_sql= $this->PackageCustomer->query("SELECT * FROM package_customers where auto_r='yes' ");
+             $total_auto_recurring['total_recurring']=count($total_auto_recurring_sql);
+          // pr($total_auto_recurring['total_recurring']); exit;
+
+            //Payable amount******************************************************//
+                //payable amount for week
+                $conditionPayableAmount= "";
+                $datrangePayableAmount['week_end']=date('Y-m-d H:i:s');
+                $datrangePayableAmount['week_start']="" ;
+                $datrangePayableAmount['week_start']=date('Y-m-d H:i:s', strtotime($datrangePayableAmount['week_start'] . "-7 days"));
+                $conditionPayableAmount .="tr.created >='" . $datrangePayableAmount['week_start'] . "' AND  tr.created <='" . 
+                     $datrangePayableAmount['week_end'] . "'";
+
+                $dd= $this->Transaction->query("SELECT sum(payable_amount) as total FROM transactions tr where 
+                    $conditionPayableAmount");
+                $total_payable_amount['week']= $dd[0][0]['total'];
+
+
+                //payable amount for Half month
+                $conditionPayableAmountHalfMonth= "";
+                $datrangePayableAmount['phalfmonth_end']=date('Y-m-d H:i:s');
+                $datrangePayableAmount['phalfmonth_start']="" ;
+                $datrangePayableAmount['phalfmonth_start']=date('Y-m-d H:i:s', strtotime($datrangePayableAmount['phalfmonth_start'] . "-15 days"));
+                $conditionPayableAmountHalfMonth .="tr.created >='" . $datrangePayableAmount['phalfmonth_start'] . "' AND  tr.created <='" . $datrangePayableAmount['phalfmonth_end'] . "'";
+
+                $payableAmountHalfMonth= $this->Transaction->query("SELECT sum(payable_amount) as total FROM transactions tr where 
+                    $conditionPayableAmountHalfMonth");
+                $total_payable_amount['half_month']= $payableAmountHalfMonth[0][0]['total'];
+               // pr($total_payable_amount);exit();
+
+
+                //payable amount for full month
+                $conditionPayableAmountMonth= "";
+                $datrangePayableAmount['pmonth_end']=date('Y-m-d H:i:s');
+                $datrangePayableAmount['pmonth_start']="" ;
+                $datrangePayableAmount['pmonth_start']=date('Y-m-d H:i:s', strtotime($datrangePayableAmount['pmonth_start'] . "-30 days"));
+                $conditionPayableAmountMonth .="tr.created >='" . $datrangePayableAmount['pmonth_start'] . "' AND  tr.created <='" . $datrangePayableAmount['pmonth_end'] . "'";
+
+                $payableAmountMonth= $this->Transaction->query("SELECT sum(payable_amount) as total FROM transactions tr where 
+                    $conditionPayableAmountMonth");
+                $total_payable_amount['full_month']= $payableAmountMonth[0][0]['total'];
+                //pr($payableAmountMonth);exit();
+
+            //******************************Paid amount*****************************************//
+                //paid amount for week
+                $conditionPaidAmount= "";
+                $datrangePaidAmount['paweek_end']=date('Y-m-d H:i:s');
+                $datrangePaidAmount['paweek_start']="" ;
+                $datrangePaidAmount['paweek_start']=date('Y-m-d H:i:s', strtotime($datrangePaidAmount['paweek_start'] . "-7 days"));
+
+                $conditionPaidAmount .="tr.created >='" . $datrangePaidAmount['paweek_start'] . "' AND  tr.created <='" . $datrangePaidAmount['paweek_end'] . "'";
+                $paidAmountWeek= $this->Transaction->query("SELECT sum(paid_amount) as total FROM transactions tr where 
+                    $conditionPaidAmount");
+                $total_paid_amount['week']= $paidAmountWeek[0][0]['total'];
+                 
+               
+                
+
+                //paid amount for Half month
+                $conditionPaidAmountHalfMonth= "";
+                $datrangePaidAmount['pahalfmonth_end']=date('Y-m-d H:i:s');
+                $datrangePaidAmount['pahalfmonth_start']="" ;
+                $datrangePaidAmount['pahalfmonth_start']=date('Y-m-d H:i:s', strtotime($datrangePaidAmount['pahalfmonth_start'] . "-15 days"));
+                $conditionPaidAmountHalfMonth .="tr.created >='" . $datrangePaidAmount['pahalfmonth_start'] . "' AND  tr.created <='" . $datrangePaidAmount['pahalfmonth_end'] . "'";
+
+                $paidAmountHalfMonth= $this->Transaction->query("SELECT sum(paid_amount)as total FROM transactions tr where 
+                $conditionPaidAmountHalfMonth");
+                $total_paid_amount['half_month']= $paidAmountHalfMonth[0][0]['total'];
+                //pr($paidAmountHalfMonth);exit();
+                //pr($total_paid_amount);exit();
+
+                //paid amount for full month
+                $conditionPaidAmountMonth= "";
+                $datrangePaidAmount['pamonth_end']=date('Y-m-d H:i:s');
+                $datrangePaidAmount['pamonth_start']="" ;
+                $datrangePaidAmount['pamonth_start']=date('Y-m-d H:i:s', strtotime($datrangePaidAmount['pamonth_start'] . "-30 days"));
+                $conditionPaidAmountMonth .="tr.created >='" . $datrangePaidAmount['pamonth_start'] . "' AND  tr.created <='" . $datrangePaidAmount['pamonth_end'] . "'";
+
+                $paidAmountMonth= $this->Transaction->query("SELECT sum(paid_amount) as total FROM transactions tr where 
+                    $conditionPaidAmountMonth");
+                $total_paid_amount['full_month']= $paidAmountMonth[0][0]['total'];
+                
+
+
+
+             $this->set(compact('Customer','sales','Service','Ticket','total_payable_amount','total_paid_amount','total_auto_recurring','dd'));
+
+
     }
 
-    function addrole() {
+
+
+    function addrole(){
         $this->loadModel('Role');
         if ($this->request->is('post')) {
             $this->Role->set($this->request->data);
